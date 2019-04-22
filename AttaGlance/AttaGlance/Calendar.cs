@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace AttaGlance
 {
-    class Calendar
+    public class Calendar
     {
+        public Calendar()
+        {
+
+        }
     }
 }

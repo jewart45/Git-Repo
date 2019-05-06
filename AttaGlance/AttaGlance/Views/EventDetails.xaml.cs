@@ -15,23 +15,20 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace AttaGlance
+namespace AttaGlance.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class HomePage : Page
+    public sealed partial class EventDetails : Page
     {
-        public HomePage()
+        public EventDetails()
         {
             this.InitializeComponent();
-
-            if ((App.Current as App).IsAuthenticated)
-            {
-                HomePageMessage.Text = "Welcome! Please use the menu to the left to select a view.";
-            }
+            Properties = new EventDetailsViewModel();
+            this.DataContext = Properties;
         }
 
-        
+        public EventDetailsViewModel Properties { get; set; }
     }
 }

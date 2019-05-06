@@ -121,10 +121,17 @@
     </Compile>
     <Compile Include="Calendar.cs" />
     <Compile Include="Event.cs" />
+    <Compile Include="ViewModels\EventBlockViewModel - Copy.cs" />
     <Compile Include="Views\EventBlock.xaml.cs">
       <DependentUpon>EventBlock.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\EventBlockViewModel.cs" />
+    <Compile Include="ViewModels\EventDetailsViewModel.cs" />
+    <Compile Include="Views\EventDetails.xaml.cs">
+      <DependentUpon>EventDetails.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CalendarPage.xaml.cs">
+      <DependentUpon>CalendarPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
@@ -158,6 +165,14 @@
     <Page Include="Views\EventBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\EventDetails.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalendarPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\HomePage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -9,7 +9,7 @@
     d:DesignHeight="100"
     d:DesignWidth="400">
 
-    <Grid Margin="5" Background="Aqua" CornerRadius="15" DoubleTapped="Grid_DoubleTapped">
+    <Grid Margin="5" Background="{Binding BackgroundColor.Value}" CornerRadius="15" DoubleTapped="Grid_DoubleTapped">
 
     </Grid>
 </UserControl>

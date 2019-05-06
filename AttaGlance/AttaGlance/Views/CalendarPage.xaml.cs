@@ -20,15 +20,15 @@ namespace AttaGlance
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class HomePage : Page
+    public sealed partial class CalendarPage : Page
     {
-        public HomePage()
+        public CalendarPage()
         {
             this.InitializeComponent();
 
             if ((App.Current as App).IsAuthenticated)
             {
-                HomePageMessage.Text = "Welcome! Please use the menu to the left to select a view.";
+                DataTemplate calendarTemplate = new DataTemplate();
             }
         }
 

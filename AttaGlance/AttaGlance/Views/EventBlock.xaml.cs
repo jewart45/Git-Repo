@@ -15,7 +15,12 @@ namespace AttaGlance
         public EventBlock()
         {
             this.InitializeComponent();
+            Properties = new EventBlockViewModel();
+            this.DataContext = Properties;
+            
         }
+
+        public EventBlockViewModel Properties { get; private set; }
 
         private void Grid_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {

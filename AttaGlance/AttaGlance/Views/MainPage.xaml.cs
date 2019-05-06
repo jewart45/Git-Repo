@@ -67,6 +67,7 @@ namespace AttaGlance
             switch (invokedItem.ToLower())
             {
                 case "calendar":
+                    SetUpEventsAsync();
                     //RootFrame.Navigate(typeof(CalendarPage));
                     break;
                 case "home":
@@ -74,6 +75,36 @@ namespace AttaGlance
                     RootFrame.Navigate(typeof(HomePage));
                     break;
             }
+        }
+
+        private async System.Threading.Tasks.Task SetUpEventsAsync()
+        {
+            var graphClient = MicrosoftGraphService.Instance.GraphProvider;
+
+            try
+            {
+                // Get the events
+                var events = await graphClient.Me.Events.Request()
+                    .Select("subject,organizer,start,end")
+                    .OrderBy("createdDateTime DESC")
+                    .GetAsync();
+
+                var users1 = await graphClient.Users.Request()
+                                    .Select("displayName,id,mail,calendar")
+                                    .GetAsync();
+                var userlist = users1.CurrentPage.ToList();
+                foreach (var u in userlist)
+                {
+                    //var pp = await graphClient.Users[u.Id].Calendars.Request()
+                    //        .GetAsync();
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            //base.OnNavigatedTo(e);
         }
 
         private void Login_SignInCompleted(object sender, Microsoft.Toolkit.Uwp.UI.Controls.Graph.SignInEventArgs e)

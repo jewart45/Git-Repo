@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.Graph;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -95,8 +96,14 @@ namespace AttaGlance
                 var userlist = users1.CurrentPage.ToList();
                 foreach (var u in userlist)
                 {
-                    //var pp = await graphClient.Users[u.Id].Calendars.Request()
-                    //        .GetAsync();
+                    var adress = new EmailAddress();
+                    adress.Address = u.Mail;
+                    var ab = new Attendee() { EmailAddress = adress, Type = AttendeeType.Required };
+                    var s = new List<Attendee>();
+                    s.Add(ab);
+                    GetAvailabilityDetails()
+                    var pp = graphClient.Users[u.Id].FindMeetingTimes(s).Request();
+
                 }
             }
             catch(Exception ex)

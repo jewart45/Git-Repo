@@ -9,16 +9,12 @@ namespace SpeechNotifier.Classes
 {
     public class Phrase
     {
-        public string Text { get; set; }
+        public string SpeechText { get; set; } = "";
+        public string NotificationText { get; set; } = "";
 
-        public Phrase(string text)
-        {
-            Text = text;
-        }
 
         public Phrase()
         {
-            Text = "";
         }
     }
 }

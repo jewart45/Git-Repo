@@ -24,12 +24,12 @@ namespace SpeechNotifier
             _notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
             _notifyIcon.Icon = SpeechNotifier.Properties.Resources.hearingIcon64;
             _notifyIcon.Visible = true;
-            _notifyIcon.BalloonTipClicked += _notifyIcon_BalloonTipClicked;
-
+            //_notifyIcon.BalloonTipClicked += _notifyIcon_BalloonTipClicked;
+            _notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             CreateContextMenu();
         }
 
-        private void _notifyIcon_BalloonTipClicked(object sender, System.EventArgs e) => _notifyIcon.ShowBalloonTip(0);
+        //private void _notifyIcon_BalloonTipClicked(object sender, System.EventArgs e) => _notifyIcon.ShowBalloonTip(0);
 
         private void CreateContextMenu()
         {

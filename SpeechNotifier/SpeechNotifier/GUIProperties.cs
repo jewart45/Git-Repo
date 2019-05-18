@@ -46,20 +46,34 @@ namespace SpeechNotifier
             }
         }
 
-        private string currentText = "";
+        private string currentSpeechText = "";
 
-        public string CurrentText
+        public string CurrentSpeechText
         {
             get
             {
-                return currentText;
+                return currentSpeechText;
             }
             set
             {
-                currentText = value;
+                currentSpeechText = value;
                 NotifyPropertyChanged();
             }
         }
+
+        private string currentResponseText = "";
+
+        public string CurrentResponseText {
+            get {
+                return currentResponseText;
+            }
+            set {
+                currentResponseText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

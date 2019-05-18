@@ -1,15 +1,10 @@
 ﻿using SpeechNotifier.Classes;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Speech.Recognition;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Xml;
-using System.Xml.Serialization;
 
 namespace SpeechNotifier
 {
@@ -26,6 +21,7 @@ namespace SpeechNotifier
         public List<Phrase> PhraseList { get; private set; }
 
         public CustomXmlSerializer Serializer { get; set; }
+        
 
         public MainWindow()
         {
@@ -37,7 +33,6 @@ namespace SpeechNotifier
             myGuiProperties = new GUIProperties();
 
             Serializer = new CustomXmlSerializer(fileName, typeof(List<Phrase>));
-            //Create and load a sample grammar.
 
             DataContext = myGuiProperties;
             rec.RequestRecognizerUpdate();
@@ -59,19 +54,21 @@ namespace SpeechNotifier
         public void Rec_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             App appl = (Application.Current as App);
+            var phrase = PhraseList.FirstOrDefault(x => x.SpeechText == e.Result.Text);
+            if(phrase != null)
+            {
+                appl._notifyIcon.ShowBalloonTip(1, "Speech Recognized", phrase.NotificationText, System.Windows.Forms.ToolTipIcon.Info);
 
-            appl._notifyIcon.ShowBalloonTip(1, "Speech Found", e.Result.Text, System.Windows.Forms.ToolTipIcon.Info);
+            }
             //MessageBox.Show("Found some speech: " + e.Result.Text);
             Console.WriteLine("Speech Found");
         }
-
-        private void MainWindow_SpeechRecognized(object sender, SpeechRecognizedEventArgs e) => MessageBox.Show("Found Speech" + e.Result.Text);
 
         private void Intialise()
         {
             GetPhrases(PhraseSelectorCmbo);
 
-            PhraseSelectorCmbo.SelectedIndex = 1;
+            PhraseSelectorCmbo.SelectedIndex = -1;
         }
 
         private void GetPhrases(ComboBox phraseSelectorCmbo)
@@ -86,10 +83,10 @@ namespace SpeechNotifier
             else
             {
                 PhraseSelectorCmbo.Items.Clear();
-                foreach (Phrase p in PhraseList)
+                foreach (Phrase p in PhraseList.Where(x=>x.SpeechText != ""))
                 {
-                    PhraseSelectorCmbo.Items.Add(p.Text);
-                    grammarList.Add(p.Text);
+                    PhraseSelectorCmbo.Items.Add(p);
+                    grammarList.Add(p.SpeechText);
                 }
                 Grammar grammar = new Grammar(new GrammarBuilder(grammarList));
                 rec.UnloadAllGrammars();
@@ -99,7 +96,9 @@ namespace SpeechNotifier
 
         private void AddPhrase_Click(object sender, RoutedEventArgs e)
         {
-            myGuiProperties.CurrentText = "Please Enter Phrase Here...";
+            PhraseSelectorCmbo.SelectedIndex = -1;
+            myGuiProperties.CurrentSpeechText = "Enter phrase you wish to recognize here...";
+            myGuiProperties.CurrentResponseText = "Enter notification text when seech is recognized...";
             myGuiProperties.PhraseGridVisibility = Visibility.Visible;
         }
 
@@ -108,7 +107,7 @@ namespace SpeechNotifier
             MessageBoxResult res = MessageBox.Show("Are you sure you wish to delete this phrase?", "Confirmation", MessageBoxButton.YesNoCancel);
             if (res == MessageBoxResult.Yes)
             {
-                Phrase p = PhraseList.Where(x => x.Text == PhraseSelectorCmbo.SelectedItem as string).FirstOrDefault();
+                Phrase p = PhraseList.Where(x => x == PhraseSelectorCmbo.SelectedItem as Phrase).FirstOrDefault();
                 if (p != null)
                 {
                     PhraseList.Remove(p);
@@ -121,10 +120,11 @@ namespace SpeechNotifier
 
         private void PhraseSelectorCmbo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (PhraseSelectorCmbo.SelectedItem != null)
+            if (PhraseSelectorCmbo.SelectedItem != null && myGuiProperties.CurrentSpeechText != (PhraseSelectorCmbo.SelectedItem as Phrase).SpeechText)
             {
-                string phrase = PhraseSelectorCmbo.SelectedItem as string;
-                myGuiProperties.CurrentText = phrase;
+                Phrase phrase = PhraseSelectorCmbo.SelectedItem as Phrase;
+                myGuiProperties.CurrentSpeechText = phrase.SpeechText;
+                myGuiProperties.CurrentResponseText = phrase.NotificationText;
                 myGuiProperties.PhraseGridVisibility = Visibility.Visible;
             }
             else
@@ -137,17 +137,36 @@ namespace SpeechNotifier
         {
             bool saved = false;
 
-            if (myGuiProperties.CurrentText == "Please Enter Phrase Here..." && myGuiProperties.CurrentText.Trim() == "")
+            if (myGuiProperties.CurrentSpeechText == "Please Enter Phrase Here..." && myGuiProperties.CurrentSpeechText.Trim() == "")
             {
                 MessageBox.Show("Please edit the text in the box");
             }
+            else if(PhraseSelectorCmbo.SelectedIndex == -1)
+            {
+                Phrase newPhrase = new Phrase() { SpeechText = myGuiProperties.CurrentSpeechText, NotificationText = myGuiProperties.CurrentResponseText };
+                PhraseList.Add(newPhrase);
+                Serializer.Serialize(PhraseList);
+                GetPhrases(PhraseSelectorCmbo);
+                saved = true;
+            }
             else
             {
-                Phrase newPhrase = new Phrase(myGuiProperties.CurrentText);
-                if (!PhraseList.Select(x => x.Text).ToList().Contains(myGuiProperties.CurrentText))
+                Phrase phraseToEdit = PhraseList.FirstOrDefault(x => x == PhraseSelectorCmbo.SelectedItem as Phrase);
+                //Save list if not contains
+                if (phraseToEdit != null)
                 {
-                    PhraseList.Add(newPhrase);
+                    //Set to current values
+                    phraseToEdit.SpeechText = myGuiProperties.CurrentSpeechText;
+                    phraseToEdit.NotificationText = myGuiProperties.CurrentResponseText;
 
+                    Serializer.Serialize(PhraseList);
+                    GetPhrases(PhraseSelectorCmbo);
+                    saved = true;
+                }
+                else
+                {
+                    Phrase newPhrase = new Phrase() { SpeechText = myGuiProperties.CurrentSpeechText, NotificationText = myGuiProperties.CurrentResponseText };
+                    PhraseList.Add(newPhrase);
                     Serializer.Serialize(PhraseList);
                     GetPhrases(PhraseSelectorCmbo);
                     saved = true;
@@ -187,7 +206,7 @@ namespace SpeechNotifier
         private void PhraseTextEdittingBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox k = sender as TextBox;
-            if (!PhraseList.Select(x => x.Text).ToList().Contains(k.Text))
+            if (!PhraseList.Select(x => x.SpeechText).ToList().Contains(k.Text))
             {
                 SaveBtn.IsEnabled = true;
             }

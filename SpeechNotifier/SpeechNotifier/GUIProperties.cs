@@ -4,7 +4,7 @@ using System.Windows;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
-using System.Drawing;
+using System.Windows.Media;
 
 namespace SpeechNotifier
 {
@@ -31,17 +31,16 @@ namespace SpeechNotifier
             }
         }
 
-        private Brush currentPersonColour = Brushes.Red;
+        private Brush detectionColour = Brushes.White;
 
-        public Brush CurrentPersonColour
-        {
+        public Brush DetectionColour { 
             get
             {
-                return currentPersonColour;
+                return detectionColour;
             }
             set
             {
-                currentPersonColour = value;
+                detectionColour = value;
                 NotifyPropertyChanged();
             }
         }

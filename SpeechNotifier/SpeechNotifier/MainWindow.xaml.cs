@@ -5,6 +5,7 @@ using System.Linq;
 using System.Speech.Recognition;
 using System.Windows;
 using System.Windows.Controls;
+using ToggleSwitch;
 
 namespace SpeechNotifier
 {
@@ -14,14 +15,14 @@ namespace SpeechNotifier
     public partial class MainWindow : Window
     {
         private GUIProperties myGuiProperties;
-        public string fileName { get; } = @"C:\Users\Public\Documents\phrases.xml";
+        public string FileName = System.AppDomain.CurrentDomain.BaseDirectory + "phrases.xml";
         public SpeechRecognitionEngine rec { get; set; }
 
-        public Choices grammarList { get; set; } = new Choices();
+        public Choices GrammarList { get; set; } = new Choices();
         public List<Phrase> PhraseList { get; private set; }
 
         public CustomXmlSerializer Serializer { get; set; }
-        
+
 
         public MainWindow()
         {
@@ -29,10 +30,9 @@ namespace SpeechNotifier
             {
                 rec = new SpeechRecognitionEngine();
             }
-
             myGuiProperties = new GUIProperties();
 
-            Serializer = new CustomXmlSerializer(fileName, typeof(List<Phrase>));
+            Serializer = new CustomXmlSerializer(FileName, typeof(List<Phrase>));
 
             DataContext = myGuiProperties;
             rec.RequestRecognizerUpdate();
@@ -47,8 +47,8 @@ namespace SpeechNotifier
             Intialise();
         }
 
-        private void Rec_SpeechDetected(object sender, SpeechDetectedEventArgs e) => Console.WriteLine("Detected Speech sounds");
-
+        private void Rec_SpeechDetected(object sender, SpeechDetectedEventArgs e) => ToggleDetectionColour();
+        private void ToggleDetectionColour() => detectionIndicator.Fill = detectionIndicator.Fill == System.Windows.Media.Brushes.Green ? System.Windows.Media.Brushes.White : System.Windows.Media.Brushes.Green;
         private void Rec_SpeechHypothesized(object sender, SpeechHypothesizedEventArgs e) => Console.WriteLine("Maybe found speech");
 
         public void Rec_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -86,9 +86,9 @@ namespace SpeechNotifier
                 foreach (Phrase p in PhraseList.Where(x=>x.SpeechText != ""))
                 {
                     PhraseSelectorCmbo.Items.Add(p);
-                    grammarList.Add(p.SpeechText);
+                    GrammarList.Add(p.SpeechText);
                 }
-                Grammar grammar = new Grammar(new GrammarBuilder(grammarList));
+                Grammar grammar = new Grammar(new GrammarBuilder(GrammarList));
                 rec.UnloadAllGrammars();
                 rec.LoadGrammar(grammar);
             }
@@ -118,9 +118,9 @@ namespace SpeechNotifier
             }
         }
 
-        private void PhraseSelectorCmbo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void PhraseSelectorCmbo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (PhraseSelectorCmbo.SelectedItem != null && myGuiProperties.CurrentSpeechText != (PhraseSelectorCmbo.SelectedItem as Phrase).SpeechText)
+            if (PhraseSelectorCmbo.SelectedIndex != -1)
             {
                 Phrase phrase = PhraseSelectorCmbo.SelectedItem as Phrase;
                 myGuiProperties.CurrentSpeechText = phrase.SpeechText;
@@ -234,6 +234,19 @@ namespace SpeechNotifier
             else
             {
                 SaveBtn.IsEnabled = false;
+            }
+        }
+
+        private void HorizontalToggleSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            HorizontalToggleSwitch box = sender as HorizontalToggleSwitch;
+            if ((bool)box.IsChecked)
+            {
+                ToggleNotify(true);
+            }
+            else
+            {
+                ToggleNotify(false);
             }
         }
     }

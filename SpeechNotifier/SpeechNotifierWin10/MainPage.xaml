@@ -1,0 +1,60 @@
+﻿<Page
+    x:Class="SpeechNotifierWin10.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SpeechNotifierWin10"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <Viewbox Grid.Column="2" VerticalAlignment="Top">
+            <StackPanel x:Name="RightSideBar">
+
+                <Button Margin="10,10" VerticalAlignment="Center"  HorizontalAlignment="Center" MinWidth="100" Click="AddPhrase_Click" >Add Phrase</Button>
+                <Button Margin="10,10" VerticalAlignment="Center" HorizontalAlignment="Center" MinWidth="100" Click="DeletePhrase_Click" >Delete Phrase</Button>
+            </StackPanel>
+        </Viewbox>
+        <Button Content="Exit App" Grid.Column="10" Grid.Row="10" Height="20" VerticalAlignment="Bottom" Margin="10, 10, 10, 10" Click="Button_Click" />
+        <Viewbox Grid.Column="0" VerticalAlignment="Top">
+
+            <StackPanel Grid.Column="0" Grid.RowSpan="100" x:Name="LeftSideBar">
+                <ToggleSwitch  Toggled="CheckBox_Checked" x:Name="NotifierChk" VerticalAlignment="Top" Margin="10,10" >Run Notifier</ToggleSwitch>
+
+                <TextBlock VerticalAlignment="Top" HorizontalTextAlignment="Center" Height="24">Select Phrase</TextBlock>
+                <ComboBox x:Name="PhraseSelectorCmbo" DisplayMemberPath="SpeechText" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="150" SelectionChanged="PhraseSelectorCmbo_SelectionChanged" />
+            </StackPanel>
+        </Viewbox>
+        <StackPanel Grid.Column="1" x:Name="AddPersonGrid">
+        </StackPanel>
+        <StackPanel Grid.Column="1" x:Name="AddPhraseGrid">
+        </StackPanel>
+        <StackPanel Grid.Column="1"  VerticalAlignment="Bottom">
+            <Button Content="Save" x:Name="SaveBtn" Height="20" Click="Save_Click" Margin="10" />
+        </StackPanel>
+
+        <Viewbox Grid.Column="1">
+
+            <StackPanel  x:Name="PhraseListStack" Orientation="Horizontal" Visibility="{Binding Path=PhraseGridVisibility}" HorizontalAlignment="Left" VerticalAlignment="Center">
+
+
+                <StackPanel Orientation="Vertical"  Margin="10">
+                    <TextBlock Height="25" Margin="0,5" HorizontalTextAlignment="Right" >Text: </TextBlock>
+                    <TextBlock Height="25" Margin="0,5"  HorizontalTextAlignment="Right" >Response: </TextBlock>
+
+                </StackPanel>
+                <StackPanel Orientation="Vertical"  Margin="10">
+                    <TextBox x:Name="PhraseTextEdittingBox" Text="{Binding Path=CurrentSpeechText, Mode=TwoWay}" TextWrapping="Wrap" Width="200" VerticalContentAlignment="Center" TextChanged="PhraseTextEdittingBox_TextChanged" MinHeight="25" Margin="0,5" />
+                    <TextBox x:Name="ResponseTextEdittingBox" Text="{Binding Path=CurrentResponseText, Mode=TwoWay}" TextWrapping="Wrap" Width="200" VerticalContentAlignment="Center" TextChanged="PhraseTextEdittingBox_TextChanged" MinHeight="25" Margin="0,5" />
+                </StackPanel>
+            </StackPanel>
+        </Viewbox>
+
+    </Grid>
+</Page>

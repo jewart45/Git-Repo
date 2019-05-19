@@ -101,7 +101,7 @@ namespace AttaGlance
                     var ab = new Attendee() { EmailAddress = adress, Type = AttendeeType.Required };
                     var s = new List<Attendee>();
                     s.Add(ab);
-                    GetAvailabilityDetails()
+                    //GetAvailabilityDetails();
                     var pp = graphClient.Users[u.Id].FindMeetingTimes(s).Request();
 
                 }

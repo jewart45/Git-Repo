@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace SpeechNotifierWin10.Classes
+namespace SpeechNotifierWinApp.Classes
 {
     public class GUIProperties : UserControl, INotifyPropertyChanged
     {

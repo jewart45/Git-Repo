@@ -7,15 +7,10 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using SpeechNotifierWin10.Classes;
-using System.Speech.Recognition;
 using Windows.UI.Notifications;
 using System.Windows;
+using Windows.Media.SpeechRecognition;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -30,7 +25,7 @@ namespace SpeechNotifierWin10
 
         private GUIProperties myGuiProperties;
         public string FileName { get; } = @"C:\Users\Public\Documents\phrases.xml";
-        public SpeechRecognitionEngine Rec { get; set; }
+        public SpeechRecognizer Rec { get; set; }
 
         public Choices GrammarList { get; set; } = new Choices();
         public List<Phrase> PhraseList { get; private set; }
@@ -39,13 +34,16 @@ namespace SpeechNotifierWin10
 
         public MainPage()
         {
+            Rec.
+            System.Diagnostics.Debugger.Launch();
             if (Rec == null)
             {
-                Rec = new SpeechRecognitionEngine();
+                Rec = new SpeechRecognizer();
             }
-
             myGuiProperties = new GUIProperties();
+            SpeechRecognitionTopicConstraint con = new SpeechRecognitionTopicConstraint(SpeechRecognitionScenario.WebSearch, "Recognition");
 
+            Rec.Constraints = new List<ISpeechRecognitionConstraint>() { con };
             Serializer = new CustomXmlSerializer(FileName, typeof(List<Phrase>));
 
             DataContext = myGuiProperties;
@@ -73,7 +71,7 @@ namespace SpeechNotifierWin10
             if (phrase != null)
             {
 
-                Notificationer.ShowNotification("Speech has been recognized", phrase.NotificationText);
+                //                Notificationer.ShowNotification("Speech has been recognized", phrase.NotificationText);
 
             }
             //MessageBox.Show("Found some speech: " + e.Result.Text);
@@ -87,7 +85,7 @@ namespace SpeechNotifierWin10
             PhraseSelectorCmbo.SelectedIndex = -1;
         }
 
-        private void GetPhrases(ComboBox phraseSelectorCmbo)
+        private void GetPhrases(Windows.UI.Xaml.Controls.ComboBox phraseSelectorCmbo)
         {
             Rec.RecognizeAsyncStop();
             NotifierChk.IsOn = false;
@@ -120,34 +118,21 @@ namespace SpeechNotifierWin10
 
         private void DeletePhrase_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult res = MessageBox.Show("Are you sure you wish to delete this phrase?", "Confirmation", MessageBoxButton.YesNoCancel);
-            if (res == MessageBoxResult.Yes)
-            {
-                Phrase p = PhraseList.Where(x => x == PhraseSelectorCmbo.SelectedItem as Phrase).FirstOrDefault();
-                if (p != null)
-                {
-                    PhraseList.Remove(p);
-                    Serializer.Serialize(PhraseList);
-                    GetPhrases(PhraseSelectorCmbo);
-                    MessageBox.Show("Phrase Deleted, Run Notifier with checkbox.");
-                }
-            }
+            //DialogResult res = MessageBox.Show("Are you sure you wish to delete this phrase?", "Confirmation", MessageBoxButtons.YesNoCancel);
+            //if (res == DialogResult.Yes)
+            //{
+            //    Phrase p = PhraseList.Where(x => x == PhraseSelectorCmbo.SelectedItem as Phrase).FirstOrDefault();
+            //    if (p != null)
+            //    {
+            //        PhraseList.Remove(p);
+            //        Serializer.Serialize(PhraseList);
+            //        GetPhrases(PhraseSelectorCmbo);
+            //        MessageBox.Show("Phrase Deleted.");
+            //    }
+            //}
         }
 
-        private void PhraseSelectorCmbo_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (PhraseSelectorCmbo.SelectedItem != null && myGuiProperties.CurrentSpeechText != (PhraseSelectorCmbo.SelectedItem as Phrase).SpeechText)
-            {
-                Phrase phrase = PhraseSelectorCmbo.SelectedItem as Phrase;
-                myGuiProperties.CurrentSpeechText = phrase.SpeechText;
-                myGuiProperties.CurrentResponseText = phrase.NotificationText;
-                myGuiProperties.PhraseGridVisibility = Visibility.Visible;
-            }
-            else
-            {
-                myGuiProperties.PhraseGridVisibility = Visibility.Collapsed;
-            }
-        }
+
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
@@ -155,7 +140,7 @@ namespace SpeechNotifierWin10
 
             if (myGuiProperties.CurrentSpeechText == "Please Enter Phrase Here..." && myGuiProperties.CurrentSpeechText.Trim() == "")
             {
-                MessageBox.Show("Please edit the text in the box");
+                //MessageBox.Show("Please edit the text in the box");
             }
             else if (PhraseSelectorCmbo.SelectedIndex == -1)
             {
@@ -191,12 +176,12 @@ namespace SpeechNotifierWin10
 
             if (saved)
             {
-                MessageBox.Show("Saved.");
+                //MessageBox.Show("Saved.");
                 Intialise();
             }
             else
             {
-                MessageBox.Show("Not Saved.");
+               // MessageBox.Show("Not Saved.");
             }
         }
 
@@ -208,7 +193,7 @@ namespace SpeechNotifierWin10
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            CheckBox box = sender as CheckBox;
+            Windows.UI.Xaml.Controls.CheckBox box = sender as Windows.UI.Xaml.Controls.CheckBox;
             if ((bool)box.IsChecked)
             {
                 ToggleNotify(true);
@@ -234,7 +219,7 @@ namespace SpeechNotifierWin10
             }
             catch
             {
-                MessageBox.Show("Could not toggle notification");
+                //MessageBox.Show("Could not toggle notification");
                 NotifierChk.IsOn = (bool)!NotifierChk.IsOn;
             }
 
@@ -242,7 +227,7 @@ namespace SpeechNotifierWin10
 
         private void PhraseTextEdittingBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox k = sender as TextBox;
+            Windows.UI.Xaml.Controls.TextBox k = sender as Windows.UI.Xaml.Controls.TextBox;
             if (!PhraseList.Select(x => x.SpeechText).ToList().Contains(k.Text))
             {
                 SaveBtn.IsEnabled = true;
@@ -250,6 +235,21 @@ namespace SpeechNotifierWin10
             else
             {
                 SaveBtn.IsEnabled = false;
+            }
+        }
+
+        private void PhraseSelectorCmbo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PhraseSelectorCmbo.SelectedItem != null && myGuiProperties.CurrentSpeechText != (PhraseSelectorCmbo.SelectedItem as Phrase).SpeechText)
+            {
+                Phrase phrase = PhraseSelectorCmbo.SelectedItem as Phrase;
+                myGuiProperties.CurrentSpeechText = phrase.SpeechText;
+                myGuiProperties.CurrentResponseText = phrase.NotificationText;
+                myGuiProperties.PhraseGridVisibility = Visibility.Visible;
+            }
+            else
+            {
+                myGuiProperties.PhraseGridVisibility = Visibility.Collapsed;
             }
         }
     }

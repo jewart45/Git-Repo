@@ -37,15 +37,8 @@ namespace SpeechNotifier
             _notifyIcon.ContextMenuStrip =
               new System.Windows.Forms.ContextMenuStrip();
             _notifyIcon.ContextMenuStrip.Items.Add("Speech Notifier").Click += (s, e) => ShowMainWindow();
-            _notifyIcon.ContextMenuStrip.Items.Add("Turn On Notifier").Click += (s, e) => ToggleOnOff();
             _notifyIcon.ContextMenuStrip.Items.Add("Exit").Click += (s, e) => ExitApplication();
         }
-
-        private void ToggleOnOff()
-        {
-            //Current.MainWindow..ToggleNotify(true);
-        }
-
         private void ExitApplication()
         {
             _isExit = true;

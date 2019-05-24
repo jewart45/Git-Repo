@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SpeechNotifier"
         xmlns:toggle="clr-namespace:ToggleSwitch;assembly=ToggleSwitch"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="625">
+        Title="Speech Notifier" Height="350" Width="625">
 
     <Grid>
 
@@ -15,32 +15,41 @@
             <ColumnDefinition Width="4*" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
-        <Viewbox Grid.Column="2" VerticalAlignment="Top">
-            <StackPanel x:Name="RightSideBar">
-                <Button Margin="10,10" VerticalAlignment="Center" Content="Add Phrase" HorizontalAlignment="Center" Width="100" Height="20" Click="AddPhrase_Click" />
-                <Button Margin="10,10" VerticalAlignment="Center" Content="Delete Phrase" HorizontalAlignment="Center" Width="100" Height="20" Click="DeletePhrase_Click" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="1" x:Name="FooterGrid" Grid.ColumnSpan="10">
+            <Button Content="Exit App" Grid.Column="10" Grid.Row="10" Height="25" Width="100" FontSize="15" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0, 0, 5, 5" Click="Button_Click" />
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,5" VerticalAlignment="Bottom">
+                <Ellipse x:Name="detectionIndicator" Fill="#FFF4F4F5" Height="10" Stroke="Black" Width="10" Margin="10,0,0,0"/>
+                <Label Content="Detection Indicator" Grid.ColumnSpan="10" HorizontalAlignment="Center" FontWeight="Bold" />
+            </StackPanel>
+        </Grid>
+        <Border Grid.Column="0" BorderThickness="1,1,0,1" BorderBrush="Black" />
+        <Border Grid.Column="1" BorderThickness="1" BorderBrush="Black"/>
+        <Border Grid.Column="2" BorderThickness="0,1,1,1" BorderBrush="Black"/>
+        <StackPanel x:Name="RightSideBar" Grid.Column="2">
+                <Button Margin="10,10" VerticalAlignment="Center" FontSize="15" Content="Add Phrase" HorizontalAlignment="Center" Width="100" Height="25" Click="AddPhrase_Click" />
+            <Button Margin="10,10" VerticalAlignment="Center" FontSize="15"  Content="Delete Phrase" HorizontalAlignment="Center" Width="100" Height="25" Click="DeletePhrase_Click" />
                 
             </StackPanel>
-        </Viewbox>
-        <Button Content="Exit App" Grid.Column="10" Grid.Row="10" Height="20" VerticalAlignment="Bottom" Margin="10, 10, 10, 10" Click="Button_Click" />
+        
         
         <Viewbox Grid.Column="0" VerticalAlignment="Top">
 
-            <StackPanel Grid.Column="0" Grid.RowSpan="100" x:Name="LeftSideBar">
-                <Label Content="Run Notifier" VerticalAlignment="Top"  HorizontalContentAlignment="Center" />
+            <StackPanel Grid.Column="0" Margin="10" Grid.RowSpan="100" x:Name="LeftSideBar">
+                <Label Content="Run Notifier" FontSize="15" VerticalAlignment="Top"  HorizontalContentAlignment="Center" />
                 <toggle:HorizontalToggleSwitch x:Name="NotifierChk"  Checked="HorizontalToggleSwitch_Checked" />
-                <Label Content="Select Phrase" VerticalAlignment="Top"  HorizontalContentAlignment="Center" />
+                <Label Content="Select Phrase" VerticalAlignment="Top" FontSize="15" HorizontalContentAlignment="Center" />
                 <ComboBox x:Name="PhraseSelectorCmbo" DisplayMemberPath="SpeechText" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="150" SelectionChanged="PhraseSelectorCmbo_SelectionChanged" />
             </StackPanel>
 
             
         </Viewbox>
 
-        <Label Content="Welcome to the Speech Notification App!" Grid.ColumnSpan="10" HorizontalAlignment="Center" FontWeight="Bold" />
-        <StackPanel Orientation="Horizontal" Margin="0,0,0,0" VerticalAlignment="Bottom">
-            <Ellipse x:Name="detectionIndicator" Fill="#FFF4F4F5" Height="10" Stroke="Black" Width="10" Margin="10,0,0,0"/>
-            <Label Content="Detection Indicator" Grid.ColumnSpan="10" HorizontalAlignment="Center" FontWeight="Bold" />
-        </StackPanel>
+        <Label Content="Select a phrase from the left or add one to the right" Grid.ColumnSpan="10" HorizontalAlignment="Center" FontWeight="Bold" />
+       
         <Viewbox Grid.Column="1">
             
 
@@ -48,14 +57,14 @@
 
                 
                 <StackPanel Orientation="Vertical"  Margin="10">
-                    <Label Content="Text:" Height="25" Margin="0,5" HorizontalContentAlignment="Right" />
-                    <Label Content="Response:" Height="25" Margin="0,5" HorizontalContentAlignment="Right"/>
+                    <Label Content="Text:" Height="35" FontSize="15" Margin="0,5" HorizontalContentAlignment="Right" />
+                    <Label Content="Response:" Height="35" FontSize="15" Margin="0,5" HorizontalContentAlignment="Right"/>
 
                 </StackPanel>
                 <StackPanel Orientation="Vertical"  Margin="10">
-                    <TextBox x:Name="PhraseTextEdittingBox" Text="{Binding Path=CurrentSpeechText, Mode=TwoWay}" TextWrapping="Wrap" Width="200" VerticalContentAlignment="Center" TextChanged="PhraseTextEdittingBox_TextChanged" MinHeight="25" Margin="0,5" />
-                    <TextBox x:Name="ResponseTextEdittingBox" Text="{Binding Path=CurrentResponseText, Mode=TwoWay}" TextWrapping="Wrap" Width="200" VerticalContentAlignment="Center" TextChanged="PhraseTextEdittingBox_TextChanged" MinHeight="25" Margin="0,5" />
-                    <Button Content="Save" x:Name="SaveBtn" Height="20" Width="100" Click="Save_Click" Margin="10" />
+                    <TextBox x:Name="PhraseTextEdittingBox" Text="{Binding Path=CurrentSpeechText, Mode=TwoWay}" TextWrapping="Wrap" Width="200" VerticalContentAlignment="Center" TextChanged="PhraseTextEdittingBox_TextChanged" MinHeight="35" FontSize="15" Margin="0,5" />
+                    <TextBox x:Name="ResponseTextEdittingBox" Text="{Binding Path=CurrentResponseText, Mode=TwoWay}" TextWrapping="Wrap" Width="200" VerticalContentAlignment="Center" TextChanged="PhraseTextEdittingBox_TextChanged" MinHeight="35" FontSize="15" Margin="0,5" />
+                    <Button Content="Save" x:Name="SaveBtn" Height="35" FontSize="15" Width="100" Click="Save_Click" Margin="10" />
 
                 </StackPanel>
                 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Speech.Recognition;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using ToggleSwitch;
@@ -16,6 +17,8 @@ namespace SpeechNotifier
     {
         private GUIProperties myGuiProperties;
         public string FileName = System.AppDomain.CurrentDomain.BaseDirectory + "phrases.xml";
+        private Timer timeoutTimer = new Timer(1000);
+
         public SpeechRecognitionEngine rec { get; set; }
 
         public Choices GrammarList { get; set; } = new Choices();
@@ -26,6 +29,7 @@ namespace SpeechNotifier
 
         public MainWindow()
         {
+            this.Title = "Speech Notifier";
             if (rec == null)
             {
                 rec = new SpeechRecognitionEngine();
@@ -41,14 +45,22 @@ namespace SpeechNotifier
             rec.SpeechDetected += Rec_SpeechDetected;
 
             rec.SetInputToDefaultAudioDevice();
-
+            timeoutTimer.Elapsed += TimeoutTimer_Elapsed;
             InitializeComponent();
 
             Intialise();
         }
 
+        private void InvokeUI(Action a) => Application.Current.Dispatcher.Invoke(a);
+
+        private void TimeoutTimer_Elapsed(object sender, ElapsedEventArgs e) => InvokeUI(()=> detectionIndicator.Fill = System.Windows.Media.Brushes.White);
         private void Rec_SpeechDetected(object sender, SpeechDetectedEventArgs e) => ToggleDetectionColour();
-        private void ToggleDetectionColour() => detectionIndicator.Fill = detectionIndicator.Fill == System.Windows.Media.Brushes.Green ? System.Windows.Media.Brushes.White : System.Windows.Media.Brushes.Green;
+        private void ToggleDetectionColour()
+        {
+            timeoutTimer.Start();
+            detectionIndicator.Fill = System.Windows.Media.Brushes.Green;
+        }
+
         private void Rec_SpeechHypothesized(object sender, SpeechHypothesizedEventArgs e) => Console.WriteLine("Maybe found speech");
 
         public void Rec_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)

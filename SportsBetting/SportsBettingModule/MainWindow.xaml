@@ -1,0 +1,267 @@
+﻿<Window x:Class="SportsBettingModule.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SportsBettingModule"
+        xmlns:oxyPlot="http://oxyplot.org/wpf"
+          xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+
+        Title="MainWindow" Height="1080" Width="1920" WindowState="Maximized" WindowStartupLocation="CenterScreen" Language="en-GB">
+    <Grid>
+
+        <Grid.Background>
+            <ImageBrush ImageSource="/Resources/Background1.jpg" Stretch="UniformToFill" Opacity="0.5" />
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="12*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid x:Name="LoadingViewGrid" Panel.ZIndex="1000" Grid.ColumnSpan="99" Grid.RowSpan="99" Background="White" Opacity="0.5" Visibility="Hidden">
+            <fa:ImageAwesome Icon="Refresh" Spin="True" Height="48" Width="48" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        </Grid>
+        <Grid x:Name="FooterGrid" Grid.Row="2" Background="RoyalBlue">
+            <Button x:Name="LoginBtn" Content="Login" HorizontalAlignment="Left" VerticalAlignment="Center" Width="100" Height="25" Click="loginBtn_Click" Margin="10,10,0,0" Background="{Binding Path=ButtonBackgroundColour}" />
+            <Button x:Name="ListBetsBtn" Content="List Bets" Visibility="{Binding Path=NavigationVisibility}" HorizontalAlignment="Left" Margin="115,10,0,0" VerticalAlignment="Center" Width="100" Height="25" Click="listBetsBtn_Click" Background="{Binding Path=ButtonBackgroundColour}" />
+            <Button x:Name="GraphBetsBtn" Content="Graph Bets" Visibility="{Binding Path=NavigationVisibility}" HorizontalAlignment="Left"  Margin="220,10,0,0"  VerticalAlignment="Center" Width="100" Height="25" Click="graphBetsBtn_Click" Background="{Binding Path=ButtonBackgroundColour}" />
+            <Button x:Name="ShowPastFightsBtn" Content="Past Fights" IsEnabled="False" Visibility="{Binding Path=NavigationVisibility}" HorizontalAlignment="Left" Margin="325,10,0,0" VerticalAlignment="Center" Width="100" Height="25" Click="ShowPastFightsBtn_Click" Background="{Binding Path=ButtonBackgroundColour}" />
+            <Button x:Name="SettingsBtn" Content="Settings" Visibility="{Binding Path=NavigationVisibility}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="430,10,0,0" Width="100" Height="25" Click="SettingsBtn_Click" Background="{Binding Path=ButtonBackgroundColour}" />
+            <Button x:Name="ResultsBtn" Content="Results" Visibility="{Binding Path=NavigationVisibility}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="535,10,0,0" Width="100" Height="25" Click="ResultsBtn_Click" Background="{Binding Path=ButtonBackgroundColour}" />
+            <Button x:Name="exitBtn" Content="Exit" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Center" Width="100" Height="25" Click="exitBtn_Click" />
+        </Grid>
+        <Grid x:Name="LoginGrid" Grid.Row="1"  Visibility="Hidden" Background="Transparent">
+            <Grid x:Name="LoggingGrid" Visibility="{Binding Path=UserLoggedIn}">
+                <TextBox x:Name="usernameTxtBox" HorizontalAlignment="Center" Height="23" TextWrapping="Wrap" VerticalAlignment="Center"  Margin="120,-150,0,0" Width="120" Visibility="{Binding Path=UserLoggedIn}" />
+                <Label Content="Username:" HorizontalAlignment="Center"  VerticalAlignment="Center"  Margin="-120,-150,0,0" Width="80" Height="26" />
+                <PasswordBox x:Name="passTxtBox" HorizontalAlignment="Center" Height="23" Margin="120,-100,0,0"   VerticalAlignment="Center" Width="120" Visibility="{Binding Path=UserLoggedIn}" />
+                <Label Content="Password:" HorizontalAlignment="Center"  VerticalAlignment="Center"  Margin="-120,-100,0,0"  Width="80" Height="26"  Visibility="{Binding Path=UserLoggedIn}" />
+                <CheckBox x:Name="chkRememberMe" Content="Remember Me" Tag="RememberMe" VerticalAlignment="Center"  Margin="0,-20,0,0"  Width="100" Height="26" Visibility="{Binding Path=UserLoggedIn}" />
+                <Button x:Name="LoginUserBtn" Content="Login" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="0,50,0,0"  Width="150" Click="loginUserBtn_Click" Height="43" Visibility="{Binding Path=UserLoggedIn}" />
+            </Grid>
+            <Label HorizontalAlignment="Center" Height="23" Visibility="Hidden" Content="User Logged In:" VerticalAlignment="Center"  Margin="150,-150,0,0" Width="120" />
+
+            <Label HorizontalAlignment="Center" Height="23" Visibility="Hidden" Content="{Binding Path=LoggedUserName}" VerticalAlignment="Center"  Margin="70,-150,0,0" Width="120" />
+        </Grid>
+        <Grid x:Name="ListBetsGrid" Grid.Row="1" Visibility="Visible" Background="AliceBlue">
+
+            <Viewbox>
+                <Grid>
+
+
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="8*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid  Grid.Column="1" Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="75" />
+                            <RowDefinition Height="75" />
+                            <RowDefinition Height="75" />
+                            <RowDefinition Height="75" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Button Content="Update List" Visibility="Visible"  HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="140" Height="45" Click="UpdateListOfEvents" />
+                        <CheckBox Content="Virtualize" HorizontalAlignment="Right" Grid.Row="1" Margin="20" VerticalAlignment="Center" IsChecked="{Binding Virtualize}" />
+                        <Label Content="Relogin times:" Grid.Column="1" HorizontalAlignment="Left"  Grid.Row="2" VerticalAlignment="Top" Width="83" Height="45" />
+                        <Label Content="{Binding Path=ReloginTimes}" HorizontalAlignment="Left"  Grid.Row="1" VerticalAlignment="Top" Width="140" Height="45" Margin="96,74.333,0,0" Grid.RowSpan="2" />
+                        <Grid Grid.Row="0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="25" />
+                                    <RowDefinition Height="40" />
+                                </Grid.RowDefinitions>
+                                <Label VerticalAlignment="Top" HorizontalAlignment="Center" Height="40" Content="Result Type" Margin="0,0,0,0" />
+                                <ComboBox x:Name="ResultTypeSelectorCombo" Grid.Row="1"  Height="40" VerticalAlignment="Bottom" ItemsSource="{Binding Path=ResultTypes, Mode=TwoWay}" SelectedIndex="0" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <DataGrid x:Name="dataGrid" AutoGenerateColumns="True" ItemsSource="{Binding SelectionToDisplay}" Grid.Row="2" Width="900" Height="500" AlternatingRowBackground="Beige" AlternationCount="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" />
+
+
+                </Grid>
+            </Viewbox>
+        </Grid>
+        <Grid x:Name="ListPastFightsGrid" Grid.Row="1" Visibility="Hidden" Background="AliceBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="145*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer x:Name="fightsScrollGrid" VerticalScrollBarVisibility="Visible" Grid.ColumnSpan="2" Margin="0,0,0.333,0.333">
+                <Grid x:Name="pastFightsGrid" ShowGridLines="True" Background="Transparent" Visibility="Visible">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="25" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0" />
+                    <Label Content="Date" FontWeight="Bold" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Center" />
+                    <Label Content="Fight Name" FontWeight="Bold" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"  HorizontalAlignment="Center" />
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+        <Grid x:Name="GraphsGrid" Grid.Row="1" Visibility="Hidden" Background="Beige">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1.5*" />
+                <RowDefinition Height="10*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <oxyPlot:PlotView x:Name="oxyPlotView" Grid.Row="1" />
+            <ComboBox x:Name="DateSelector" SelectedIndex="-1" Height="30" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="10,22,0,10.333" Width="180" VerticalContentAlignment="Center"  SelectionChanged="DateSelection_SelectionChanged" />
+            <ComboBox x:Name="EventSelector" SelectedIndex="-1" Height="30" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="215,22,0,10.333" Width="280" SelectionChanged="FighterSelector_SelectionChanged" />
+            <ComboBox x:Name="SelectionSelector" SelectedIndex="0" Height="30" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="520,20,0,10.333" Width="180" SelectionChanged="SelectionSelector_SelectionChanged" />
+            <ComboBox x:Name="WindowEnd" SelectedIndex="0" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Margin="630,20,0,0" Width="175" Height="25" SelectionChanged="FighterSelector_SelectionChanged" Grid.RowSpan="2" Visibility="Hidden" />
+            <Label Content="Date Range" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="15,0,0,0" Width="175" Height="25" />
+            <Label Content="Event" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="261,0,0,0" Width="175" Height="25" />
+            <Label Content="Selection" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" Margin="520,0,0,0" Width="175" Height="25" RenderTransformOrigin="0.493,0.387" />
+
+            <Button x:Name="ExportBtn" Grid.Row="0" Grid.Column="1" Height="40" Width="100" Margin="10,0" VerticalAlignment="Center"  Content="Export Data" Visibility="{Binding Path=NavigationVisibility}" Click="ExportBtn_Click" />
+        </Grid>
+        <Grid x:Name="SettingsGrid" Grid.Row="1"  Visibility="Hidden" Background="White">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="140" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="7*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+            <TextBox x:Name="LoggingIntervalTextBox" Grid.Column="1" Grid.Row="1" Text="{Binding Path=LoggingInterval, Mode=TwoWay}" KeyDown="LoggingIntervalTextBox_KeyDown" Width="130" Height="30" HorizontalAlignment="Left" Margin="0,21" />
+            <Label Content="Logging Interval (m):" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <Label Content="{Binding Path=LoggingInterval}" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="10,10" />
+
+            <TextBox x:Name="ShortLoggingIntervalTextBox" Grid.Column="1" Grid.Row="4" Text="{Binding Path=ShortLoggingInterval, Mode=TwoWay}" KeyDown="ShortLoggingIntervalTextBox_KeyDown" Width="130" Height="30" HorizontalAlignment="Left" Margin="0,21" />
+            <Label Content="Short Logging Interval (m):" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <Label Content="{Binding Path=ShortLoggingInterval}" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="10,10" />
+
+            <TextBox x:Name="AutoRefreshIntervalTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding Path=AutoRefreshInterval, Mode=TwoWay}" Width="130" Height="30" HorizontalAlignment="Left" Margin="0,21" LostFocus="AutoRefreshIntervalTextBox_LostFocus"  />
+            <Label Content="AutoRefresh Interval (m):" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <Label Content="{Binding Path=AutoRefreshInterval}" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="10,10" />
+
+            <ComboBox x:Name="ButtonColorCombo" Grid.Column="1" Grid.Row="3" Text="{Binding Path=LoggingInterval, Mode=TwoWay}" Width="130" Height="30" HorizontalAlignment="Left" Margin="0,21"   DisplayMemberPath="Content"
+             SelectedValuePath="Content" ItemsSource ="{Binding Path=ButtonBackgroundColours}" SelectionChanged="ButtonColorCombo_SelectionChanged" />
+
+            <Label Content="Button Background Colour:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+        </Grid>
+
+        <Grid x:Name="ResultsGrid" Grid.Row="1"  Visibility="Hidden" Background="White">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" MinWidth="140" />
+                <ColumnDefinition Width="0.5*" MinWidth="100" />
+                <ColumnDefinition Width="0.5*" MinWidth="100" />
+                <ColumnDefinition Width="9*" MinWidth="400" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="2*" />
+            </Grid.RowDefinitions>
+
+            <Label Content="Bet on:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <ComboBox x:Name="BetSelectionCombo" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Width="180" Height="30" HorizontalAlignment="Left" Margin="0,21"
+             ItemsSource ="{Binding Path=ResultSelectionList}" />
+
+            <TextBox x:Name="OverLevelTextBox" Grid.Column="1" Grid.Row="2" Text="{Binding Path=MinBetLevel, Mode=TwoWay}" LostFocus="OverLevelTextBox_LostFocus"  Width="90" Height="30" HorizontalAlignment="Left" Margin="0,21" />
+            <Label Content="Over this amount:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <Label Content="{Binding Path=MinBetLevel}" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="10,10" />
+
+            <TextBox x:Name="UnderLevelTextBox" Grid.Column="1" Grid.Row="3" Text="{Binding Path=MaxBetLevel, Mode=TwoWay}" Width="90" Height="30" HorizontalAlignment="Left" Margin="0,21" LostFocus="UnderLevelTextBox_LostFocus" />
+            <Label Content="Under This Amount:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <Label Content="{Binding Path=MaxBetLevel}" Grid.Column="2" Grid.Row="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="10,10" />
+
+            <CheckBox Name="ResultsByDateChk" Grid.Row="0" Grid.Column="3" HorizontalAlignment="Right" Content="Rate of Return" VerticalAlignment="Center" Click="ResultsByNameChk_Click" Margin="20,0" />
+
+            <TextBox x:Name="BetAmountTextBox" Grid.Column="1" Grid.Row="4" Text="{Binding Path=BetAmount, Mode=TwoWay}" Width="90" Height="30" HorizontalAlignment="Left" Margin="0,21" LostFocus="BetAmountTextBox_LostFocus" />
+            <Label Content="Bet This Much:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <Label Content="{Binding Path=BetAmount}" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="10,10" />
+
+            <TextBox x:Name="BetLimitTextBox" Grid.Column="1" Grid.Row="5" Text="{Binding Path=BetLimit, Mode=TwoWay}" Width="90" Height="30" HorizontalAlignment="Left" Margin="0,21" LostFocus="BetLimitTextBox_LostFocus" />
+            <Label Content="As long as this much remains:" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalContentAlignment="Center" Margin="10,10" />
+            <Label Content="{Binding Path=BetLimit}" Grid.Column="2" Grid.Row="5" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="10,10" />
+            <oxyPlot:PlotView x:Name="oxyPlotViewResults" Grid.Row="1" Grid.RowSpan="100" Grid.Column="3" />
+        </Grid>
+
+        <Grid x:Name="HeaderGrid" Grid.Row="0" Background="{Binding Path=ThemeColour}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="1.5*" />
+            </Grid.RowDefinitions>
+            <ToolBar Grid.Row="1">
+                <DockPanel  LastChildFill="False" Width="1250">
+                    <DockPanel.Resources>
+                        <Style TargetType="{x:Type Menu}" BasedOn="{StaticResource {x:Static ToolBar.MenuStyleKey}}">
+                        </Style>
+                    </DockPanel.Resources>
+
+                    <Menu Background="Transparent" HorizontalAlignment="Right" DockPanel.Dock="Right" Height="25" Width="150">
+                        <MenuItem  Background="Beige" Width="150" BorderBrush="Black" Header="{Binding LoggedUserName, FallbackValue=No User}" Visibility="{Binding NavigationVisibility}" VerticalContentAlignment="Center">
+                            <MenuItem Header="Log Out" Click="LogoutUser" />
+                            <MenuItem Header="Balance TBA" Click="ViewBalance" />
+                        </MenuItem>
+                    </Menu>
+
+                    <CheckBox x:Name="StartLoggingBtn" DockPanel.Dock="Left" Width="100" Margin="10,0" Content="Logging" Visibility="{Binding Path=NavigationVisibility}" Click="startLoggingBtn_Click" VerticalContentAlignment="Center" />
+                    <CheckBox x:Name="AutoRefreshChk" DockPanel.Dock="Left" Width="100" Margin="10,0" Content="Auto Refresh" Visibility="{Binding Path=NavigationVisibility}" Click="AutoRefreshChk_Click" VerticalContentAlignment="Center" />
+                    <CheckBox x:Name="ActiveOrderingChk" DockPanel.Dock="Left" Width="100" Margin="10,0" Content="Active Betting" Visibility="{Binding Path=NavigationVisibility}" Click="ActiveOrderingChk_Click" VerticalContentAlignment="Center" />
+                    <Button  x:Name="RefreshBtn" DockPanel.Dock="Left" Width="100" Margin="10,0" Content="Refresh" Visibility="{Binding Path=NavigationVisibility}"  Click="RefreshBtn_Click" Background="{Binding Path=ButtonBackgroundColour}" />
+                    <Button x:Name="LogNowBtn" DockPanel.Dock="Left" Width="100" Margin="10,0"  Content="Log Snapshot" Visibility="{Binding Path=NavigationVisibility}" Click="LogNowBtn_Click" Background="{Binding Path=ButtonBackgroundColour}" />
+                    <Button x:Name="ResultsNowBtn" DockPanel.Dock="Left" Width="100" Margin="10,0"  Content="Log Results Now" Visibility="{Binding Path=NavigationVisibility}" Click="ResultsNowBtn_Click"  Background="{Binding Path=ButtonBackgroundColour}" />
+                    <Menu Background="Transparent" DockPanel.Dock="Left"  VerticalContentAlignment="Top" Width="150" Height="25">
+                        <MenuItem Width="150" BorderBrush="Black" Header="Special Functions" Visibility="{Binding NavigationVisibility}"  Background="{Binding ButtonBackgroundColour}" VerticalContentAlignment="Center">
+                            <MenuItem Header="Export Median Odds" Click="ExportFinalOdds" />
+                            <MenuItem Header="Export Last Week Median Odds" Click="ExportLastWeekOdds" />
+                            <MenuItem Header="Export First Matched Odds" Click="ExportFirstOdds" />
+                            <MenuItem Header="Fill Bet Results" Click="FillingBetResultsClick" />
+                            <MenuItem Header="Remove Events With No Winner" Click="RemoveEventsWithoutWinner" />
+                            <MenuItem Header="Clean Data" Click="CleanData" />
+                        </MenuItem>
+                    </Menu>
+                </DockPanel>
+            </ToolBar>
+            <DockPanel Background="White" LastChildFill="False">
+
+                <TextBlock Text="Available:"  Margin="20,0" VerticalAlignment="Center" Visibility="{Binding NavigationVisibility}" />
+                <TextBlock Text="{Binding Path=CurrentBalance, StringFormat=C}" DockPanel.Dock="Left" HorizontalAlignment="Center" Margin="20,0" VerticalAlignment="Center" Visibility="{Binding NavigationVisibility}" />
+                <TextBlock Text="Exposure:"  Margin="20,0" VerticalAlignment="Center" Visibility="{Binding NavigationVisibility}" />
+                <TextBlock Text="{Binding Path=CurrentExposure, StringFormat=C}" DockPanel.Dock="Left" HorizontalAlignment="Center" Margin="20,0" VerticalAlignment="Center" Visibility="{Binding NavigationVisibility}" />
+                <TextBlock Text="Total:"  Margin="20,0" VerticalAlignment="Center" Visibility="{Binding NavigationVisibility}" />
+                <TextBlock Text="{Binding Path=TotalBalance, StringFormat=C}" Margin="20,0" VerticalAlignment="Center" Visibility="{Binding NavigationVisibility}" />
+                <TextBlock Text="{Binding Path=MainMessage}" Margin="20,0" VerticalAlignment="Center" />
+            </DockPanel>
+
+            <Label Content="Message:" HorizontalAlignment="Left" Visibility="Hidden" Margin="22,30.667,0,0" Grid.Row="2" VerticalAlignment="Top" Width="82" HorizontalContentAlignment="Right" />
+            <Label x:Name="mainMessage" Content="Message:" Visibility="Hidden" HorizontalAlignment="Left" Margin="109,31.667,0,0" Grid.Row="2" VerticalAlignment="Top" Width="322" />
+        </Grid>
+    </Grid>
+</Window>

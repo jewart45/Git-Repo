@@ -15,7 +15,7 @@ namespace LoginClientLib
         private Timer twentyFourHourRefreshTimer { get; set; } = new Timer(1000 * 60 * 60 * 24);  //24 hours
         public string SessionToken { get; set; }
         private static string appKey = "r9pFKKDlrpQknNvB";
-        private static string certsPath = @"C:\Users\jewar\source\repos\SoccerBetting\SoccerBettingModule\sslcerts\certs2\Jan2020.p12";
+        private static string certsPath = @"C:\Users\jewar\source\repos\Git Repo\SportsBetting\SportsBettingModule\sslcerts\certs2\Jan2020.p12";
 
         public LoginClient(string user, string password)
         {

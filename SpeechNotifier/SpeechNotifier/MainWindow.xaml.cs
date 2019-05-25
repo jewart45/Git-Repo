@@ -16,35 +16,35 @@ namespace SpeechNotifier
     public partial class MainWindow : Window
     {
         private GUIProperties myGuiProperties;
-        public string FileName = System.AppDomain.CurrentDomain.BaseDirectory + "phrases.xml";
+        public readonly string fileName = @"C:\Users\Public\Documents\SpeechNotifierPhrases.xml";
         private Timer timeoutTimer = new Timer(1000);
 
-        public SpeechRecognitionEngine rec { get; set; }
+        private SpeechRecognitionEngine Recognizer { get; set; }
 
-        public Choices GrammarList { get; set; } = new Choices();
-        public List<Phrase> PhraseList { get; private set; }
+        private Choices GrammarList { get; set; } = new Choices();
+        private List<Phrase> PhraseList { get; set; }
 
-        public CustomXmlSerializer Serializer { get; set; }
+        private CustomXmlSerializer Serializer { get; set; }
 
 
         public MainWindow()
         {
             this.Title = "Speech Notifier";
-            if (rec == null)
+            if (Recognizer == null)
             {
-                rec = new SpeechRecognitionEngine();
+                Recognizer = new SpeechRecognitionEngine();
             }
             myGuiProperties = new GUIProperties();
 
-            Serializer = new CustomXmlSerializer(FileName, typeof(List<Phrase>));
+            Serializer = new CustomXmlSerializer(fileName, typeof(List<Phrase>));
 
             DataContext = myGuiProperties;
-            rec.RequestRecognizerUpdate();
-            rec.SpeechRecognized += Rec_SpeechRecognized;
-            rec.SpeechHypothesized += Rec_SpeechHypothesized;
-            rec.SpeechDetected += Rec_SpeechDetected;
+            Recognizer.RequestRecognizerUpdate();
+            Recognizer.SpeechRecognized += Rec_SpeechRecognized;
+            Recognizer.SpeechHypothesized += Rec_SpeechHypothesized;
+            Recognizer.SpeechDetected += Rec_SpeechDetected;
 
-            rec.SetInputToDefaultAudioDevice();
+            Recognizer.SetInputToDefaultAudioDevice();
             timeoutTimer.Elapsed += TimeoutTimer_Elapsed;
             InitializeComponent();
 
@@ -85,7 +85,7 @@ namespace SpeechNotifier
 
         private void GetPhrases(ComboBox phraseSelectorCmbo)
         {
-            rec.RecognizeAsyncStop();
+            Recognizer.RecognizeAsyncStop();
             NotifierChk.IsChecked = false;
             PhraseList = Serializer.Deserialize() as List<Phrase>;
             if (PhraseList == null)
@@ -101,8 +101,8 @@ namespace SpeechNotifier
                     GrammarList.Add(p.SpeechText);
                 }
                 Grammar grammar = new Grammar(new GrammarBuilder(GrammarList));
-                rec.UnloadAllGrammars();
-                rec.LoadGrammar(grammar);
+                Recognizer.UnloadAllGrammars();
+                Recognizer.LoadGrammar(grammar);
             }
         }
 
@@ -221,11 +221,11 @@ namespace SpeechNotifier
             {
                 if (v)
                 {
-                    rec.RecognizeAsync(RecognizeMode.Multiple);
+                    Recognizer.RecognizeAsync(RecognizeMode.Multiple);
                 }
                 else
                 {
-                    rec.RecognizeAsyncStop();
+                    Recognizer.RecognizeAsyncStop();
                 }
             }
             catch

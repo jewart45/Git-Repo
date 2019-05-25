@@ -1,0 +1,1 @@
+DesktopAppConverter.exe -Installer "C:\Users\jewar\Source\Repos\Git Repo\SpeechNotifier\SpeechNotifier\bin\Release" -AppExecutable SpeechNotifier.exe -Destination "C:\Users\jewar\Source\Repos\Git Repo\Win10AppsDirectory" -PackageName "SpeechNotifier" -Publisher "CN=Josh Ewart" -Version 1.0.0.0 -MakeAppx -Verbose -Sign

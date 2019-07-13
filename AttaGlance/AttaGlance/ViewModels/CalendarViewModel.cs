@@ -10,14 +10,20 @@ using Windows.UI.Xaml;
 
 namespace AttaGlance
 {
-    public class EventBlockViewModel
+    public class CalendarViewModel
     {
         public IReactiveProperty<Visibility> BlockVisibility { get; } = new ReactiveProperty<Visibility>(Visibility.Collapsed);
 
         public IReactiveProperty<Color> Background { get; } = new ReactiveProperty<Color>(Colors.White); 
-        public EventBlockViewModel()
-        {
+        public IReactiveProperty<string> Name { get; } = new ReactiveProperty<string>("User");
 
+        public IReactiveProperty<string> Id { get; } = new ReactiveProperty<string>("");
+
+        public List<Event> Events { get; set; } = new List<Event>();
+        public CalendarViewModel(string name = "User", string id = "")
+        {
+            Name.Value = name;
+            Id.Value = id;
         }
     }
 }

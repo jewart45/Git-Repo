@@ -94,6 +94,7 @@ namespace SportsBettingModule
         {
             string error = "";
             List<OddsInfo> listOfOddsToAdd = new List<OddsInfo>();
+            List<EventsLookup> listOfEventsToAdd = new List<EventsLookup>();
             try
             {
                 if (EventListWithOdds.Count == 0)
@@ -126,6 +127,7 @@ namespace SportsBettingModule
             //Get Odds
             foreach (MarketplaceEvent ev in EventListWithOdds)
             {
+                listOfEventsToAdd.Add(ev.ToResultInfo(eventType));
                 foreach (MarketplaceRunner runner in ev.Runners)
                 {
                     if (runner.Odds != "")
@@ -148,6 +150,7 @@ namespace SportsBettingModule
             using (var db = new SportsDatabaseModel())
             {
                 db.AddMultipleOdds(listOfOddsToAdd.Where(x => x.OddsValue != 0 && x.EventDate.CompareTo(DateTime.Now.AddMinutes(30)) > 0).ToList());
+                db.AddEventLookups(listOfEventsToAdd);
             }
             //Log Results
             if (OrderingActive)

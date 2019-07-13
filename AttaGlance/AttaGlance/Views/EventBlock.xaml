@@ -8,8 +8,16 @@
     mc:Ignorable="d"
     d:DesignHeight="100"
     d:DesignWidth="400">
+    <Grid Height="100" Width="400">
+        <Border BorderBrush="Gray" BorderThickness="2" Margin="-1"/>
 
-    <Grid Margin="5" Background="{Binding BackgroundColor.Value}" CornerRadius="15" DoubleTapped="Grid_DoubleTapped">
+        <Grid Margin="5,2.5" Background="{Binding BackgroundColor.Value, FallbackValue=Blue}" CornerRadius="15" DoubleTapped="Grid_DoubleTapped">
+            <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10">
+                <TextBlock Text="{Binding Subject.Value, FallbackValue='Subject Line'}" HorizontalAlignment="Left" Margin="0" FontSize="18" Foreground="White" FontWeight="Bold"/>
+                <TextBlock Text="{Binding Description.Value, FallbackValue='Description goes here adn here and here and here and here and here and here and here and here'}" Margin="0,5" HorizontalAlignment="Left" TextWrapping="Wrap" Foreground="White" FontSize="12"/>
 
+            </StackPanel>
+        
+        </Grid>
     </Grid>
 </UserControl>

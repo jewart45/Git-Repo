@@ -423,6 +423,7 @@ namespace SportsBettingModule
                 List<OddsInfo> oddsInfos;
                 switch (settings.EventType)
                 {
+                    case "Moneyline":
                     case "Match Odds":
                         oddsInfos = ev.FightResult.ToOddsInfo(ev);
                         break;
@@ -1593,20 +1594,7 @@ namespace SportsBettingModule
             }
         }
 
-        private void ShortLoggingIntervalTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            Key key = e.Key;
-            TextBox txtBox = sender as TextBox;
-            if (key == Key.Return)
-            {
-                TimeSpan.TryParse(txtBox.Text, out TimeSpan span);
-                if (span != null)
-                {
-                    OddsLogger.shortLogInterval = span;
-                    txtBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
-                }
-            }
-        }
+     
 
         private void loginBtn_Click(object sender, RoutedEventArgs e) => ShowWindow(LoginGrid);
 
@@ -1651,6 +1639,13 @@ namespace SportsBettingModule
                         {
                             User user = new User() { Username = username, Password = password };
                             db.ChangeRemember(user, (bool)remember.IsChecked);
+                            if(db.settings.FirstOrDefault() != null)
+                            {
+                                myGuiProperties.AutoRefreshInterval = TimeSpan.FromSeconds(db.settings.First().AutoRefreshInterval_s);
+                                myGuiProperties.LoggingInterval = TimeSpan.FromSeconds(db.settings.First().LoggingFrequency_s);
+                                myGuiProperties.ShortLoggingInterval = TimeSpan.FromSeconds(db.settings.First().ShortLoggingFrequency_s);
+
+                            }
                         }
                     });
                 }
@@ -1751,18 +1746,20 @@ namespace SportsBettingModule
 #pragma warning disable IDE0022 // Use expression body for methods
             return Task.Run(() =>
             {
+                XmlReader reader;
                 string url = "https://rss.betfair.com/RSS.aspx?format=rss&sportID=7522";
+                
                 XmlReaderSettings p = new XmlReaderSettings
                 {
                     DtdProcessing = DtdProcessing.Parse
                 };
-                XmlReader reader = XmlReader.Create(url, p);
-
                 int i = 0;
                 while (i < 10)
                 {
                     try
                     {
+                        
+                        reader = XmlReader.Create(url, p);
                         MainMessage($"Getting Results from XML... Attempt {i}");
                         var feed = SyndicationFeed.Load(reader);
                         reader.Close();
@@ -1785,7 +1782,7 @@ namespace SportsBettingModule
                     }
                     catch (Exception ex)
                     {
-                        reader.Close();
+                        //reader?.Close();
                         i++;
                         if (i >= 10)
                         {
@@ -1802,28 +1799,28 @@ namespace SportsBettingModule
 
         private void ProcessResults(List<Result> results)
         {
-            using (SportsDatabaseModel db = new SportsDatabaseModel())
-            {
-                foreach (var res in results)
-                {
-                    if (res.Success)
-                    {
-                        string EventName = res.EventName;
+            //using (SportsDatabaseModel db = new SportsDatabaseModel())
+            //{
+            //    foreach (var res in results)
+            //    {
+            //        if (res.Success)
+            //        {
+            //            string EventName = res.EventName;
 
-                        //Remove datapoints
-                        var dataPoints = db.oddsInfo
-                            .Where(x => x.EventName == res.EventName);
-                        foreach (var point in dataPoints)
-                        {
-                            point.Winner = point.SelectionName.Trim().ToLower() == res.Winner.ToLower();
-                        }
-                    }
-                    else
-                    {
-                    }
-                }
-                db.SaveChanges();
-            }
+            //            //Remove datapoints
+            //            var dataPoints = db.oddsInfo
+            //                .Where(x => x.EventName == res.EventName);
+            //            foreach (var point in dataPoints)
+            //            {
+            //                point.Winner = point.SelectionName.Trim().ToLower() == res.Winner.ToLower();
+            //            }
+            //        }
+            //        else
+            //        {
+            //        }
+            //    }
+            //    db.SaveChanges();
+            //}
         }
 
         private void FillBetResults()
@@ -2329,7 +2326,68 @@ namespace SportsBettingModule
             }
             using (SportsDatabaseModel db = new SportsDatabaseModel())
             {
-                db.settings.First().AutoRefreshInterval_s = (int)span.TotalSeconds;
+                if(db.settings.Count() == 0)
+                {
+                    db.settings.Add(new Settings
+                    {
+                        AutoRefreshInterval_s = 20*60,
+                        LoggingFrequency_s = 6*60*60,
+                        ShortLoggingFrequency_s = 42*60
+                    });
+                    db.SaveChanges();
+                }
+                db.settings.OrderBy(x=>x.ID).First().AutoRefreshInterval_s = (int)span.TotalSeconds;
+                db.SaveChanges();
+            }
+        }
+
+        private void ShortLoggingIntervalTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TimeSpan.TryParse(ShortLoggingIntervalTextBox.Text, out TimeSpan span);
+            if (span != null)
+            {
+                OddsLogger.shortLogInterval = span;
+                ShortLoggingIntervalTextBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
+            }
+            using (SportsDatabaseModel db = new SportsDatabaseModel())
+            {
+                if (db.settings.Count() == 0)
+                {
+                    db.settings.Add(new Settings
+                    {
+                        AutoRefreshInterval_s = 20 * 60,
+                        LoggingFrequency_s = 6 * 60 * 60,
+                        ShortLoggingFrequency_s = 42 * 60
+                    });
+                    db.SaveChanges();
+
+                }
+                db.settings.First().ShortLoggingFrequency_s = (int)span.TotalSeconds;
+            }
+        }
+
+        private void LoggingIntervalTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TimeSpan.TryParse(LoggingIntervalTextBox.Text, out TimeSpan span);
+            if (span != null)
+            {
+                OddsLogger.logInterval = span;
+                LoggingIntervalTextBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down));
+            }
+            using (SportsDatabaseModel db = new SportsDatabaseModel())
+            {
+                if (db.settings.Count() == 0)
+                {
+                    db.settings.Add(new Settings
+                    {
+                        AutoRefreshInterval_s = 20 * 60,
+                        LoggingFrequency_s = 6 * 60 * 60,
+                        ShortLoggingFrequency_s = 42 * 60
+                    });
+                    db.SaveChanges();
+
+                }
+                db.settings.First().LoggingFrequency_s = (int)span.TotalSeconds;
             }
         }
     }

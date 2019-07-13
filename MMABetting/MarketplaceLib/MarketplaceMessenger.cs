@@ -57,7 +57,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)")
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName == eveType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -288,7 +288,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name.Trim());
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName == evType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                     MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), f.MarketId);
@@ -327,7 +327,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name.Trim());
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName == evType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                     MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId);
@@ -368,7 +368,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName == evType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                     foreach (RunnerDescription runner in f.Runners)
@@ -405,7 +405,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName == evType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                     MarketplaceEvent test = new MarketplaceEvent(f.Event.Name, f.MarketId);
@@ -444,7 +444,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName == evType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                     foreach (RunnerDescription runner in f.Runners)
@@ -484,7 +484,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName == evType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
 
@@ -515,7 +515,7 @@ namespace Marketplace
 
             foreach (MarketCatalogue f in marketCatalogues)
             {
-                if (!fightEventDictionary.ContainsKey(f.Event.Name) && (f.MarketName == searchString || f.MarketName == searchString + " (UNMANAGED)"))
+                if (!fightEventDictionary.ContainsKey(f.Event.Name) && (f.MarketName == searchString || f.MarketName == searchString + " (UNMANAGED)") || f.MarketName == searchString + " - Unmanaged ")
                 {
                     fightEventDictionary.Add(f.Event.Name, f.MarketId);
                 }
@@ -528,7 +528,7 @@ namespace Marketplace
             IList<string> marketIds = new List<string>();
             foreach (MarketCatalogue f in marketCatalogues)
             {
-                if ((f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)") && f.Runners.Count == 2)
+                if ((f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName == eveType + " - Unmanaged ") && f.Runners.Count == 2)
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -572,7 +572,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)")
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName == eveType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -627,7 +627,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)")
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName == eveType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -693,7 +693,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)")
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName == eveType + " - Unmanaged ")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -705,8 +705,9 @@ namespace Marketplace
 
             PriceProjection priceProjection = new PriceProjection
             {
+                ExBestOffersOverrides = new ExBestOffersOverrides() { BestPricesDepth = 1 },
                 PriceData = priceData,
-                Virtualise = vitualise
+                Virtualise = false
             };
 
             Console.WriteLine("\nGetting prices for market");
@@ -743,7 +744,15 @@ namespace Marketplace
                                     currentEvent.Winner = currentRunner.Name;
                                 }
                             }
+                            else
+                            {
+
+                            }
                         }
+                    }
+                    else
+                    {
+
                     }
                 }
             }
@@ -801,9 +810,9 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //EventNames.Add(f.Event.Name);
-                if (!eventTypes.Contains(f.MarketName.Replace(" (UNMANAGED)", "")))
+                if (!eventTypes.Contains(f.MarketName.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged ","")))
                 {
-                    eventTypes.Add(f.MarketName.Replace(" (UNMANAGED)", ""));
+                    eventTypes.Add(f.MarketName.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged ", ""));
                 }
             }
 

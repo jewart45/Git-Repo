@@ -15,6 +15,7 @@ namespace SportsDatabaseSqlite
         }
 
         public DbSet<OddsInfo> oddsInfo { get; set; }
+        public DbSet<EventsLookup> eventLookups { get; set; }
 
         public DbSet<FighterInfo> playerInfo { get; set; }
 
@@ -83,10 +84,9 @@ namespace SportsDatabaseSqlite
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //All tables listed here
-
             modelBuilder.Entity<OddsInfo>();
             modelBuilder.Entity<ResultLog>();
+            modelBuilder.Entity<EventsLookup>();
             modelBuilder.Entity<FighterInfo>();
             modelBuilder.Entity<User>();
             modelBuilder.Entity<Settings>();
@@ -94,6 +94,13 @@ namespace SportsDatabaseSqlite
 
             SqliteCreateDatabaseIfNotExists<SportsDatabaseModel> sqlitConnectionInitializer = new SqliteCreateDatabaseIfNotExists<SportsDatabaseModel>(modelBuilder);
             Database.SetInitializer(sqlitConnectionInitializer);
+        }
+
+        public void AddEventLookups(List<EventsLookup> listOfEventsToAdd)
+        {
+            eventLookups.AddRange(listOfEventsToAdd
+                .Where(x => eventLookups.Where(z => z.MarketId == x.MarketId && z.EventName == x.EventName).FirstOrDefault() == null));
+            SaveChanges();
         }
     }
 }

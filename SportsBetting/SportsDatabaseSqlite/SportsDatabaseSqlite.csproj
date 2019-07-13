@@ -46,6 +46,7 @@
     <Compile Include="SportsDatabaseModel.cs" />
     <Compile Include="Tables\FighterInfo.cs" />
     <Compile Include="Tables\OddsInfo.cs" />
+    <Compile Include="Tables\ResultInfo.cs" />
     <Compile Include="Tables\ResultLog.cs" />
     <Compile Include="Tables\Settings.cs" />
     <Compile Include="Tables\User.cs" />

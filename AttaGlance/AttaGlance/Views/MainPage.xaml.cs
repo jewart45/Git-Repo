@@ -1,19 +1,9 @@
 ﻿using System;
 using Microsoft.Toolkit.Services.MicrosoftGraph;
-using System.Collections.Generic;
 using Windows.UI.Xaml.Controls;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Microsoft.Graph;
+using System.Collections.Generic;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -81,7 +71,7 @@ namespace AttaGlance
         private async System.Threading.Tasks.Task SetUpEventsAsync()
         {
             var graphClient = MicrosoftGraphService.Instance.GraphProvider;
-
+            var eventsDict = new Dictionary<string, IUserEventsCollectionPage>();
             try
             {
                 // Get the events
@@ -96,14 +86,30 @@ namespace AttaGlance
                 var userlist = users1.CurrentPage.ToList();
                 foreach (var u in userlist)
                 {
-                    var adress = new EmailAddress();
-                    adress.Address = u.Mail;
-                    var ab = new Attendee() { EmailAddress = adress, Type = AttendeeType.Required };
-                    var s = new List<Attendee>();
-                    s.Add(ab);
-                    //GetAvailabilityDetails();
-                    var pp = graphClient.Users[u.Id].FindMeetingTimes(s).Request();
+                    try
+                    {
+                        var adress = new EmailAddress();
+                        adress.Address = u.Mail;
+                        //var ab = new Attendee() { EmailAddress = adress, Type = AttendeeType.Required };
+                        //var s = new List<Attendee>();
+                        //s.Add(ab);
+                        //GetAvailabilityDetails();
+                        var pp = await graphClient.Users[u.Id].Events.Request()
+                            .Select("subject,organizer,start,end")
+                        .OrderBy("createdDateTime DESC")
+                        .GetAsync();
 
+                        eventsDict.Add(u.Id, pp);
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
+                foreach(var item in eventsDict)
+                {
+                    // create new item
                 }
             }
             catch(Exception ex)

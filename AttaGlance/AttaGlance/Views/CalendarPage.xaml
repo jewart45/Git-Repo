@@ -12,13 +12,33 @@
         <Grid.Resources>
             <!--DataTemplate for Published Date column defined in Grid.Resources.  PublishDate is a property on the ItemsSource of type DateTime -->
             <DataTemplate x:Key="CalendarTemplate" >
-                <local:EventBlock/>
             </DataTemplate>
 
         </Grid.Resources>
-        <controls:DataGrid ItemsSource="{Binding PeopleList}" AutoGenerateColumns="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <controls:DockPanel x:Name="peopleStack">
+            <controls:DockPanel  Width="200" controls:DockPanel.Dock="Left" >
+                <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">Date</TextBlock>
+                <TextBlock Height="100" Width="200" controls:DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Top"> 07 Aug 2019</TextBlock>
+                <TextBlock Height="100" Width="200" controls:DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Top"> 07 Aug 2019</TextBlock>
+                <TextBlock Height="100" Width="200" controls:DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Top"> 07 Aug 2019</TextBlock>
+              
 
-        </controls:DataGrid>
-       
+            </controls:DockPanel>
+            <controls:DockPanel  Width="400" controls:DockPanel.Dock="Left" >
+                <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">User 1</TextBlock>
+                <local:EventBlock Height="100" controls:DockPanel.Dock="Top"/>
+                <local:EmptyEventBlock Height="100" Visibility="Visible" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+
+            </controls:DockPanel>
+            <controls:DockPanel  Width="400" controls:DockPanel.Dock="Left" HorizontalAlignment="Left" >
+                <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">User 1</TextBlock>
+                <local:EventBlock  controls:DockPanel.Dock="Top"/>
+                <local:EmptyEventBlock controls:DockPanel.Dock="Top"/>
+                <local:EventBlock VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+
+            </controls:DockPanel>
+        </controls:DockPanel>
+
     </Grid>
 </Page>

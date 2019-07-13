@@ -1,4 +1,5 @@
-﻿using SportsDatabaseSqlite.Tables;
+﻿using CommonClasses;
+using SportsDatabaseSqlite.Tables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,15 @@ namespace SportsBettingModule.Classes
 
             return list;
         }
+
+        public static EventsLookup ToResultInfo(this MarketplaceEvent ev, string eventType) => new EventsLookup
+        {
+            DateTaken = DateTime.Now,
+            EventDate = ev.Date,
+            EventName = ev.Name,
+            EventType = eventType,
+            MarketId = ev.MarketId
+        };
 
         public static long PercentToDouble(this string percent)
         {

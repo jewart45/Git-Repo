@@ -123,6 +123,9 @@
     <Compile Include="Event.cs" />
     <Compile Include="ViewModels\CalendarViewModel.cs" />
     <Compile Include="ViewModels\EventBlockViewModel.cs" />
+    <Compile Include="Views\DateLabelBlock.xaml.cs">
+      <DependentUpon>DateLabelBlock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EmptyEventBlock.xaml.cs">
       <DependentUpon>EmptyEventBlock.xaml</DependentUpon>
     </Compile>
@@ -166,6 +169,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Views\DateLabelBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\EmptyEventBlock.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

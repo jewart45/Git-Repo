@@ -7,38 +7,64 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
+    d:DesignHeight="4000"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid>
+    <Grid HorizontalAlignment="Stretch">
         <Grid.Resources>
             <!--DataTemplate for Published Date column defined in Grid.Resources.  PublishDate is a property on the ItemsSource of type DateTime -->
             <DataTemplate x:Key="CalendarTemplate" >
             </DataTemplate>
 
         </Grid.Resources>
-        <controls:DockPanel x:Name="peopleStack">
-            <controls:DockPanel  Width="200" controls:DockPanel.Dock="Left" >
-                <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">Date</TextBlock>
-                <TextBlock Height="100" Width="200" controls:DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Top"> 07 Aug 2019</TextBlock>
-                <TextBlock Height="100" Width="200" controls:DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Top"> 07 Aug 2019</TextBlock>
-                <TextBlock Height="100" Width="200" controls:DockPanel.Dock="Top" TextAlignment="Center" VerticalAlignment="Top"> 07 Aug 2019</TextBlock>
+        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" VerticalAlignment="Top" MaxHeight="1000" Visibility="Visible">
+                
+            
+            <controls:DockPanel x:Name="peopleStack" Width="1000" HorizontalAlignment="Left" Height="10000">
+                <controls:DockPanel  Width="200" controls:DockPanel.Dock="Left" >
+                    <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">Date</TextBlock>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
               
 
-            </controls:DockPanel>
-            <controls:DockPanel  Width="400" controls:DockPanel.Dock="Left" >
-                <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">User 1</TextBlock>
-                <local:EventBlock Height="100" controls:DockPanel.Dock="Top"/>
-                <local:EmptyEventBlock Height="100" Visibility="Visible" controls:DockPanel.Dock="Top"/>
+                </controls:DockPanel>
+                <controls:DockPanel  Width="400" controls:DockPanel.Dock="Left" >
+                    <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">User 1</TextBlock>
+                    <local:EventBlock Height="100" controls:DockPanel.Dock="Top"/>
+                    <local:EmptyEventBlock Height="100" Visibility="Visible" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
                 <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
 
             </controls:DockPanel>
-            <controls:DockPanel  Width="400" controls:DockPanel.Dock="Left" HorizontalAlignment="Left" >
-                <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">User 1</TextBlock>
-                <local:EventBlock  controls:DockPanel.Dock="Top"/>
-                <local:EmptyEventBlock controls:DockPanel.Dock="Top"/>
-                <local:EventBlock VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
+                <controls:DockPanel  Width="400" controls:DockPanel.Dock="Left" HorizontalAlignment="Left" >
+                    <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">User 1</TextBlock>
+                    <local:EventBlock  controls:DockPanel.Dock="Top"/>
+                    <local:EmptyEventBlock controls:DockPanel.Dock="Top"/>
+                    <local:EventBlock VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
 
+                </controls:DockPanel>
             </controls:DockPanel>
-        </controls:DockPanel>
 
+            </ScrollViewer>
     </Grid>
 </Page>

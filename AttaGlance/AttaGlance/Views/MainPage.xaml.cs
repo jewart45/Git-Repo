@@ -3,6 +3,7 @@ using Microsoft.Toolkit.Services.MicrosoftGraph;
 using Windows.UI.Xaml.Controls;
 using System.Linq;
 using Microsoft.Graph;
+using Windows.UI.Xaml.Controls;
 using System.Collections.Generic;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -46,22 +47,33 @@ namespace AttaGlance
         private void SetAuthState(bool isAuthenticated)
         {
             (App.Current as App).IsAuthenticated = isAuthenticated;
-
             // Toggle controls that require auth
             Calendar.IsEnabled = isAuthenticated;
         }
 
-        private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        private async void NavView_ItemInvokedAsync(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            var invokedItem = args.InvokedItem as string;
+            string invokedItem ="";
+            if (args.InvokedItem is NavigationViewItem v)
+            {
+                invokedItem = v.Content as string;
+            }
+            else
+            {
+                invokedItem = args.InvokedItem as string;
+            }
+
 
             switch (invokedItem.ToLower())
             {
                 case "calendar":
-                    SetUpEventsAsync();
-                    //RootFrame.Navigate(typeof(CalendarPage));
+                    await SetUpEventsAsync();
+                    RootFrame.Navigate(typeof(CalendarPage));
                     break;
                 case "home":
+                case "settings":
+                    RootFrame.Navigate(typeof(HomePage));
+                    break;
                 default:
                     RootFrame.Navigate(typeof(HomePage));
                     break;

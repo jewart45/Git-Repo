@@ -13,11 +13,12 @@
     <Grid>
         <NavigationView x:Name="NavView"
             IsSettingsVisible="True"
-            ItemInvoked="NavView_ItemInvoked">
+            ItemInvoked="NavView_ItemInvokedAsync">
 
             <NavigationView.Header>
                 <graphControls:AadLogin x:Name="Login"
                     HorizontalAlignment="Right"
+                    Margin="10"
                     View="SmallProfilePhotoLeft"
                     AllowSignInAsDifferentUser="False"
                     SignInCompleted="Login_SignInCompleted"

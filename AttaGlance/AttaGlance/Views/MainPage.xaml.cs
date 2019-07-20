@@ -21,7 +21,7 @@ namespace AttaGlance
 
             // Initialize auth state to false
             SetAuthState(false);
-
+            SetUpPages();
             // Load OAuth settings
             var oauthSettings = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView("OAuth");
             var appId = oauthSettings.GetString("AppId");
@@ -42,6 +42,11 @@ namespace AttaGlance
                 // Navigate to HomePage.xaml
                 RootFrame.Navigate(typeof(HomePage));
             }
+        }
+
+        private void SetUpPages()
+        {
+            
         }
 
         private void SetAuthState(bool isAuthenticated)
@@ -83,7 +88,6 @@ namespace AttaGlance
         private async System.Threading.Tasks.Task SetUpEventsAsync()
         {
             var graphClient = MicrosoftGraphService.Instance.GraphProvider;
-            var eventsDict = new Dictionary<string, IUserEventsCollectionPage>();
             try
             {
                 // Get the events
@@ -110,20 +114,26 @@ namespace AttaGlance
                             .Select("subject,organizer,start,end")
                         .OrderBy("createdDateTime DESC")
                         .GetAsync();
-
-                        eventsDict.Add(u.Id, pp);
+                        var evList = new List<Event>();
+                        //go through events from user to create calendar
+                        foreach(var ev in pp.CurrentPage)
+                        {
+                            evList.Add(new Event(DateTime.Parse(ev.Start.DateTime), DateTime.Parse(ev.End.DateTime), ev.Subject, ev.Body?.ToString()));
+                        }
+                        //set calendar
+                        var cal = new Calendar(u.Id, u.DisplayName)
+                        {
+                            EventsList = evList
+                        };
                     }
-                    catch
+                    catch(Exception ex)
                     {
-
+                        Console.WriteLine(ex.ToString());
+                        //empty catch
                     }
                 }
 
-                foreach(var item in eventsDict)
-                {
-                    // create new item
-                }
-            }
+                            }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
@@ -146,6 +156,7 @@ namespace AttaGlance
             SetAuthState(false);
             // Reload the home page
             RootFrame.Navigate(typeof(HomePage));
+
         }
     }
 }

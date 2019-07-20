@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,14 +25,44 @@ namespace AttaGlance
     {
         public CalendarPage()
         {
+            this.DataContext = new CalendarPageViewModel(this);
             this.InitializeComponent();
 
             if ((App.Current as App).IsAuthenticated)
             {
                 DataTemplate calendarTemplate = new DataTemplate();
             }
+
+
+
         }
 
-        
+        public void Refresh()
+        {
+
+        }
+
+        internal void SetGrid(List<Calendar> calendarList)
+        {
+            peopleStack.Children.Clear();
+            var datePanel = new DockPanel();
+            var t = new TextBlock { Text = "Date", FontSize = 25, HorizontalAlignment = HorizontalAlignment.Center };
+            DockPanel.SetDock(t, Dock.Top);
+            datePanel.Children.Add(t);
+            peopleStack.Children.Add(datePanel);
+            foreach (var c in calendarList)
+            {
+                var p = new TextBlock { Tag = c, Text = c.Name, FontSize = 25, HorizontalAlignment = HorizontalAlignment.Center };
+                DockPanel.SetDock(p, Dock.Top);
+                datePanel.Children.Add(p);
+                var panel = new DockPanel();
+                panel.Children.Add(p);
+                peopleStack.Children.Add(panel);
+            }
+            for(int i = 0; i < 15; i++)
+            {
+
+            }
+        }
     }
 }

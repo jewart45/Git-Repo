@@ -8,8 +8,10 @@
     mc:Ignorable="d"
     d:DesignHeight="100"
     d:DesignWidth="400">
-    <Grid Width="400" Height="100">
+    <Viewbox>
+    <Grid Width="400" Height="200">
         <Border BorderBrush="Gray" BorderThickness="2" Margin="-1"/>
-        <TextBlock x:Name="labelTxt"  Foreground="White" Margin="10" VerticalAlignment="Center" FontSize="35" Text="{Binding Label, FallbackValue=Jan 1 1999}" HorizontalAlignment="Center"/>
+        <TextBlock x:Name="labelTxt"  Foreground="Black" Margin="10" VerticalAlignment="Center" FontSize="35" Text="{Binding Label, FallbackValue=Jan 1 1999}" HorizontalAlignment="Center"/>
     </Grid>
+    </Viewbox>
 </UserControl>

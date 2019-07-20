@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Calendar.cs" />
     <Compile Include="Event.cs" />
+    <Compile Include="ViewModels\CalendarPageViewMode.cs" />
     <Compile Include="ViewModels\CalendarViewModel.cs" />
     <Compile Include="ViewModels\EventBlockViewModel.cs" />
     <Compile Include="Views\DateLabelBlock.xaml.cs">

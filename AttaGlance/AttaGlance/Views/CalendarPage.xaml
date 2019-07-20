@@ -16,33 +16,29 @@
             </DataTemplate>
 
         </Grid.Resources>
-        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollMode="Disabled" HorizontalAlignment="Stretch" VerticalAlignment="Top" MaxHeight="1000" Visibility="Visible">
+        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="Visible">
                 
             
-            <controls:DockPanel x:Name="peopleStack" Width="1000" HorizontalAlignment="Left" Height="10000">
+            <controls:DockPanel x:Name="peopleStack" Width="600" HorizontalAlignment="Left" >
                 <controls:DockPanel  Width="200" controls:DockPanel.Dock="Left" >
                     <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">Date</TextBlock>
-                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
-                    <local:DateLabelBlock Label="January 3 1999" controls:DockPanel.Dock="Top" VerticalAlignment="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
+                    <local:DateLabelBlock Label="January 3 1999"  controls:DockPanel.Dock="Top"/>
               
 
                 </controls:DockPanel>
                 <controls:DockPanel  Width="400" controls:DockPanel.Dock="Left" >
                     <TextBlock HorizontalAlignment="Center" controls:DockPanel.Dock="Top" FontSize="25">User 1</TextBlock>
                     <local:EventBlock Height="100" controls:DockPanel.Dock="Top"/>
-                    <local:EmptyEventBlock Height="100" Visibility="Visible" controls:DockPanel.Dock="Top"/>
+                    <local:EmptyEventBlock Height="100" controls:DockPanel.Dock="Top"/>
                 <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
                 <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>
                 <local:EventBlock Height="100" VerticalAlignment="Top" controls:DockPanel.Dock="Top"/>

@@ -23,9 +23,10 @@ namespace AttaGlance
 
         public DateLabelBlock(DateTime dt)
         {
+            this.InitializeComponent();
             Time = dt;
             Label = dt.ToString();
-            this.InitializeComponent();
+            labelTxt.Text = Label;
 
         }
     }

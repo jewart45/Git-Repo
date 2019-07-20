@@ -21,7 +21,6 @@ namespace AttaGlance
 
             // Initialize auth state to false
             SetAuthState(false);
-            SetUpPages();
             // Load OAuth settings
             var oauthSettings = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView("OAuth");
             var appId = oauthSettings.GetString("AppId");
@@ -44,10 +43,6 @@ namespace AttaGlance
             }
         }
 
-        private void SetUpPages()
-        {
-            
-        }
 
         private void SetAuthState(bool isAuthenticated)
         {
@@ -72,7 +67,6 @@ namespace AttaGlance
             switch (invokedItem.ToLower())
             {
                 case "calendar":
-                    await SetUpEventsAsync();
                     RootFrame.Navigate(typeof(CalendarPage));
                     break;
                 case "home":

@@ -27,11 +27,11 @@ namespace AttaGlance
             var date = day.Date;
 
             //if earlier than start
-            if(DateTime.Compare(Start.Date, date) < 0)
+            if(DateTime.Compare(Start.Date, date) == 0 || DateTime.Compare(End.Date, date) == 0)
             {
-                return false;
+                return true;
             }
-            else if(DateTime.Compare(End, date) >= 0)
+            else if(DateTime.Compare(Start.Date, date) <= 0 && DateTime.Compare(End.Date, date) >= 0)
             {
                 return true;
             }

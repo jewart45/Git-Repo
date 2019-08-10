@@ -17,11 +17,11 @@ namespace AttaGlance
         public IReactiveProperty<Color> Background { get; } = new ReactiveProperty<Color>(Colors.White); 
         public IReactiveProperty<string> Subject { get; } = new ReactiveProperty<string>("No Subject");
 
-        public IReactiveProperty<string> Description { get; } = new ReactiveProperty<string>("");
-        public EventBlockViewModel(string subject = "No Subject", string description = "")
+        public IReactiveProperty<string> Time { get; } = new ReactiveProperty<string>("");
+        public EventBlockViewModel(DateTime start, DateTime end, string subject = "No Subject", string description = "")
         {
             Subject.Value = subject;
-            Description.Value = description;
+            Time.Value = $"{start.ToString("hh:mm")} - {end.ToString("hh:mm")}";
         }
     }
 }

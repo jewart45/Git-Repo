@@ -3,7 +3,6 @@ using Microsoft.Toolkit.Services.MicrosoftGraph;
 using Windows.UI.Xaml.Controls;
 using System.Linq;
 using Microsoft.Graph;
-using Windows.UI.Xaml.Controls;
 using System.Collections.Generic;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -68,6 +67,9 @@ namespace AttaGlance
             {
                 case "calendar":
                     RootFrame.Navigate(typeof(CalendarPage));
+                    break;
+                case "calendars":
+                    RootFrame.Navigate(typeof(CalendarsPage));
                     break;
                 case "home":
                 case "settings":

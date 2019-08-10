@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="AttaGlance.CalendarsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AttaGlance"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d"
+    d:DesignHeight="800"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid HorizontalAlignment="Stretch">
+        <Grid.Resources>
+            <!--DataTemplate for Published Date column defined in Grid.Resources.  PublishDate is a property on the ItemsSource of type DateTime -->
+            <DataTemplate x:Key="CalendarsTemplate" >
+            </DataTemplate>
+            <DataTemplate x:Key="DateTemplate" >
+                <local:DateLabelBlock />
+            </DataTemplate>
+            <DataTemplate x:Key="EventTemplate" >
+                <local:EventBlock />
+            </DataTemplate>
+            <DataTemplate x:Key="EmptyEventTemplate" >
+                <local:EmptyEventBlock />
+            </DataTemplate>
+
+        </Grid.Resources>
+        <controls:DataGrid x:Name="dataGrid" FontSize="20" AutoGenerateColumns="True" AlternatingRowBackground="Beige" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+            <controls:DataGrid.Columns>
+                <!--Custom column that shows the published date-->
+                <controls:DataGridTemplateColumn Header="Date" CellTemplate="{StaticResource DateTemplate}" />
+                <controls:DataGridTemplateColumn Header="User1" CellTemplate="{StaticResource EventTemplate}" />
+                <controls:DataGridTemplateColumn Header="User2" CellTemplate="{StaticResource EmptyEventTemplate}" />
+            </controls:DataGrid.Columns>
+            
+        </controls:DataGrid>
+    </Grid>
+</Page>

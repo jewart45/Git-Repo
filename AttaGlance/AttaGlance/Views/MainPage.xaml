@@ -37,6 +37,11 @@
                         <FontIcon Glyph="&#xE163;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Calendars" x:Name="Calendars" Tag="calendars">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE163;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <StackPanel>

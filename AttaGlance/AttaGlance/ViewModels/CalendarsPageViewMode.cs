@@ -13,19 +13,19 @@ using Windows.UI.Xaml.Controls;
 
 namespace AttaGlance
 {
-    public class CalendarPageViewModel
+    public class CalendarsPageViewModel
     {
         public List<Calendar> CalendarList { get; private set; } = new List<Calendar>();
 
-        public CalendarPage Page { get; private set; }
+        public CalendarsPage Page { get; private set; }
 
-        public CalendarPageViewModel(CalendarPage page)
+        public CalendarsPageViewModel(CalendarsPage page)
         {
             Page = page;
             SetUpPageAsync(Page);
         }
 
-        private async void SetUpPageAsync(CalendarPage page)
+        private async void SetUpPageAsync(CalendarsPage page)
         {
 
             await SetUpEventsAsync();

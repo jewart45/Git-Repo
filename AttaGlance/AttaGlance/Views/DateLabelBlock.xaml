@@ -6,12 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="100"
-    d:DesignWidth="400">
+    d:DesignHeight="75"
+    d:DesignWidth="100">
     <Viewbox>
-    <Grid Width="400" Height="200">
-        <Border BorderBrush="Gray" BorderThickness="2" Margin="-1"/>
-        <TextBlock x:Name="labelTxt"  Foreground="Black" Margin="10" VerticalAlignment="Center" FontSize="35" Text="{Binding Label, FallbackValue=Jan 1 1999}" HorizontalAlignment="Center"/>
+    <Grid Width="100" Height="75">
+            <Border BorderBrush="Gray" BorderThickness="2" Margin="-1"/>
+            <TextBlock x:Name="labelTxt"  Foreground="Black" Margin="10" VerticalAlignment="Center" FontSize="14" Text="{Binding Label, FallbackValue=Jan 1 1999}" HorizontalAlignment="Center"/>
     </Grid>
     </Viewbox>
 </UserControl>

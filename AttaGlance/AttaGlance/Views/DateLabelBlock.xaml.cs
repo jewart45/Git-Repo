@@ -25,7 +25,7 @@ namespace AttaGlance
         {
             this.InitializeComponent();
             Time = dt;
-            Label = dt.ToString();
+            Label = dt.ToString("dd MMM yyyy");
             labelTxt.Text = Label;
 
         }

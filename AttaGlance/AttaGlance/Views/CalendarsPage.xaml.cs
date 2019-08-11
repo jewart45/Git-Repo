@@ -1,18 +1,9 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+﻿
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using FontAwesome;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -26,7 +17,8 @@ namespace AttaGlance
         public CalendarsPage()
         {
             this.InitializeComponent();
-            this.DataContext = new CalendarsPageViewModel(this);
+            ViewModel = new CalendarsPageViewModel(this);
+            this.DataContext = ViewModel;
             
 
             if ((App.Current as App).IsAuthenticated)
@@ -38,10 +30,9 @@ namespace AttaGlance
 
         }
 
-        public void Refresh()
-        {
+        public CalendarsPageViewModel ViewModel { get; private set; }
 
-        }
+        public void Refresh() => ViewModel.SetUpPageAsync();
 
         internal void SetGrid(List<Calendar> calendarList)
         {

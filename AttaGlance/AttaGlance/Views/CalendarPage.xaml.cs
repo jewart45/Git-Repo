@@ -111,7 +111,7 @@ namespace AttaGlance
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
-            if(peopleStack.Width >= 100)
+            if(viewStack.Width >= 100)
             {
                 viewStack.Width -= 0.1 * viewStack.Width;
                 viewStack.Height -= 0.1 * viewStack.Width;
@@ -126,7 +126,7 @@ namespace AttaGlance
 
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
-            if (peopleStack.Width <= 5000)
+            if (viewStack.Width <= 5000)
             {
                 viewStack.Width += 0.1 * viewStack.Width;
                 viewStack.Height += 0.1 * viewStack.Width;

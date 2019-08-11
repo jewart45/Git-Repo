@@ -38,13 +38,33 @@ namespace AttaGlance
             try
             {
                 var me = await graphClient.Me.Request()
-                                       .Select("displayName,id,mail,calendar")
+                                       .Select("displayName,id,mail,calendars")
                                        .GetAsync();
+
+                
                 // Get the events
 
                 //Get My events
                 try
                 {
+                    var k = await graphClient.Me.Calendars.Request().Select("owner,name,id").GetAsync();
+                    var k1 = await graphClient.Me.CalendarGroups.Request().Select("name,id").GetAsync();
+
+                    foreach(var ev in k.CurrentPage)
+                    {
+                        var pp = await graphClient.Me.Calendars[ev.Id].Events.Request()
+                            .Select("subject,organizer,start,end")
+                        .OrderBy("createdDateTime DESC")
+                        .GetAsync();
+                    }
+                    foreach (var ev in k1.CurrentPage)
+                    {
+                        var pp = await graphClient.Me.CalendarGroups[ev.Id].Calendars.Request()
+                        //    .Select("subject,organizer,start,end")
+                        //.OrderBy("createdDateTime DESC")
+                        .GetAsync();
+                    }
+
                     var events = await graphClient.Me.Events.Request()
                    .Select("subject,organizer,start,end")
                    .OrderBy("createdDateTime DESC")
@@ -71,7 +91,7 @@ namespace AttaGlance
                 }
 
                 var users1 = await graphClient.Users.Request()
-                                    .Select("displayName,id,mail,calendar")
+                                    .Select("displayName,id,mail,calendars,outlook,calendarview")
                                     .GetAsync();
                 var userlist = users1.CurrentPage.ToList();
                 foreach (var u in userlist.Where(x=>x.DisplayName != me.DisplayName))
@@ -84,6 +104,7 @@ namespace AttaGlance
                         //var s = new List<Attendee>();
                         //s.Add(ab);
                         //GetAvailabilityDetails();
+                        var check = await graphClient.Users[u.Id].Calendar.Request().GetAsync();
                         var pp = await graphClient.Users[u.Id].Events.Request()
                             .Select("subject,organizer,start,end")
                         .OrderBy("createdDateTime DESC")

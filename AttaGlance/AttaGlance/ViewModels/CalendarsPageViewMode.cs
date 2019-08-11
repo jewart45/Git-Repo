@@ -25,11 +25,17 @@ namespace AttaGlance
             SetUpPageAsync(Page);
         }
 
-        private async void SetUpPageAsync(CalendarsPage page)
+        public async void SetUpPageAsync(CalendarsPage page)
         {
 
             await SetUpEventsAsync();
             page.SetGrid(CalendarList);
+        }
+        public async void SetUpPageAsync()
+        {
+
+            await SetUpEventsAsync();
+            Page.SetGrid(CalendarList);
         }
 
         private async Task SetUpEventsAsync()

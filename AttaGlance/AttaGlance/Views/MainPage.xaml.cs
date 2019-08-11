@@ -40,6 +40,8 @@ namespace AttaGlance
                 // Navigate to HomePage.xaml
                 RootFrame.Navigate(typeof(HomePage));
             }
+
+            
         }
 
 

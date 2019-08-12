@@ -137,5 +137,10 @@ namespace AttaGlance
                 ZoomOut_Btn.IsEnabled = true;
             }
         }
+
+        private void ZoomOut_Btn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

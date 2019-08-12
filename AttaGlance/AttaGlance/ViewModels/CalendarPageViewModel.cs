@@ -1,12 +1,14 @@
 ﻿using Microsoft.Graph;
 using Microsoft.Toolkit.Services.MicrosoftGraph;
-using Reactive.Bindings;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,11 +20,23 @@ namespace AttaGlance
         public List<Calendar> CalendarList { get; private set; } = new List<Calendar>();
 
         public CalendarPage Page { get; private set; }
+        public IReactiveCommand RefreshCmd { get; private set; }
 
         public CalendarPageViewModel(CalendarPage page)
         {
             Page = page;
+            SetupCommands();
+            
             SetUpPageAsync(Page);
+        }
+
+        private void SetupCommands()
+        {
+            //Set up commands
+            RefreshCmd = ReactiveCommand.Create(() =>
+            {
+
+            });
         }
 
         private async void SetUpPageAsync(CalendarPage page)

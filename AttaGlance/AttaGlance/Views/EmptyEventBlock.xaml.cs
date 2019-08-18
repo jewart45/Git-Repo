@@ -18,7 +18,20 @@ namespace AttaGlance
         public EmptyEventBlock()
         {
             this.InitializeComponent();
+            MainGrid.PointerEntered += PointerEnter;
+            MainGrid.PointerCaptureLost += PointerExited;
+        }
 
+        private void PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 0);
+            MainGrid.Background = new SolidColorBrush(Colors.Transparent);
+        }
+
+        private void PointerEnter(object sender, PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
+            MainGrid.Background = new SolidColorBrush(Colors.LightGray);
         }
 
         private void TextBlock_PointerEntered(object sender, PointerRoutedEventArgs e)

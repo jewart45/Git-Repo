@@ -18,7 +18,7 @@ namespace AttaGlance
             Properties = new EventBlockViewModel(start, end, Subject, Description);
             this.DataContext = Properties;
             MainGrid.PointerEntered += PointerEnter;
-            MainGrid.PointerExited += PointerExited;
+            MainGrid.PointerCaptureLost += PointerExited;
         }
 
 
@@ -26,14 +26,14 @@ namespace AttaGlance
         {
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 0);
             MainGrid.Background = new SolidColorBrush(Colors.Blue);
-            this.Background = new SolidColorBrush(Colors.LightGray);
+            outsideGrid.Background = new SolidColorBrush(Colors.LightGray);
         }
 
         private void PointerEnter(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             MainGrid.Background = new SolidColorBrush(Colors.DarkRed);
-            this.Background = new SolidColorBrush(Colors.Transparent);
+            outsideGrid.Background = new SolidColorBrush(Colors.Transparent);
         }
 
         public EventBlock()

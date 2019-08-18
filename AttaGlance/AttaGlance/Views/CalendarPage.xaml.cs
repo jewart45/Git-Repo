@@ -1,9 +1,12 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
@@ -24,15 +27,24 @@ namespace AttaGlance
     /// </summary>
     public sealed partial class CalendarPage : Page
     {
+        private CalendarPageViewModel ViewModel;
+        private int daysShown = 15;
+
         public CalendarPage()
         {
-            this.DataContext = new CalendarPageViewModel(this);
+            ViewModel = new CalendarPageViewModel(this);
+            this.DataContext = ViewModel;
             this.InitializeComponent();
 
             if ((App.Current as App).IsAuthenticated)
             {
                 DataTemplate calendarTemplate = new DataTemplate();
             }
+
+            this.ObservableForProperty(x => x.GroupsCombo.SelectedItem).Where(x => x.Value != null).Subscribe(s =>
+            {
+                ViewModel.SetCurrentCalendarsAsync(s.Value as string);
+            });
 
 
 
@@ -42,6 +54,7 @@ namespace AttaGlance
         {
 
         }
+
 
         internal void SetGrid(List<Calendar> calendarList)
         {
@@ -67,7 +80,7 @@ namespace AttaGlance
                 peopleStack.Width += panel.Width;
                 viewStack.Width += panel.Width;
             }
-            for(int i = 0; i < 15; i++)
+            for(int i = 0; i < daysShown; i++)
             {
                 //Date Block
                 var date = DateTime.Now.Date.AddDays(i);
@@ -108,6 +121,10 @@ namespace AttaGlance
                 }
             }
         }
+
+        internal void SetGroups(List<string> list) => GroupsCombo.ItemsSource = list;
+
+        internal void SetLoading(bool v) => LoadingRing.Visibility = v ? Visibility.Visible : Visibility.Collapsed;
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {

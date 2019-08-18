@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:fa="using:FontAwesome.UWP"
     xmlns:local="using:AttaGlance"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DataContext="ViewModel"
@@ -29,6 +28,13 @@
             Height="100"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
+            <ComboBox
+                x:Name="GroupsCombo"
+                Width="200"
+                Margin="10"
+                VerticalAlignment="Center"
+                ItemsSource="{Binding CalendarGroups}"
+                SelectedItem="{Binding SelectedGroup, Mode=TwoWay}" />
             <Button
                 x:Name="ZoomOut_Btn"
                 Width="50"
@@ -53,12 +59,13 @@
         </StackPanel>
         <ProgressRing
             Grid.Row="1"
+            x:Name="LoadingRing"
             Width="100"
             Height="100"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             IsActive="True"
-            Visibility="Visible" />
+            Visibility="Collapsed" />
 
         <Viewbox
             Grid.Row="1"

@@ -24,14 +24,14 @@ namespace AttaGlance
 
         private void PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 0);
+            //Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Hand, 0);
             MainGrid.Background = new SolidColorBrush(Colors.Blue);
             outsideGrid.Background = new SolidColorBrush(Colors.LightGray);
         }
 
         private void PointerEnter(object sender, PointerRoutedEventArgs e)
         {
-            Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
+            //Window.Current.CoreWindow.PointerCursor = new Windows.UI.Core.CoreCursor(Windows.UI.Core.CoreCursorType.Arrow, 0);
             MainGrid.Background = new SolidColorBrush(Colors.DarkRed);
             outsideGrid.Background = new SolidColorBrush(Colors.Transparent);
         }

@@ -7,8 +7,6 @@
     xmlns:local="using:AttaGlance"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DataContext="ViewModel"
-    d:DesignHeight="800"
-    d:DesignWidth="1200"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
     <Grid>
@@ -58,8 +56,8 @@
                 Content="Refresh" />
         </StackPanel>
         <ProgressRing
-            Grid.Row="1"
             x:Name="LoadingRing"
+            Grid.Row="1"
             Width="100"
             Height="100"
             HorizontalAlignment="Center"
@@ -67,15 +65,12 @@
             IsActive="True"
             Visibility="Collapsed" />
 
-        <Viewbox
-            Grid.Row="1"
-            Margin="0,0,0,50"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch">
+        <Grid Grid.Row="1">
+
+
             <ScrollViewer
                 x:Name="calendar_ScrollViewer"
-                Width="1200"
-                Height="700"
+                Grid.Row="1"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 BorderBrush="Black"
@@ -196,7 +191,7 @@
                     </controls:DockPanel>
                 </Viewbox>
             </ScrollViewer>
-        </Viewbox>
+        </Grid>
         <Grid Grid.Row="2" />
     </Grid>
 </Page>

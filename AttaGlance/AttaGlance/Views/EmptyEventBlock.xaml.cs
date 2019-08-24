@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Graph;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,11 +16,22 @@ namespace AttaGlance
 {
     public sealed partial class EmptyEventBlock : UserControl
     {
+        public Attendee Attendee { get; set; }
+        public DateTime Date { get; set; }
         public EmptyEventBlock()
         {
             this.InitializeComponent();
             MainGrid.PointerEntered += PointerEnter;
             MainGrid.PointerExited += PointerExited;
+            
+        }
+
+        public EmptyEventBlock(Attendee at)
+        {
+            this.InitializeComponent();
+            MainGrid.PointerEntered += PointerEnter;
+            MainGrid.PointerExited += PointerExited;
+            Attendee = at;
         }
 
         private void PointerExited(object sender, PointerRoutedEventArgs e)
@@ -47,8 +59,11 @@ namespace AttaGlance
 
         }
 
-        private void TextBlock_PointerPressed(object sender, PointerRoutedEventArgs e)
+        private async void TextBlock_PointerPressedAsync(object sender, PointerRoutedEventArgs e)
         {
+
+            ContentDialog meetingRequest = new MeetingRequest(Attendee, Date);
+            ContentDialogResult result = await meetingRequest.ShowAsync();
             
 
         }

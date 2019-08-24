@@ -108,7 +108,18 @@ namespace AttaGlance
                             }
                             else
                             {
-                                var eeb = new EmptyEventBlock() { Height = 75 };
+                                var eeb = new EmptyEventBlock() {
+                                    Height = 75,
+                                    Date = date.Date,
+                                    Attendee = new Microsoft.Graph.Attendee()
+                                    {
+                                        EmailAddress = new Microsoft.Graph.EmailAddress()
+                                        {
+                                            Address = cal.Email,
+                                            Name = cal.Name
+                                        }
+                                    }
+                                };
                                 DockPanel.SetDock(eeb, Dock.Top);
                                 p.Children.Add(eeb);
                             }

@@ -10,6 +10,6 @@
     d:DesignWidth="200">
     <Grid Width="200" Height="75" x:Name="MainGrid">
         <Border BorderBrush="Gray" BorderThickness="2" Margin="-1"/>
-        <TextBlock x:Name="txtBlock" PointerEntered="TextBlock_PointerEntered" PointerExited="TextBlock_PointerExited" PointerPressed="TextBlock_PointerPressed"  Foreground="Blue" Margin="10" VerticalAlignment="Bottom">Add an Event</TextBlock>
+        <TextBlock x:Name="txtBlock" PointerEntered="TextBlock_PointerEntered" PointerExited="TextBlock_PointerExited" PointerPressed="TextBlock_PointerPressedAsync"  Foreground="Blue" Margin="10" VerticalAlignment="Bottom">Add an Event</TextBlock>
     </Grid>
 </UserControl>

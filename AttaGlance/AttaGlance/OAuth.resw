@@ -121,6 +121,6 @@
     <value>1b63bdc5-ed9a-407c-be2b-7a63144f747c</value>
   </data>
   <data name="Scopes" xml:space="preserve">
-    <value>User.ReadBasic.All Calendars.Read.Shared</value>
+    <value>User.ReadBasic.All Calendars.ReadWrite.Shared</value>
   </data>
 </root>

@@ -8,7 +8,7 @@
     d:DesignHeight="75"
     d:DesignWidth="200"
     mc:Ignorable="d">
-    <Grid Width="200" Height="75" x:Name="outsideGrid">
+    <Grid x:Name="outsideGrid">
         <Border
             Margin="-1"
             BorderBrush="Gray"

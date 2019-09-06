@@ -87,37 +87,26 @@
                     VerticalAlignment="Top">
 
 
-                    <controls:DockPanel
+                    <Grid
                         x:Name="peopleStack"
                         Width="1200"
                         Height="800"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        LastChildFill="False">
-                        <controls:DockPanel
+                        VerticalAlignment="Stretch">
+                        <Grid
                             Width="100"
-                            controls:DockPanel.Dock="Left"
-                            LastChildFill="False">
+                            controls:DockPanel.Dock="Left">
                             <TextBlock
                                 HorizontalAlignment="Center"
                                 controls:DockPanel.Dock="Top"
                                 FontSize="25">
                                 Date
                             </TextBlock>
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
-                            <local:DateLabelBlock controls:DockPanel.Dock="Top" Label="January 3 1999" />
+       
 
 
-                        </controls:DockPanel>
-                        <controls:DockPanel Width="200" controls:DockPanel.Dock="Left">
+                        </Grid>
+                        <Grid Width="200" controls:DockPanel.Dock="Left">
                             <Border
                                 controls:DockPanel.Dock="Top"
                                 BorderBrush="Gray"
@@ -172,14 +161,12 @@
                                 VerticalAlignment="Top"
                                 controls:DockPanel.Dock="Top" />
 
-                        </controls:DockPanel>
-                        <controls:DockPanel
+                        </Grid>
+                        <Grid
                             Width="400"
-                            HorizontalAlignment="Left"
-                            controls:DockPanel.Dock="Left">
+                            HorizontalAlignment="Left">
                             <TextBlock
                                 HorizontalAlignment="Center"
-                                controls:DockPanel.Dock="Top"
                                 FontSize="25">
                                 User 1
                             </TextBlock>
@@ -187,8 +174,8 @@
                             <local:EmptyEventBlock controls:DockPanel.Dock="Top" />
                             <local:EventBlock VerticalAlignment="Top" controls:DockPanel.Dock="Top" />
 
-                        </controls:DockPanel>
-                    </controls:DockPanel>
+                        </Grid>
+                    </Grid>
                 </Viewbox>
             </ScrollViewer>
         </Grid>

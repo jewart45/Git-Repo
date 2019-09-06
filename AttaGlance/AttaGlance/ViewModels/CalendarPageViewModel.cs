@@ -90,7 +90,6 @@ namespace AttaGlance
 
         private async Task SetUpPageAsync(CalendarPage page)
         {
-
             await SetUpCalendarBackendAsync();
             page.SetGrid(CalendarList.ToList());
         }

@@ -59,22 +59,39 @@ namespace AttaGlance
         internal void SetGrid(List<Calendar> calendarList)
         {
             peopleStack.Children.Clear();
+            peopleStack.ColumnDefinitions.Clear();
+            peopleStack.RowDefinitions.Clear();
             peopleStack.Width = 100;
             viewStack.Width = 100;
-            var datePanel = new DockPanel() { Name="datePanel", Width=100, LastChildFill=false };
+            var datePanel = new Grid() { Name="datePanel", Width=100, Height = 50 };
+
+            AddGridColumn(peopleStack);
+            //var splitter = new GridSplitter() { Width = 10};
+            //Grid.SetColumn(splitter, peopleStack.ColumnDefinitions.Count - 1);
+            //AddGridColumn(peopleStack);
+
+            //peopleStack.Children.Add(splitter);
+
+            Grid.SetColumn(datePanel, 0);
             var b1 = new Border { BorderBrush = new SolidColorBrush(Colors.Gray), BorderThickness = new Thickness(2), Margin = new Thickness(-1) };
             b1.Child = new TextBlock { Text = "Date", FontSize = 25, HorizontalAlignment = HorizontalAlignment.Center };
 
-            DockPanel.SetDock(b1, Dock.Top);
+            //DockPanel.SetDock(b1, Dock.Top);
             datePanel.Children.Add(b1);
             peopleStack.Children.Add(datePanel);
             foreach (var c in calendarList)
             {
+                AddGridColumn(peopleStack);
+               // var splitter2 = new GridSplitter() { Width = 10 };
+               // Grid.SetColumn(splitter2, peopleStack.ColumnDefinitions.Count - 1);
+              //  AddGridColumn(peopleStack);
                 var b = new Border { BorderBrush = new SolidColorBrush(Colors.Gray), BorderThickness = new Thickness(2), Margin = new Thickness(-1) };
                 b.Child = new TextBlock { Tag = c, Text = c.Name, FontSize = 25, HorizontalAlignment = HorizontalAlignment.Center };
           
-                DockPanel.SetDock(b, Dock.Top);
-                var panel = new DockPanel() { Name = c.Name + "_Dock", Width = 200, LastChildFill = false };
+                //DockPanel.SetDock(b, Dock.Top);
+                var panel = new Grid() { Name = c.Name + "_Dock", Width = 200, Height=50 };
+                Grid.SetColumn(panel, peopleStack.ColumnDefinitions.Count - 1);
+                //panel.Children.Add(new GridSplitter());
                 panel.Children.Add(b);
                 peopleStack.Children.Add(panel);
                 peopleStack.Width += panel.Width;
@@ -83,17 +100,20 @@ namespace AttaGlance
             for(int i = 0; i < daysShown; i++)
             {
                 //Date Block
+                AddGridRow(peopleStack);
                 var date = DateTime.Now.Date.AddDays(i);
-                var dlb = new DateLabelBlock(date);
-                DockPanel.SetDock(dlb, Dock.Top);
+                var dlb = new DateLabelBlock(date) { Height = 75, Width = 150 };
+                Grid.SetRow(dlb, i);
+               // DockPanel.SetDock(dlb, Dock.Top);
                 datePanel.Children.Add(dlb);
 
                 //each other block in row
                 foreach(var panel in peopleStack.Children.Where(x=>x != datePanel))
                 {
-                    if (panel is DockPanel p)
+                    if (panel is Grid p)
                     {
-                        var cal = calendarList.FirstOrDefault(x => x.Name + "_Dock" == (panel as DockPanel).Name);
+                        AddGridRow(p);
+                        var cal = calendarList.FirstOrDefault(x => x.Name + "_Dock" == (panel as Grid).Name);
                         if (cal != null)
                         {
                             var eventsThatDay = cal.EventsList.Where(x => x.CheckIfDayIntersects(date)).ToList();
@@ -101,8 +121,8 @@ namespace AttaGlance
                             {
                                 foreach (var ev in eventsThatDay)
                                 {
-                                    var eb = new EventBlock(ev.Start, ev.End, ev.Subject, ev.Description) { Height=75 };
-                                    DockPanel.SetDock(eb, Dock.Top);
+                                    var eb = new EventBlock(ev.Start, ev.End, ev.Subject, ev.Description) { Height=75, VerticalAlignment = VerticalAlignment.Top };
+                                    Grid.SetRow(eb, i);
                                     p.Children.Add(eb);
                                 }
                             }
@@ -120,8 +140,10 @@ namespace AttaGlance
                                         }
                                     }
                                 };
-                                DockPanel.SetDock(eeb, Dock.Top);
+                                //DockPanel.SetDock(eeb, Dock.Top);
+                                Grid.SetRow(eeb, i);
                                 p.Children.Add(eeb);
+                                p.Height += 75;
                             }
                         }
                         else
@@ -133,7 +155,24 @@ namespace AttaGlance
             }
         }
 
-        internal void SetGroups(List<string> list) => GroupsCombo.ItemsSource = list;
+        private void AddGridColumn(Grid g)
+        {
+            var colDefinition = new ColumnDefinition();
+            colDefinition.Width = GridLength.Auto;
+            g.ColumnDefinitions.Add(colDefinition);
+        }
+        private void AddGridRow(Grid g)
+        {
+            var rowDefinition = new RowDefinition();
+            rowDefinition.Height = GridLength.Auto;
+            g.RowDefinitions.Add(rowDefinition);
+        }
+
+        internal void SetGroups(List<string> list)
+        {
+            GroupsCombo.ItemsSource = list;
+            GroupsCombo.SelectedIndex = 0;
+        }
 
         internal void SetLoading(bool v) => LoadingRing.Visibility = v ? Visibility.Visible : Visibility.Collapsed;
 

@@ -93,20 +93,48 @@
                         Height="800"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch">
-                        <Grid
-                            Width="100"
-                            controls:DockPanel.Dock="Left">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                controls:DockPanel.Dock="Top"
-                                FontSize="25">
-                                Date
-                            </TextBlock>
-       
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="200"/>
+                        </Grid.ColumnDefinitions>
 
+                        <Grid Width="100" Grid.Column="0" HorizontalAlignment="Left">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                            </Grid.RowDefinitions>
+                            <Border
+                                BorderBrush="Gray"
+                                BorderThickness="1">
+                                <TextBlock HorizontalAlignment="Center" FontSize="25">User 1</TextBlock>
+                            </Border>
+
+                            <local:DateLabelBlock Width="100"  Grid.Row="1" />
 
                         </Grid>
-                        <Grid Width="200" controls:DockPanel.Dock="Left">
+
+                        <Grid Width="200" Grid.Column="1" HorizontalAlignment="Left">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                            </Grid.RowDefinitions>
                             <Border
                                 controls:DockPanel.Dock="Top"
                                 BorderBrush="Gray"
@@ -162,19 +190,72 @@
                                 controls:DockPanel.Dock="Top" />
 
                         </Grid>
-                        <Grid
-                            Width="400"
-                            HorizontalAlignment="Left">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                FontSize="25">
-                                User 1
-                            </TextBlock>
-                            <local:EventBlock controls:DockPanel.Dock="Top" />
-                            <local:EmptyEventBlock controls:DockPanel.Dock="Top" />
-                            <local:EventBlock VerticalAlignment="Top" controls:DockPanel.Dock="Top" />
+                        <Grid Width="200" Grid.Column="2" HorizontalAlignment="Left">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                                <RowDefinition Height="75"/>
+                            </Grid.RowDefinitions>
+                            <Border
+                                controls:DockPanel.Dock="Top"
+                                BorderBrush="Gray"
+                                BorderThickness="1">
+                                <TextBlock HorizontalAlignment="Center" FontSize="25">User 1</TextBlock>
+                            </Border>
+
+                            <local:EventBlock Height="100" controls:DockPanel.Dock="Top" />
+                            <local:EmptyEventBlock Height="100" controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
+                            <local:EventBlock
+                                Height="100"
+                                VerticalAlignment="Top"
+                                controls:DockPanel.Dock="Top" />
 
                         </Grid>
+                        
                     </Grid>
                 </Viewbox>
             </ScrollViewer>

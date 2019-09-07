@@ -19,6 +19,7 @@
             Margin="5,2.5"
             Background="{Binding BackgroundColor.Value, FallbackValue=Blue}"
             CornerRadius="15"
+            HorizontalAlignment="Stretch"
             DoubleTapped="Grid_DoubleTapped">
             <StackPanel
                 Margin="10"

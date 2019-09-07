@@ -70,9 +70,6 @@ namespace AttaGlance
                 case "calendar":
                     RootFrame.Navigate(typeof(CalendarPage));
                     break;
-                case "calendars":
-                    RootFrame.Navigate(typeof(CalendarsPage));
-                    break;
                 case "home":
                 case "settings":
                     RootFrame.Navigate(typeof(HomePage));

@@ -18,6 +18,7 @@ namespace SpeechNotifier
         private GUIProperties myGuiProperties;
         public readonly string fileName = @"C:\Users\Public\Documents\SpeechNotifierPhrases.xml";
         private Timer timeoutTimer = new Timer(1000);
+        private bool running = false;
 
         private SpeechRecognitionEngine Recognizer { get; set; }
 
@@ -40,6 +41,7 @@ namespace SpeechNotifier
 
             DataContext = myGuiProperties;
             Recognizer.RequestRecognizerUpdate();
+            Recognizer.RecognizeAsyncStop();
             Recognizer.SpeechRecognized += Rec_SpeechRecognized;
             Recognizer.SpeechHypothesized += Rec_SpeechHypothesized;
             Recognizer.SpeechDetected += Rec_SpeechDetected;
@@ -65,6 +67,10 @@ namespace SpeechNotifier
 
         public void Rec_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
+            if (!running)
+            {
+                return;
+            }
             App appl = (Application.Current as App);
             var phrase = PhraseList.FirstOrDefault(x => x.SpeechText == e.Result.Text);
             if(phrase != null)
@@ -214,23 +220,34 @@ namespace SpeechNotifier
                 ToggleNotify(false);
             }
         }
-
+        
         public void ToggleNotify(bool v)
         {
             try
             {
                 if (v)
                 {
+                    while (Recognizer.AudioState == AudioState.Speech)
+                    {
+
+                    }
+                    
                     Recognizer.RecognizeAsync(RecognizeMode.Multiple);
+                    running = true;
                 }
                 else
                 {
+                    while(Recognizer.AudioState == AudioState.Speech)
+                    {
+
+                    }
                     Recognizer.RecognizeAsyncStop();
+                    running = false;
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("Could not toggle notification");
+                MessageBox.Show($"Could not toggle notification, {ex}");
                 NotifierChk.IsChecked = (bool)!NotifierChk.IsChecked;
             }
             

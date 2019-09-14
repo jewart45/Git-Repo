@@ -378,7 +378,7 @@ namespace MMABettingModule
                     dataTable.Columns.Add("Name", typeof(string));
                     dataTable.Columns.Add("Odds", typeof(double));
 
-                    foreach (FighterFinalOddsExport i in finalOdds)
+                    foreach (FighterFinalOddsExport i in finalOdds.OrderBy(x=>x.FightDate).ThenBy(x=>x.FightName))
                     {
                         dataTable.Rows.Add(i.FightDate, i.FightName, i.Name, i.Odds);
                     }

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ArrayOfPhrase xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Phrase>
+    <SpeechText>hello</SpeechText>
+    <NotificationText>zsdf</NotificationText>
+  </Phrase>
+</ArrayOfPhrase>

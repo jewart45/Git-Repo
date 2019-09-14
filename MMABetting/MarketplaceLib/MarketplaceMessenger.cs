@@ -713,13 +713,20 @@ namespace Marketplace
             Console.WriteLine("\nGetting prices for market");
 
             IList<MarketBook> marketBook = new List<MarketBook>();
-
+            IList<MarketBook> incrementalBook;
             for (int i = 0; i < marketIds.Count; i = i + 50)
             {
+
                 int j = i + 50 > marketIds.Count ? marketIds.Count : i + 50;
-
-                IList<MarketBook> incrementalBook = client.listMarketBook(marketIds.Skip(i).Take(j - i).ToList(), priceProjection);
-
+                try
+                {
+                    incrementalBook = client.listMarketBook(marketIds.Skip(i).Take(j - i).ToList(), priceProjection);
+                }
+                catch(System.Exception ex)
+                {
+                    incrementalBook = new List<MarketBook>();
+                    Console.WriteLine(ex);
+                }
                 foreach (MarketBook price in incrementalBook)
                 {
                     marketBook.Add(price);

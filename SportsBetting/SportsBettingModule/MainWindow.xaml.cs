@@ -337,7 +337,29 @@ namespace SportsBettingModule
                     }
                 }
             }
-           
+            else// if (eventType == "To Be Placed")
+            {
+                foreach (MarketplaceEvent ev in marketList)
+                {
+                    //If not in eventList, add
+                    if (!evList.Select(x => x.Name).ToList().Contains(ev.Name))
+                    {
+                        Event e = new Event(ev.Name)
+                        {
+                            Date = ev.Date
+                        };
+                        foreach (MarketplaceRunner runn in ev.Runners)
+                        {
+                            e.Fighters.Add(new Fighter(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                            e.FightResult.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                        }
+
+                        e.Winner = ev.Winner;
+                        evList.Add(e);
+                    }
+                }
+            }
+
         }
 
         private void AutoRefreshChk_Click(object sender, RoutedEventArgs e)
@@ -1441,7 +1463,9 @@ namespace SportsBettingModule
                 {
                     Task.Run(() =>
                     {
-                        myGuiProperties.ResultTypes = marketMessenger.GetEventTypes("Basketball");
+                        var typesSorted = marketMessenger.GetEventTypes("Horse Racing");
+                        typesSorted.Sort();
+                        myGuiProperties.ResultTypes = typesSorted;
                         GetBettingInfo(myGuiProperties.ResultTypes.FirstOrDefault());
                         InvokeUI(() =>
                         {
@@ -1654,7 +1678,7 @@ namespace SportsBettingModule
                 myGuiProperties.NavigationVisibility = Visibility.Visible;
                 //mainMessage.Content = "Login Successful";
                 marketMessenger.Initialise(loginClient.SessionToken);
-                marketMessenger.SetMarketFilter("Basketball");
+                marketMessenger.SetMarketFilter("Horse Racing");
                 var bal = marketMessenger.GetAccountBalance();
                 myGuiProperties.CurrentBalance = bal.CurrentAvailable;
                 myGuiProperties.CurrentExposure = bal.Exposure;
@@ -1688,7 +1712,10 @@ namespace SportsBettingModule
             {
                 MainMessage("Refreshing List...");
                 GetBettingInfo(settings.EventType);
-                myGuiProperties.ResultTypes = marketMessenger.GetEventTypes("Basketball");
+                
+                var typesSorted = marketMessenger.GetEventTypes("Horse Racing");
+                typesSorted.Sort();
+                myGuiProperties.ResultTypes = typesSorted;
                 var bal = marketMessenger.GetAccountBalance();
                 myGuiProperties.CurrentBalance = bal.CurrentAvailable;
                 myGuiProperties.CurrentExposure = bal.Exposure;

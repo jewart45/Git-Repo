@@ -42,7 +42,7 @@ namespace SportsBettingModule
         private Timer twelveHourRefreshTimer;
         private List<SelectionDisplay> AllSelections = new List<SelectionDisplay>();
         private Timer getResultsTimer;
-        private const string resultsFilePath = @"C:\Users\jewar\source\repos\Git Repo\SportsBetting\SportsBettingModule\Resources\results.xml";
+        private const string resultsFilePath = "https://rss.betfair.com/RSS.aspx?format=rss&sportID=7522";
 
         public MainWindow()
         {
@@ -139,7 +139,7 @@ namespace SportsBettingModule
 
         public void DisplayError(object sender, string msg) => MessageBox.Show(msg, "Error From: " + sender.ToString(), MessageBoxButton.OK);
 
-        public void GetBettingInfo(string eventType)
+        public void GetBettingInfo(string eventType, string competition)
         {
             BettingInfoAvailable = new List<Event>();
 
@@ -159,8 +159,8 @@ namespace SportsBettingModule
                 RunnerDictionary = marketMessenger.GetBettingDictionary(eventType);
             }
 
-            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, myGuiProperties.Virtualize);
+            EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
+            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, competition);
             
             CreateEventFramework(BettingInfoAvailable, EventListWithOdds, eventType);
          
@@ -380,7 +380,7 @@ namespace SportsBettingModule
         => InvokeUI(() =>
         {
             MainMessage("Refreshing List...");
-            GetBettingInfo(settings.EventType);
+            GetBettingInfo(settings.EventType, settings.Competition);
             FindAndFillResults();
             Event f = BettingInfoAvailable
             .Where(x => x.Fighters.First().NameNoSpaces == EventSelector.Text && x.Fighters.First().Odds != "" && x.Name == SelectionSelector.SelectedItem.ToString())
@@ -1463,10 +1463,13 @@ namespace SportsBettingModule
                 {
                     Task.Run(() =>
                     {
-                        var typesSorted = marketMessenger.GetEventTypes("Horse Racing");
+                        var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
                         typesSorted.Sort();
                         myGuiProperties.ResultTypes = typesSorted;
-                        GetBettingInfo(myGuiProperties.ResultTypes.FirstOrDefault());
+                        var competitions = marketMessenger.GetCompetitionTypes();
+                        competitions.Sort();
+                        myGuiProperties.CompetitionTypes = competitions;
+                        GetBettingInfo(myGuiProperties.ResultTypes.FirstOrDefault(), settings.Competition);
                         InvokeUI(() =>
                         {
                             DisplayBettingInfo();
@@ -1481,7 +1484,7 @@ namespace SportsBettingModule
                     {
                         Task.Run(() =>
                         {
-                            GetBettingInfo(settings.EventType);
+                            GetBettingInfo(settings.EventType, settings.Competition);
                             InvokeUI(() =>
                             {
                                 DisplayBettingInfo();
@@ -1678,7 +1681,7 @@ namespace SportsBettingModule
                 myGuiProperties.NavigationVisibility = Visibility.Visible;
                 //mainMessage.Content = "Login Successful";
                 marketMessenger.Initialise(loginClient.SessionToken);
-                marketMessenger.SetMarketFilter("Horse Racing");
+                marketMessenger.SetMarketFilter(settings.Sport);
                 var bal = marketMessenger.GetAccountBalance();
                 myGuiProperties.CurrentBalance = bal.CurrentAvailable;
                 myGuiProperties.CurrentExposure = bal.Exposure;
@@ -1690,7 +1693,7 @@ namespace SportsBettingModule
         private void LogNowBtn_Click(object sender, RoutedEventArgs e)
         {
             MainMessage("Logging...");
-            OddsLogger.LogOddsNow(settings.EventType);
+            OddsLogger.LogOddsNow(settings.EventType, settings.Competition);
             MainMessage("");
         }
 
@@ -1711,11 +1714,15 @@ namespace SportsBettingModule
             Task.Run(() =>
             {
                 MainMessage("Refreshing List...");
-                GetBettingInfo(settings.EventType);
+                GetBettingInfo(settings.EventType, settings.Competition);
                 
-                var typesSorted = marketMessenger.GetEventTypes("Horse Racing");
+                var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
                 typesSorted.Sort();
+                var competitions = marketMessenger.GetCompetitionTypes();
                 myGuiProperties.ResultTypes = typesSorted;
+                competitions.Sort();
+                myGuiProperties.CompetitionTypes = competitions;
+
                 var bal = marketMessenger.GetAccountBalance();
                 myGuiProperties.CurrentBalance = bal.CurrentAvailable;
                 myGuiProperties.CurrentExposure = bal.Exposure;
@@ -1767,14 +1774,14 @@ namespace SportsBettingModule
             });
         }
 
-        private Task GetResultsFromXML(string filePath)
+        private Task GetResultsFromXML(string urlPath)
         {
             
 #pragma warning disable IDE0022 // Use expression body for methods
             return Task.Run(() =>
             {
                 XmlReader reader;
-                string url = "https://rss.betfair.com/RSS.aspx?format=rss&sportID=7522";
+                string url = urlPath;
                 
                 XmlReaderSettings p = new XmlReaderSettings
                 {
@@ -2014,7 +2021,7 @@ namespace SportsBettingModule
         {
             if (!OddsLogger.Logging)
             {
-                OddsLogger.StartLoggingAsync(settings.EventType);
+                OddsLogger.StartLoggingAsync(settings.EventType, settings.Competition);
                 StartLoggingBtn.IsChecked = true;
             }
             else
@@ -2319,7 +2326,7 @@ namespace SportsBettingModule
                 //Lets update the listGrid
                 Task.Run(() =>
                 {
-                    GetBettingInfo(settings.EventType);
+                    GetBettingInfo(settings.EventType, settings.Competition);
                     Task.Delay(500);
                     InvokeUI(() =>
                     {

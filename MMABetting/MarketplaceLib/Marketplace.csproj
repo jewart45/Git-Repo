@@ -80,6 +80,7 @@
     <Compile Include="Json\JsonRequest.cs" />
     <Compile Include="Json\JsonResponse.cs" />
     <Compile Include="Json\RescriptRequest.cs" />
+    <Compile Include="MarketplaceMessengerReactive.cs" />
     <Compile Include="MarketplaceMessenger.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="MarketplaceMessengerBoxing.cs" />

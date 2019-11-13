@@ -53,6 +53,16 @@ namespace SportsBettingModule
             }
         }
 
+        private List<string> competitionTypes = new List<string>();
+
+        public List<string> CompetitionTypes {
+            get => competitionTypes;
+            set {
+                competitionTypes = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private List<SelectionDisplay> selectionToDisplay = new List<SelectionDisplay>();
 
         public List<SelectionDisplay> SelectionToDisplay {

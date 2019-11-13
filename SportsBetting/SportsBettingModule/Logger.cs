@@ -161,7 +161,7 @@ namespace SportsBettingModule
             return error;
         }
 
-        public async void StartLoggingAsync(string eventType)
+        public async void StartLoggingAsync(string eventType, string competition)
         {
             LoggingCancelFlag = false;
 
@@ -186,13 +186,13 @@ namespace SportsBettingModule
                         if ((i + 1) % shortLogInterval.TotalSeconds == 0)
                         {
                             //fighterDictionary = marketMessenger.GetAllOddsOld(fighterOddsList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.FightDate) > 0).Select(x => x.SelectionID).ToList<string>(), eventType, virtualise);
-                            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-                            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-                            EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, false);
+                            EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
+                            EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
+                            EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
 
                             if (EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0).Count() > 0)
                             {
-                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, false);
+                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
 
                                 error = LogSpecificOdds(EventListWithOdds, eventType, false);
                                 //increment
@@ -222,8 +222,8 @@ namespace SportsBettingModule
                             List<OddsInfo> listOfOddsToAdd = new List<OddsInfo>();
                             try
                             {
-                                EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) < 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, false);
+                                EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
+                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) < 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
                                 if (EventListWithOdds.Count == 0)
                                 {
                                     if (MarketplaceErrorOccured != null)
@@ -375,15 +375,15 @@ namespace SportsBettingModule
             //IDictionary<string, string> fighterDictionary = marketMessenger.GetFighterDictionary("Match Odds");
         });
 
-        public void LogOddsNow(string eventType)
+        public void LogOddsNow(string eventType, string competition)
         {
             IDictionary<string, string> fighterDictionary;
             //Get Odds
             List<MarketplaceEvent> EventList = new List<MarketplaceEvent>();
             List<MarketplaceEvent> EventListWithOdds = new List<MarketplaceEvent>();
 
-            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-            EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, false);
+            EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
+            EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
             fighterDictionary = marketMessenger.GetAllOddsOld(fighterOddsList.Select(x => x.SelectionID).ToList<string>(), eventType);
             foreach (MarketplaceEvent ev in EventListWithOdds)
             {

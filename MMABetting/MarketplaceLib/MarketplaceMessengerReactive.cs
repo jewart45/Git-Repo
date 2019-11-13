@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Marketplace
 {
-    public class MarketplaceMessenger
+    public class MarketplaceMessengerReactive
     {
         private static readonly string appKey = "r9pFKKDlrpQknNvB";
         private static readonly string sessionTokenStatic = "5clUqvyg1RczWBw1MpvY7Ug0otjZRvAjcwHFlXYbqa8=";
@@ -173,7 +173,7 @@ namespace Marketplace
             }
         }
 
-        public MarketplaceMessenger()
+        public MarketplaceMessengerReactive()
         {
         }
 
@@ -306,7 +306,7 @@ namespace Marketplace
             return fighterDictionary;
         }
 
-        public List<MarketplaceEvent> GetEventSelectionIDs(string evType, string competition)
+        public List<MarketplaceEvent> GetEventSelectionIDs(string evType, bool dummy)
         {
             List<MarketplaceEvent> listToReturn = new List<MarketplaceEvent>();
             ISet<MarketProjection> marketProjections = new HashSet<MarketProjection>
@@ -327,7 +327,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name.Trim());
-                if ((f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged") && (f.Competition.Name == competition || competition == ""))
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
                 {
                     marketIds.Add(f.MarketId);
                     MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId);
@@ -391,9 +391,7 @@ namespace Marketplace
             ISet<MarketProjection> marketProjections = new HashSet<MarketProjection>
             {
                 MarketProjection.EVENT,
-                MarketProjection.RUNNER_DESCRIPTION,
-                MarketProjection.COMPETITION,
-
+                MarketProjection.RUNNER_DESCRIPTION
             };
             MarketSort marketSort = MarketSort.MAXIMUM_TRADED;
             string maxResults = "100";
@@ -689,13 +687,13 @@ namespace Marketplace
             return oddsDictionary;
         }
 
-        public List<MarketplaceEvent> GetAllOdds(List<MarketplaceEvent> eventList, string eveType, string competition)
+        public List<MarketplaceEvent> GetAllOdds(List<MarketplaceEvent> eventList, string eveType, bool vitualise)
         {
             IList<string> marketIds = new List<string>();
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if ((f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged") && (f.Competition.Name == competition || competition == ""))
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -866,37 +864,6 @@ namespace Marketplace
             }
 
             return rate;
-        }
-
-        public List<string> GetCompetitionTypes()
-        {
-
-            //as an example we requested runner metadata
-            ISet<MarketProjection> marketProjections = new HashSet<MarketProjection>
-            {
-                MarketProjection.EVENT,
-                MarketProjection.RUNNER_DESCRIPTION,
-                MarketProjection.COMPETITION
-            };
-            MarketSort marketSort = MarketSort.MAXIMUM_TRADED;
-            string maxResults = "1000";
-
-            Console.WriteLine("\nGetting the next available MMA Matches");
-            marketCatalogues = client.listMarketCatalogue(marketFilter, marketProjections, marketSort, maxResults);
-            //extract the marketId of the next horse race
-            List<string> compTypes = new List<string>();
-            IList<string> marketIds = new List<string>();
-            ISet<string> EventNames = new HashSet<string>();
-            foreach (MarketCatalogue f in marketCatalogues)
-            {
-                //EventNames.Add(f.Event.Name);
-                if (!compTypes.Contains(f.Competition.Name.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged", "")))
-                {
-                    compTypes.Add(f.Competition.Name.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged", ""));
-                }
-            }
-
-            return compTypes;
         }
     }
 }

@@ -13,6 +13,8 @@ namespace SportsBettingModule
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+      
+
         public GUIProperties()
         {
             ButtonBackgroundColours.Add(new ComboBoxColourItem { Content = nameof(System.Windows.Media.Brushes.LightGray), Value = System.Windows.Media.Brushes.LightGray });
@@ -129,6 +131,14 @@ namespace SportsBettingModule
             get => virtualize;
             set {
                 virtualize = value;
+                NotifyPropertyChanged();
+            }
+        }
+        private List<string> sports = new List<string>();
+        public List<string> Sports {
+            get => sports;
+            set {
+                sports = value;
                 NotifyPropertyChanged();
             }
         }

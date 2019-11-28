@@ -46,6 +46,8 @@ namespace SportsBettingModule
 
         public MainWindow()
         {
+            InitializeComponent();
+
             marketMessenger = new MarketplaceMessenger();
             Windows = new List<Grid>();
             NavigationButtons = new List<Button>();
@@ -59,12 +61,14 @@ namespace SportsBettingModule
             settings = new SettingsVariables();
             //Set the inital event types
             myGuiProperties.ResultTypes = settings.PossibleEventTypes;
+            myGuiProperties.Sports = settings.PossibleSports;
+            SportCombo.ItemsSource = settings.PossibleSports;
             autoRefreshTimer = new Timer(myGuiProperties.AutoRefreshInterval.TotalMilliseconds);
 
             twelveHourRefreshTimer = new Timer(1000 * 60 * 60 * 12);    //12 hours
             getResultsTimer = new Timer(1000 * 60 * 60 * 1);    //1 hours
 
-            InitializeComponent();
+            
             SetUpEvents();
 
             DataContext = myGuiProperties;
@@ -1935,10 +1939,10 @@ namespace SportsBettingModule
 
         private async void GetResultsTimer_ElapsedAsync(object sender, ElapsedEventArgs e)
         {
-            await GetResultsFromXML(resultsFilePath);
-            FillBetResults();
-            getResultsTimer.Stop();
-            getResultsTimer.Start();
+            //await GetResultsFromXML(resultsFilePath);
+            //FillBetResults();
+            //getResultsTimer.Stop();
+            //getResultsTimer.Start();
         }
 
         private void TwentyFourHourRefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -1962,7 +1966,7 @@ namespace SportsBettingModule
             if (loginClient.SessionToken != null)
             {
                 marketMessenger.Initialise(loginClient.SessionToken);
-                marketMessenger.SetMarketFilter("Soccer");
+                marketMessenger.SetMarketFilter(settings.Sport);
 
                 marketMessenger.GetBettingDictionary(settings.EventType);
             }
@@ -2423,6 +2427,27 @@ namespace SportsBettingModule
                 }
                 db.settings.First().LoggingFrequency_s = (int)span.TotalSeconds;
             }
+        }
+
+        private void Sport_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            settings.Sport = SportCombo.SelectedItem.ToString();
+            marketMessenger.SetMarketFilter(settings.Sport);
+        }
+
+        private void CompetitionTypeSelectorCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            settings.Competition = CompetitionTypeSelectorCombo.SelectedItem?.ToString();
+        }
+
+        private void RefreshSelection_Click(object sender, RoutedEventArgs e)
+        {
+            var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
+            typesSorted.Sort();
+            var competitions = marketMessenger.GetCompetitionTypes();
+            myGuiProperties.ResultTypes = typesSorted;
+            competitions.Sort();
+            myGuiProperties.CompetitionTypes = competitions;
         }
     }
 }

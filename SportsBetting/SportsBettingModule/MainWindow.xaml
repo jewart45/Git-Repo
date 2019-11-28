@@ -250,80 +250,74 @@
                         <ColumnDefinition Width="8*" />
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Row="1" Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="75" />
-                            <RowDefinition Height="75" />
-                            <RowDefinition Height="75" />
-                            <RowDefinition Height="75" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="1" Grid.Column="1">
                         <Button
-                            Grid.Row="2"
+                            Width="140"
+                            Height="25"
+                            Margin="10"
+                            Content="Refresh Selections" Click="RefreshSelection_Click" />
+
+
+
+                        <Label
+                            Height="40"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            VerticalContentAlignment="Bottom"
+                            Content="Competition" />
+                        <ComboBox
+                            x:Name="CompetitionTypeSelectorCombo"
+                            Height="40"
+                            VerticalAlignment="Bottom"
+                            ItemsSource="{Binding Path=CompetitionTypes, Mode=TwoWay}"
+                            SelectedIndex="0"
+                            SelectionChanged="CompetitionTypeSelectorCombo_SelectionChanged" />
+                        <Label
+                            Height="40"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            VerticalContentAlignment="Bottom"
+                            Content="Result Type" />
+                        <ComboBox
+                            x:Name="ResultTypeSelectorCombo"
+                            Grid.Row="1"
+                            Height="40"
+                            VerticalAlignment="Bottom"
+                            ItemsSource="{Binding Path=ResultTypes, Mode=TwoWay}"
+                            SelectedIndex="0" />
+
+                        <Button
                             Width="140"
                             Height="45"
+                            Margin="0,30"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Click="UpdateListOfEvents"
                             Content="Update List"
                             Visibility="Visible" />
-                        <CheckBox
-                            Grid.Row="2"
-                            Margin="20"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Content="Virtualize"
-                            IsChecked="{Binding Virtualize}" />
-                        <Label
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            Width="83"
-                            Height="45"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Content="Relogin times:" />
-                        <Label
-                            Grid.Row="2"
-                            Grid.RowSpan="2"
-                            Width="140"
-                            Height="45"
-                            Margin="96,74.333,0,0"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top"
-                            Content="{Binding Path=ReloginTimes}" />
-                        <Grid
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            Margin="0,0,0,10">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="25" />
-                                    <RowDefinition Height="40" />
-                                    <RowDefinition Height="40" />
-                                </Grid.RowDefinitions>
-                                <Label
-                                    Height="40"
-                                    Margin="0,0,0,0"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Top"
-                                    Content="Result Type" />
-                                <ComboBox
-                                    x:Name="ResultTypeSelectorCombo"
-                                    Grid.Row="1"
-                                    Height="40"
-                                    VerticalAlignment="Bottom"
-                                    ItemsSource="{Binding Path=ResultTypes, Mode=TwoWay}"
-                                    SelectedIndex="0" />
-                                <ComboBox
-                                    x:Name="CompetitionTypeSelectorCombo"
-                                    Grid.Row="2"
-                                    Height="40"
-                                    VerticalAlignment="Bottom"
-                                    ItemsSource="{Binding Path=CompetitionTypes, Mode=TwoWay}"
-                                    SelectedIndex="0" />
-                            </Grid>
-                        </Grid>
-                    </Grid>
+
+
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Width="83"
+                                Height="45"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Content="Relogin times:" />
+                            <Label
+                                Height="45"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top"
+                                Content="{Binding Path=ReloginTimes}" />
+                        </StackPanel>
+
+                    </StackPanel>
 
                     <DataGrid
                         x:Name="dataGrid"
@@ -557,6 +551,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
             <TextBox
@@ -655,6 +650,24 @@
                 HorizontalAlignment="Right"
                 VerticalContentAlignment="Center"
                 Content="Button Background Colour:" />
+
+            <ComboBox
+                x:Name="SportCombo"
+                Grid.Row="5"
+                Grid.Column="1"
+                Width="130"
+                Height="30"
+                Margin="0,21"
+                HorizontalAlignment="Left"
+                SelectionChanged="Sport_SelectionChanged" />
+
+            <Label
+                Grid.Row="5"
+                Grid.Column="0"
+                Margin="10,10"
+                HorizontalAlignment="Right"
+                VerticalContentAlignment="Center"
+                Content="Competition:" />
         </Grid>
 
         <Grid

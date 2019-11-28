@@ -243,7 +243,7 @@ namespace Marketplace
         public void SetMarketFilter(string searchString)
         {
             // Start Here
-
+            marketFilter = new MarketFilter();
             TimeRange time = new TimeRange
             {
                 From = DateTime.Now,

@@ -223,8 +223,9 @@ namespace SportsBettingModule
                             try
                             {
                                 EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
-                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) < 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
-                                if (EventListWithOdds.Count == 0)
+                                var eventsToCheck = EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) < 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList();
+                                EventListWithOdds = marketMessenger.GetAllOdds(eventsToCheck, eventType, competition);
+                                if (EventListWithOdds.Count == 0 && eventsToCheck.Count > 0)
                                 {
                                     if (MarketplaceErrorOccured != null)
                                     {

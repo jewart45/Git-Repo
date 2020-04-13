@@ -9,6 +9,7 @@ namespace SportsBettingModule.Classes
         public string Name { get; private set; }
 
         public string Winner { get; set; }
+        public string ResultType { get; set; }
         public DateTime Date { get; set; }
         public GoTheDistance GoTheDistance { get; set; } = new GoTheDistance();
 
@@ -19,9 +20,11 @@ namespace SportsBettingModule.Classes
         public MethodOfVictory MethodOfVictory { get; set; } = new MethodOfVictory();
         public List<Fighter> Fighters { get; set; } = new List<Fighter>();
 
-        public Event(string name, Fighter f1 = null, Fighter f2 = null)
+        public Event(string name, string resultType = null, Fighter f1 = null, Fighter f2 = null)
         {
             Name = name;
+            ResultType = resultType;
+
             if (f1 != null)
             {
                 Fighters.Add(f1);

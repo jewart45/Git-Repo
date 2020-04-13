@@ -234,7 +234,7 @@
             x:Name="ListBetsGrid"
             Grid.Row="1"
             Background="AliceBlue"
-            Visibility="Visible">
+            Visibility="Hidden">
 
             <Viewbox>
                 <Grid>

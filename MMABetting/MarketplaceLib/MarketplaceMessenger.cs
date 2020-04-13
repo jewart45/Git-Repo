@@ -57,7 +57,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged")
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged" || eveType == "All")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -146,6 +146,7 @@ namespace Marketplace
                         PersistenceType = PersistenceType.LAPSE,
                         Price = selId.OddsDecimal > selId.LastTradedOddsDecimal ? selId.OddsDecimal : selId.LastTradedOddsDecimal,
                         Size = sizeToBet
+                     
                     };
 
                     placeInstruction.LimitOrder = limitOrder;
@@ -153,6 +154,7 @@ namespace Marketplace
                     placeInstructions.Add(placeInstruction);
 
                     var customerRef = selId.MarketId;
+                    //This Is Where it orders!
                     var placeExecutionReport = client.placeOrders(selId.MarketId, customerRef, placeInstructions);
                     if (placeExecutionReport.Status == ExecutionReportStatus.SUCCESS)
                     {
@@ -291,7 +293,7 @@ namespace Marketplace
                 if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), f.MarketId);
+                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
                     foreach (RunnerDescription runner in f.Runners)
                     {
                         ev.Runners.Add(new MarketplaceRunner(runner.RunnerName, runner.SelectionId.ToString()));
@@ -327,10 +329,10 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name.Trim());
-                if ((f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged") && (f.Competition.Name == competition || competition == ""))
+                if ((f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged" || evType == "All") && (f.Competition.Name == competition || competition == "All"))
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId);
+                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
 
                     foreach (RunnerDescription runner in f.Runners)
                     {
@@ -368,7 +370,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged" || evType == "All")
                 {
                     marketIds.Add(f.MarketId);
                     foreach (RunnerDescription runner in f.Runners)
@@ -407,10 +409,10 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged" || evType == "All")
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent test = new MarketplaceEvent(f.Event.Name, f.MarketId);
+                    MarketplaceEvent test = new MarketplaceEvent(f.Event.Name, f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
                     foreach (RunnerDescription runner in f.Runners)
                     {
                         test.Runners.Add(new MarketplaceRunner(runner.RunnerName, runner.SelectionId.ToString()));
@@ -446,7 +448,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged" || evType == "All")
                 {
                     marketIds.Add(f.MarketId);
                     foreach (RunnerDescription runner in f.Runners)
@@ -486,7 +488,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 EventNames.Add(f.Event.Name);
-                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
+                if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged" || evType == "All")
                 {
                     marketIds.Add(f.MarketId);
 
@@ -530,7 +532,7 @@ namespace Marketplace
             IList<string> marketIds = new List<string>();
             foreach (MarketCatalogue f in marketCatalogues)
             {
-                if ((f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged") && f.Runners.Count == 2)
+                if ((f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged" || eveType == "All") && f.Runners.Count == 2)
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -574,7 +576,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged")
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged" || eveType == "All")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -629,7 +631,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged")
+                if (f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged" || eveType == "All")
                 {
                     marketIds.Add(f.MarketId);
                 }
@@ -695,7 +697,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //Removed 2 runners condition
-                if ((f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged") && (f.Competition.Name == competition || competition == ""))
+                if ((f.MarketName == eveType || f.MarketName == eveType + " (UNMANAGED)" || f.MarketName.Trim() == eveType + " - Unmanaged" || eveType == "All") && (f.Competition.Name == competition || competition == "All"))
                 {
                     marketIds.Add(f.MarketId);
                 }

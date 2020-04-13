@@ -291,7 +291,7 @@ namespace Marketplace
                 if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), f.MarketId);
+                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
                     foreach (RunnerDescription runner in f.Runners)
                     {
                         ev.Runners.Add(new MarketplaceRunner(runner.RunnerName, runner.SelectionId.ToString()));
@@ -330,7 +330,7 @@ namespace Marketplace
                 if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId);
+                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
 
                     foreach (RunnerDescription runner in f.Runners)
                     {
@@ -408,7 +408,7 @@ namespace Marketplace
                 if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent test = new MarketplaceEvent(f.Event.Name, f.MarketId);
+                    MarketplaceEvent test = new MarketplaceEvent(f.Event.Name, f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
                     foreach (RunnerDescription runner in f.Runners)
                     {
                         test.Runners.Add(new MarketplaceRunner(runner.RunnerName, runner.SelectionId.ToString()));

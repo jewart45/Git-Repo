@@ -157,8 +157,8 @@
         <Grid
             x:Name="LoginGrid"
             Grid.Row="1"
-            Background="Transparent"
-            Visibility="Hidden">
+            Margin="{Binding Path=ViewMargin}"
+            Visibility="Visible">
             <Grid x:Name="LoggingGrid" Visibility="{Binding Path=UserLoggedIn}">
                 <TextBox
                     x:Name="usernameTxtBox"
@@ -211,7 +211,7 @@
                     Click="loginUserBtn_Click"
                     Content="Login"
                     Visibility="{Binding Path=UserLoggedIn}" />
-            </Grid>
+            
             <Label
                 Width="120"
                 Height="23"
@@ -229,10 +229,12 @@
                 VerticalAlignment="Center"
                 Content="{Binding Path=LoggedUserName}"
                 Visibility="Hidden" />
+            </Grid>
         </Grid>
         <Grid
             x:Name="ListBetsGrid"
             Grid.Row="1"
+            Margin="{Binding Path=ViewMargin}"
             Background="AliceBlue"
             Visibility="Hidden">
 
@@ -383,6 +385,7 @@
         </Grid>
         <Grid
             x:Name="ListPastFightsGrid"
+            Margin="{Binding Path=ViewMargin}"
             Grid.Row="1"
             Background="AliceBlue"
             Visibility="Hidden">
@@ -433,6 +436,7 @@
         <Grid
             x:Name="GraphsGrid"
             Grid.Row="1"
+            Margin="{Binding Path=ViewMargin}"
             Background="Beige"
             Visibility="Hidden">
             <Grid.RowDefinitions>
@@ -535,6 +539,7 @@
         <Grid
             x:Name="SettingsGrid"
             Grid.Row="1"
+            Margin="{Binding Path=ViewMargin}"
             Background="White"
             Visibility="Hidden">
             <Grid.ColumnDefinitions>
@@ -674,6 +679,7 @@
             x:Name="ResultsGrid"
             Grid.Row="1"
             Background="White"
+            Margin="{Binding Path=ViewMargin}"
             Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" MinWidth="140" />

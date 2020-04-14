@@ -45,6 +45,20 @@ namespace SportsBettingModule
             }
         }
 
+        private Thickness viewMargin = new Thickness(0);
+
+        public Thickness ViewMargin
+        {
+            get => viewMargin;
+            set
+            {
+                viewMargin = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
+
         private List<string> resultTypes = new List<string>();
 
         public List<string> ResultTypes {

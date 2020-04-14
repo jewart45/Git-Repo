@@ -42,6 +42,7 @@ namespace SportsBettingModule
         private Timer twelveHourRefreshTimer;
         private List<SelectionDisplay> AllSelections = new List<SelectionDisplay>();
         private Timer getResultsTimer;
+        private Grid currentWindow;
         private const string resultsFilePath = "https://rss.betfair.com/RSS.aspx?format=rss&sportID=7522";
 
         public MainWindow()
@@ -78,6 +79,7 @@ namespace SportsBettingModule
             Windows.Add(SettingsGrid);
             Windows.Add(ListPastFightsGrid);
             Windows.Add(ResultsGrid);
+            Windows.ForEach(x => x.Visibility = Visibility.Hidden);
 
             NavigationSet.Add(LoginGrid, LoginBtn);
             NavigationSet.Add(ListBetsGrid, ListBetsBtn);
@@ -1830,29 +1832,81 @@ namespace SportsBettingModule
 
         private void ShowWindow(Grid gridName)
         {
+            if (gridName == currentWindow)
+                return;
+
             //LoadingScreen(false);
             foreach (Button b in NavigationButtons)
             {
                 b.FontWeight = System.Windows.FontWeights.Normal;
                 b.Background = Brushes.WhiteSmoke;
             }
-            foreach (Grid window in Windows)
+
+            //InvokeUI(() =>
+            //{
+            Task.Run(async() =>
             {
-                if (window == gridName)
+                await DropWindow(Windows.Find(x => x == currentWindow));
+                InvokeUI(() =>
                 {
-                    window.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    window.Visibility = Visibility.Hidden;
-                }
-            }
+                    foreach (Grid window in Windows)
+                    {
+                        if (window == gridName)
+                        {
+                            window.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            window.Visibility = Visibility.Hidden;
+                        }
+                    }
+                });
+                await RaiseWindow(Windows.Find(x => x == gridName));
+            });
+
+            //});
+            
             if (NavigationSet.ContainsKey(gridName))
             {
                 Button btn = NavigationSet[gridName];
                 btn.FontWeight = System.Windows.FontWeights.Bold;
                 btn.Background = Brushes.Gray;
             }
+            currentWindow = gridName;
+        }
+
+        private Task RaiseWindow(Grid grid)
+        {
+            return Task.Run(() =>
+            {
+                InvokeUI(() => grid.Visibility = Visibility.Visible);
+                if (grid == null)
+                    return;
+
+                while (myGuiProperties.ViewMargin.Top > 0)
+                {
+                    InvokeUI(() => myGuiProperties.ViewMargin = new Thickness(0, myGuiProperties.ViewMargin.Top - 10, 0, 0));
+                    System.Threading.Thread.Sleep(10);
+                }
+                
+            });
+        }
+
+        private Task DropWindow(Grid grid)
+        {
+            return Task.Run(() =>
+            {
+                if (grid == null)
+                    return;
+                while (myGuiProperties.ViewMargin.Top < LoadingViewGrid.ActualHeight)
+                {
+                    InvokeUI(() => myGuiProperties.ViewMargin = new Thickness(0, myGuiProperties.ViewMargin.Top + 10, 0, 0));
+                    System.Threading.Thread.Sleep(10);
+                }
+                InvokeUI(() => grid.Visibility = Visibility.Hidden);
+                
+            });
+
         }
 
         private void startLoggingBtn_Click(object sender, RoutedEventArgs e)

@@ -3,6 +3,7 @@ using LoginClientLib;
 using Marketplace;
 using Microsoft.Win32;
 using SportsBettingModule.Classes;
+using SportsBettingModule.Templates;
 using SportsDatabaseSqlite;
 using SportsDatabaseSqlite.Tables;
 using System;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
@@ -1766,6 +1768,19 @@ namespace SportsBettingModule
             {
                 e.Column.IsReadOnly = false;
                 
+            }
+            else if ((string)e.Column.Header == "Change")
+            {
+                DataGridTemplateColumn col = new DataGridTemplateColumn();
+                col.Header = e.Column.Header;
+                FrameworkElementFactory dataCellFactoryElem = new FrameworkElementFactory(typeof(DataCell));
+                Binding dateBind = new Binding(e.PropertyName);
+                dateBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+                dateBind.Mode = BindingMode.TwoWay;
+                DataTemplate cellTemplate = new DataTemplate();
+                cellTemplate.VisualTree = dataCellFactoryElem;
+                col.CellTemplate = cellTemplate;
+                e.Column = col;//Set the new generated column
             }
             else
             {

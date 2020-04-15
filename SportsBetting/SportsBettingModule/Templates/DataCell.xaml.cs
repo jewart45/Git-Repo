@@ -19,22 +19,38 @@ namespace SportsBettingModule.Templates
     /// </summary>
     public partial class DataCell : Window
     {
-        public string ChangeText { get; set; } = "####";
+        private string text = "#####";
+        public string Text
+        {
+            get
+            {
+                return text;
+            }
+            set
+            {
+                text = value;
+                UpdateColour();
+            }
+        }
         public DataCell()
         {
             InitializeComponent();
-            contentLbl.Content = ChangeText;
+            contentLbl.Content = Text;
             UpdateColour();
         }
 
-        private async Task UpdateColour()
+        private void UpdateColour()
         {
-            backgroundGrid.Opacity = 1;
-            for(double i = 0; i <= 0; i = i + 0.01)
+            Task.Run(async () =>
             {
-                backgroundGrid.Opacity = 1 - i;
-                await Task.Delay(100);
-            }
+                backgroundGrid.Opacity = 1;
+                for (double i = 0; i <= 0; i = i + 0.01)
+                {
+                    backgroundGrid.Opacity = 1 - i;
+                    await Task.Delay(10);
+                }
+            });
+            
         }
     }
 }

@@ -14,37 +14,12 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     mc:Ignorable="d">
+    
     <Grid>
+        
 
         <Grid.Resources>
-            <!--  DataTemplate for Published Date column defined in Grid.Resources.  PublishDate is a property on the ItemsSource of type DateTime  -->
-            <DataTemplate x:Key="ChangeTemplate">
-                <StackPanel Width="20" Height="30">
-                    <Border
-                        Background="LightBlue"
-                        BorderBrush="Black"
-                        BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            FontSize="8"
-                            Text="{Binding PublishDate, StringFormat={}{0:MMM}}" />
-                    </Border>
-                    <Border
-                        Background="White"
-                        BorderBrush="Black"
-                        BorderThickness="1">
-                        <TextBlock
-                            HorizontalAlignment="Center"
-                            FontSize="8"
-                            FontWeight="Bold"
-                            Text="{Binding PublishDate, StringFormat={}{0:yyyy}}" />
-                    </Border>
-                </StackPanel>
-            </DataTemplate>
-            <!--  DataTemplate for the Published Date column when in edit mode.  -->
-            <DataTemplate x:Key="EditingDateTemplate">
-                <DatePicker SelectedDate="{Binding PublishDate}" />
-            </DataTemplate>
+            
         </Grid.Resources>
 
         <Grid.Background>
@@ -236,13 +211,10 @@
             Grid.Row="1"
             Margin="{Binding Path=ViewMargin}"
             Background="AliceBlue"
-            Visibility="Hidden">
+            Visibility="Visible">
 
             <Viewbox>
                 <Grid>
-
-
-
                     <Grid.RowDefinitions>
                         <RowDefinition Height="25" />
                         <RowDefinition Height="*" />
@@ -373,9 +345,24 @@
                                 IsReadOnly="True" />
                             <DataGridTextColumn
                                 Width="*"
-                                Binding="{Binding Path=Change}"
+                                Binding="{Binding Path=Change, NotifyOnTargetUpdated=True}"
                                 Header="Change"
-                                IsReadOnly="True" />
+                                IsReadOnly="True" >
+                                <DataGridTextColumn.CellStyle>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                                                <BeginStoryboard>
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" From="Red" To="Transparent"  Duration="0:0:1"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+
+                            </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
 

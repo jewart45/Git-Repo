@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Newtonsoft.Json;
+using System;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Marketplace.TO
 {
@@ -31,7 +29,7 @@ namespace Marketplace.TO
 
         [JsonProperty(PropertyName = "persistenceType")]
         public PersistenceType PersistenceType { get; set; }
-        
+
         [JsonProperty(PropertyName = "orderType")]
         public OrderType OrderType { get; set; }
 

@@ -14,12 +14,10 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized"
     mc:Ignorable="d">
-    
+
     <Grid>
-        
 
         <Grid.Resources>
-            
         </Grid.Resources>
 
         <Grid.Background>
@@ -186,7 +184,7 @@
                     Click="loginUserBtn_Click"
                     Content="Login"
                     Visibility="{Binding Path=UserLoggedIn}" />
-            
+
             <Label
                 Width="120"
                 Height="23"
@@ -231,8 +229,6 @@
                             Margin="10"
                             Content="Refresh Selections" Click="RefreshSelection_Click" />
 
-
-
                         <Label
                             Height="40"
                             Margin="0,0,0,0"
@@ -272,9 +268,6 @@
                             Content="Update List"
                             Visibility="Visible" />
 
-
-
-
                         <StackPanel Orientation="Horizontal">
                             <Label
                                 Grid.Row="3"
@@ -290,7 +283,6 @@
                                 VerticalAlignment="Top"
                                 Content="{Binding Path=ReloginTimes}" />
                         </StackPanel>
-
                     </StackPanel>
 
                     <DataGrid
@@ -347,26 +339,23 @@
                                 Width="*"
                                 Binding="{Binding Path=Change, NotifyOnTargetUpdated=True}"
                                 Header="Change"
-                                IsReadOnly="True" >
+                                IsReadOnly="True">
                                 <DataGridTextColumn.CellStyle>
                                     <Style>
                                         <Style.Triggers>
                                             <EventTrigger RoutedEvent="Binding.TargetUpdated">
                                                 <BeginStoryboard>
                                                     <Storyboard>
-                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" From="Red" To="Transparent"  Duration="0:0:1"/>
+                                                        <ColorAnimation Storyboard.TargetProperty="Background.Color" From="Red" To="Transparent"  Duration="0:0:1" />
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </EventTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
-
                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-
-
                 </Grid>
             </Viewbox>
         </Grid>

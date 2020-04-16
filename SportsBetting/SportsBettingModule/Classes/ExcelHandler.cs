@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Data.OleDb;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace SportsBettingModule.Classes
 {
-    class ExcelHandler
+    internal class ExcelHandler
     {
         private OleDbConnection connection { get; set; }
         private OleDbCommand cmd { get; set; }
@@ -14,19 +14,15 @@ namespace SportsBettingModule.Classes
         public string connectionString { get; set; }
         public bool isConnected { get; private set; }
         public List<string> LoggingColumns { get; set; }    //Accesible list of columns to log in datafile
+
         // Declare the delegate (if using non-generic pattern).
         public delegate void RaiseError(object sender, string error);
 
         // Declare the event.
         public event RaiseError ErrorOccured;
 
-
-
-
-
         public ExcelHandler(string filename)
         {
-
             connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filename + ";Extended Properties=Excel 12.0;Persist Security Info=True";
 
             //connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Dsn=Excel Files;dbq=C:\Users\jewar\source\repos\MMABetting\SoccerBettingModule\SoccerBettingModule\excel\mmaBets.xlsx;defaultdir=C:\Users\jewar\source\repos\MMABetting\SoccerBettingModule\SoccerBettingModule\excel;driverid=1046;maxbuffersize=2048;pagetimeout=5";
@@ -71,7 +67,6 @@ namespace SportsBettingModule.Classes
             timer.AutoReset = true;
             timer.Elapsed += LogData;
 
-
             timer.Enabled = true;
 
             return started;
@@ -95,7 +90,6 @@ namespace SportsBettingModule.Classes
         //        return false;
         //    }
 
-
         //}
 
         public void CreateTable(string name, List<string> Columns)
@@ -116,12 +110,10 @@ namespace SportsBettingModule.Classes
 
             //columnlist = columnlist.Substring(0,columnlist.Length - 3);
 
-
             string command = "Create Table Bettin (F1 char(255), F2 char(255))";
 
             ExecuteNonQuery(command);
             //cmd.CommandText = "ALTER TABLE [Bets$] ADD Testing VARCHAR(50)";
-
         }
 
         public bool AddColumn(string col)
@@ -133,11 +125,8 @@ namespace SportsBettingModule.Classes
 
         public void ShutdownConnection()
         {
-
             Task shutdown = new Task(() =>
             {
-
-
                 if (connection != null)
                 {
                     cmd.Connection.Close();
@@ -155,13 +144,8 @@ namespace SportsBettingModule.Classes
                             ErrorOccured(this, "Could not close Connection to Excel");
                     }
                 }
-
             });
             shutdown.Start();
-
-
-
-
         }
 
         private bool ExecuteNonQuery(string commandText)
@@ -170,7 +154,6 @@ namespace SportsBettingModule.Classes
             try
             {
                 //Task<bool> connect = new Task<bool>(()=>{
-
                 //    if (connection.State != System.Data.ConnectionState.Open)
                 //        connection.Open();
                 //    int i = 0;
@@ -185,16 +168,14 @@ namespace SportsBettingModule.Classes
                 //        }
                 //        catch(Exception ex)
                 //        {
-
                 //            if (ErrorOccured != null)
                 //                ErrorOccured(this, "Could not complete command: " + ex.Message);
                 //            return false;
 
                 //        }
 
-                //    } 
+                //    }
                 //    else return false;
-
 
                 //});
                 //connect.Start();
@@ -214,12 +195,10 @@ namespace SportsBettingModule.Classes
 
                 //});
 
-
                 try
                 {
                     if (cmd.Connection.State != System.Data.ConnectionState.Open)
                         cmd.Connection.Open();
-
 
                     if (cmd.Connection.State == System.Data.ConnectionState.Open)
                     {
@@ -237,8 +216,6 @@ namespace SportsBettingModule.Classes
                     cmd.Connection.Close();
                     return false;
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -248,9 +225,6 @@ namespace SportsBettingModule.Classes
                     cmd.Connection.Close();
                 return false;
             }
-
-
-
         }
 
         public void RaiseErrorEventHandler(Exception ex)

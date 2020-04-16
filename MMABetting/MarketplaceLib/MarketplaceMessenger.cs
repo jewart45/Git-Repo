@@ -153,7 +153,6 @@ namespace Marketplace
                         PersistenceType = PersistenceType.LAPSE,
                         Price = selId.OddsDecimal > selId.LastTradedOddsDecimal ? selId.OddsDecimal : selId.LastTradedOddsDecimal,
                         Size = sizeToBet
-                     
                     };
 
                     placeInstruction.LimitOrder = limitOrder;
@@ -402,7 +401,6 @@ namespace Marketplace
                 MarketProjection.EVENT,
                 MarketProjection.RUNNER_DESCRIPTION,
                 MarketProjection.COMPETITION,
-
             };
             MarketSort marketSort = MarketSort.MAXIMUM_TRADED;
             string maxResults = "100";
@@ -713,21 +711,18 @@ namespace Marketplace
             //get all prices from the exchange
             //priceData.Add(PriceData.EX_ALL_OFFERS);
 
-           
-
             Console.WriteLine("\nGetting prices for market");
 
             IList<MarketBook> marketBook = new List<MarketBook>();
             IList<MarketBook> incrementalBook;
             for (int i = 0; i < marketIds.Count; i = i + 50)
             {
-
                 int j = i + 50 > marketIds.Count ? marketIds.Count : i + 50;
                 try
                 {
                     incrementalBook = client.listMarketBook(marketIds.Skip(i).Take(j - i).ToList(), priceProjection);
                 }
-                catch(System.Exception ex)
+                catch (System.Exception ex)
                 {
                     incrementalBook = new List<MarketBook>();
                     Console.WriteLine(ex);
@@ -758,13 +753,11 @@ namespace Marketplace
                             }
                             else
                             {
-
                             }
                         }
                     }
                     else
                     {
-
                     }
                 }
             }
@@ -822,7 +815,7 @@ namespace Marketplace
             foreach (MarketCatalogue f in marketCatalogues)
             {
                 //EventNames.Add(f.Event.Name);
-                if (!eventTypes.Contains(f.MarketName.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged","")))
+                if (!eventTypes.Contains(f.MarketName.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged", "")))
                 {
                     eventTypes.Add(f.MarketName.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged", ""));
                 }
@@ -873,7 +866,6 @@ namespace Marketplace
 
         public List<string> GetCompetitionTypes()
         {
-
             //as an example we requested runner metadata
             ISet<MarketProjection> marketProjections = new HashSet<MarketProjection>
             {

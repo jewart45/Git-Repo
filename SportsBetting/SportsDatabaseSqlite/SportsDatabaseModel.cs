@@ -91,7 +91,6 @@ namespace SportsDatabaseSqlite
             modelBuilder.Entity<User>();
             modelBuilder.Entity<Settings>();
 
-
             var sqlitConnectionInitializer = new SqliteCreateDatabaseIfNotExists<SportsDatabaseModel>(modelBuilder);
             Database.SetInitializer(sqlitConnectionInitializer);
         }

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Marketplace.TO
 {
-
     public class MarketTypeResult
     {
         [JsonProperty(PropertyName = "marketType")]

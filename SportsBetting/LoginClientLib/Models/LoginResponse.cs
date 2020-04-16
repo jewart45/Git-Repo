@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
+﻿using System.Runtime.Serialization;
 
 namespace LoginClientLib.Models
 {
@@ -9,6 +7,7 @@ namespace LoginClientLib.Models
     {
         [DataMember(Name = "sessionToken")]
         public string SessionToken { get; set; }
+
         [DataMember(Name = "loginStatus")]
         public string LoginStatus { get; set; }
     }

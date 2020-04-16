@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Newtonsoft.Json;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Marketplace.TO
 {

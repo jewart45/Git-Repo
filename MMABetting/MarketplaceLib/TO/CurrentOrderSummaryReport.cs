@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Marketplace.TO
 {
@@ -32,6 +30,6 @@ namespace Marketplace.TO
             sb.AppendFormat(" : MoreAvailable={0}", MoreAvailable);
 
             return sb.ToString();
-        }		
+        }
     }
 }

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Marketplace.TO
 {
@@ -22,7 +19,7 @@ namespace Marketplace.TO
 
         [JsonProperty(PropertyName = "discountRate")]
         public double DiscountRate { get; set; }
-        
+
         [JsonProperty(PropertyName = "pointsBalance")]
         public int PointsBalance { get; set; }
 

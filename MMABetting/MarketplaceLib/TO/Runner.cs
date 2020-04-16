@@ -1,8 +1,7 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Marketplace.TO
 {
@@ -59,7 +58,6 @@ namespace Marketplace.TO
             if (ExchangePrices != null)
             {
                 sb.AppendFormat(": {0}", ExchangePrices);
-
             }
 
             if (Orders != null && Orders.Count > 0)

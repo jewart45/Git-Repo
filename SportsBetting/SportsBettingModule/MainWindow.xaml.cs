@@ -3,7 +3,6 @@ using LoginClientLib;
 using Marketplace;
 using Microsoft.Win32;
 using SportsBettingModule.Classes;
-using SportsBettingModule.Templates;
 using SportsDatabaseSqlite;
 using SportsDatabaseSqlite.Tables;
 using System;
@@ -16,11 +15,9 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace SportsBettingModule
 {
@@ -152,8 +149,6 @@ namespace SportsBettingModule
 
             IDictionary<string, string> RunnerDictionary;
 
-           
-
             List<MarketplaceEvent> EventList = new List<MarketplaceEvent>();
             List<MarketplaceEvent> EventListWithOdds = new List<MarketplaceEvent>();
 
@@ -166,19 +161,17 @@ namespace SportsBettingModule
                 ReLogin();
                 //Try Again
                 RunnerDictionary = marketMessenger.GetBettingDictionary(eventType);
-                
             }
 
             EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
             EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, competition);
-            
+
             CreateEventFramework(BettingInfoAvailable, EventListWithOdds, eventType);
-         
 
             //Sort by fight date and then name of fight
             BettingInfoAvailable = BettingInfoAvailable.OrderBy(x => x.Name).OrderBy(x => x.Date).ToList();
 
-            foreach(var ev in BettingInfoAvailable)
+            foreach (var ev in BettingInfoAvailable)
             {
                 var selection = ChooseSelectionType(ev);
                 foreach (var run in selection.Runners)
@@ -191,7 +184,6 @@ namespace SportsBettingModule
                         selDisplay.Date = ev.Date;
                         selDisplay.Percentage = run.PercentChance;
                         selDisplay.DecimalOdds = run.Multiplier;
-
                     }
                     else
                     {
@@ -211,12 +203,8 @@ namespace SportsBettingModule
                         AllSelections.Add(sd);
 
                         ChangeLogging(ev, run, true);
-
                     }
-
-                   
                 }
-                
             }
             var selsNotAvail = AllSelections.Where(x => !BettingInfoAvailable.Select(y => y.Name).ToList().Contains(x.EventName) && (x.ResultType == settings.EventType || settings.EventType == "All"));
 
@@ -372,7 +360,6 @@ namespace SportsBettingModule
                     }
                 }
             }
-
         }
 
         private void AutoRefreshChk_Click(object sender, RoutedEventArgs e)
@@ -1336,16 +1323,11 @@ namespace SportsBettingModule
             ShowWindow(GraphsGrid);
         }
 
-
-        
-
         private void listBetsBtn_Click(object sender, RoutedEventArgs e)
         {
             LoadingScreen(true);
 
-            
             ShowWindow(ListBetsGrid);
-            
 
             LoadingScreen(false);
         }
@@ -1358,7 +1340,6 @@ namespace SportsBettingModule
 
             myGuiProperties.SelectionToDisplay.ForEach(x => x.Selected = (bool)chkSender.IsChecked);
 
-            
             foreach (var sel in myGuiProperties.SelectionToDisplay)
             {
                 var s = ChooseSelectionType(BettingInfoAvailable.Where(x => x.Name == sel.EventName).First());
@@ -1385,14 +1366,11 @@ namespace SportsBettingModule
                             break;
 
                         default:
-                           ChangeLogging(BettingInfoAvailable.Where(x => x.FightResult.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
+                            ChangeLogging(BettingInfoAvailable.Where(x => x.FightResult.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
                             break;
                     }
-                    
                 }
             }
-
-
         }
 
         private void LoggingIntervalTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -1409,8 +1387,6 @@ namespace SportsBettingModule
                 }
             }
         }
-
-     
 
         private void loginBtn_Click(object sender, RoutedEventArgs e) => ShowWindow(LoginGrid);
 
@@ -1460,14 +1436,9 @@ namespace SportsBettingModule
                                 myGuiProperties.AutoRefreshInterval = TimeSpan.FromSeconds(db.settings.First().AutoRefreshInterval_s);
                                 myGuiProperties.LoggingInterval = TimeSpan.FromSeconds(db.settings.First().LoggingFrequency_s);
                                 myGuiProperties.ShortLoggingInterval = TimeSpan.FromSeconds(db.settings.First().ShortLoggingFrequency_s);
-
                             }
                         }
-
-
                     });
-
-
                 }
 
                 myGuiProperties.UserLoggedIn = true;
@@ -1524,11 +1495,10 @@ namespace SportsBettingModule
                         }
                     }
                 }
-                
-                InvokeUI(()=> {
-                    
-                    LoadingScreen(false);
 
+                InvokeUI(() =>
+                {
+                    LoadingScreen(false);
                 });
             });
         }
@@ -1558,7 +1528,7 @@ namespace SportsBettingModule
             {
                 MainMessage("Refreshing List...");
                 GetBettingInfo(settings.EventType, settings.Competition);
-                
+
                 var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
                 typesSorted.Sort();
                 typesSorted.Insert(0, "All");
@@ -1620,13 +1590,12 @@ namespace SportsBettingModule
 
         private Task GetResultsFromXML(string urlPath)
         {
-            
 #pragma warning disable IDE0022 // Use expression body for methods
             return Task.Run(() =>
             {
                 XmlReader reader;
                 string url = urlPath;
-                
+
                 XmlReaderSettings p = new XmlReaderSettings
                 {
                     DtdProcessing = DtdProcessing.Parse
@@ -1636,7 +1605,6 @@ namespace SportsBettingModule
                 {
                     try
                     {
-                        
                         reader = XmlReader.Create(url, p);
                         MainMessage($"Getting Results from XML... Attempt {i}");
                         var feed = SyndicationFeed.Load(reader);
@@ -1766,10 +1734,9 @@ namespace SportsBettingModule
 
         private void DataGrid_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
-            if((string)e.Column.Header == "Selected")
+            if ((string)e.Column.Header == "Selected")
             {
                 e.Column.IsReadOnly = false;
-                
             }
             else
             {
@@ -1848,7 +1815,7 @@ namespace SportsBettingModule
 
             //InvokeUI(() =>
             //{
-            Task.Run(async() =>
+            Task.Run(async () =>
             {
                 await DropWindow(Windows.Find(x => x == currentWindow));
                 InvokeUI(() =>
@@ -1869,7 +1836,7 @@ namespace SportsBettingModule
             });
 
             //});
-            
+
             if (NavigationSet.ContainsKey(gridName))
             {
                 Button btn = NavigationSet[gridName];
@@ -1892,7 +1859,6 @@ namespace SportsBettingModule
                     InvokeUI(() => myGuiProperties.ViewMargin = new Thickness(0, myGuiProperties.ViewMargin.Top - 10, 0, 0));
                     System.Threading.Thread.Sleep(10);
                 }
-                
             });
         }
 
@@ -1908,9 +1874,7 @@ namespace SportsBettingModule
                     System.Threading.Thread.Sleep(10);
                 }
                 InvokeUI(() => grid.Visibility = Visibility.Hidden);
-                
             });
-
         }
 
         private void startLoggingBtn_Click(object sender, RoutedEventArgs e)
@@ -2045,14 +2009,11 @@ namespace SportsBettingModule
             //TODO: Implement ViewBalance
         }
 
-     
-
         /// <summary>
         /// Handles the KeyDown event of the AutoRefreshIntervalTextBox control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
-       
 
         private void Test_Click(object sender, RoutedEventArgs e)
         {
@@ -2068,7 +2029,6 @@ namespace SportsBettingModule
             double.TryParse(OverLevelTextBox.Text, out double span);
             if (span != 0)
             {
-
                 OddsLogger.MinBetLevel = span;
             }
         }
@@ -2135,7 +2095,6 @@ namespace SportsBettingModule
                         oxyPlotViewResults.Model = g.CreateOxyPlot();
                     }
                     ResultsByDateChk.Visibility = Visibility.Visible;
-
                 }
                 else
                 {
@@ -2150,11 +2109,9 @@ namespace SportsBettingModule
             //LoadingScreen(true);
             Task.Run(async () =>
             {
-                
                 await GetResultsFromXML(resultsFilePath);
-                
+
                 FillBetResults();
-               
             });//LoadingScreen(false);
 
         private void MainMessage(string v) => InvokeUI(() =>
@@ -2173,7 +2130,7 @@ namespace SportsBettingModule
                 Dictionary<int, double> dict1 = new Dictionary<int, double>();
                 Dictionary<int, double> dict2 = new Dictionary<int, double>();
                 var l = db.results
-                    .Where(x=>x.AmountMatched > 0)
+                    .Where(x => x.AmountMatched > 0)
                     //.Where(x => x.EventName == EventSelector.SelectedItem.ToString() && x.SelectionName == SelectionSelector.SelectedItem.ToString())
                     //.Select(t => new { t.EventStart, t.AmountWon })
                     .OrderBy(x => x.EventStart)
@@ -2183,7 +2140,6 @@ namespace SportsBettingModule
                 {
                     for (int i = 0; i < l.Count; i++)
                     {
-                        
                         sum += ((l[i].AmountWon - Convert.ToDouble(l[i].Reference)) / l[i].AmountMatched);
                         if (i > 20)
                         {
@@ -2264,17 +2220,17 @@ namespace SportsBettingModule
             }
             using (SportsDatabaseModel db = new SportsDatabaseModel())
             {
-                if(db.settings.Count() == 0)
+                if (db.settings.Count() == 0)
                 {
                     db.settings.Add(new Settings
                     {
-                        AutoRefreshInterval_s = 20*60,
-                        LoggingFrequency_s = 6*60*60,
-                        ShortLoggingFrequency_s = 42*60
+                        AutoRefreshInterval_s = 20 * 60,
+                        LoggingFrequency_s = 6 * 60 * 60,
+                        ShortLoggingFrequency_s = 42 * 60
                     });
                     db.SaveChanges();
                 }
-                db.settings.OrderBy(x=>x.ID).First().AutoRefreshInterval_s = (int)span.TotalSeconds;
+                db.settings.OrderBy(x => x.ID).First().AutoRefreshInterval_s = (int)span.TotalSeconds;
                 db.SaveChanges();
             }
         }
@@ -2298,7 +2254,6 @@ namespace SportsBettingModule
                         ShortLoggingFrequency_s = 42 * 60
                     });
                     db.SaveChanges();
-
                 }
                 db.settings.First().ShortLoggingFrequency_s = (int)span.TotalSeconds;
             }
@@ -2323,7 +2278,6 @@ namespace SportsBettingModule
                         ShortLoggingFrequency_s = 42 * 60
                     });
                     db.SaveChanges();
-
                 }
                 db.settings.First().LoggingFrequency_s = (int)span.TotalSeconds;
             }

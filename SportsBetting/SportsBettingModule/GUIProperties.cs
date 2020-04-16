@@ -13,8 +13,6 @@ namespace SportsBettingModule
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-      
-
         public GUIProperties()
         {
             ButtonBackgroundColours.Add(new ComboBoxColourItem { Content = nameof(System.Windows.Media.Brushes.LightGray), Value = System.Windows.Media.Brushes.LightGray });
@@ -27,9 +25,11 @@ namespace SportsBettingModule
 
         private Visibility navigationVisibility = Visibility.Hidden;
 
-        public Visibility NavigationVisibility {
+        public Visibility NavigationVisibility
+        {
             get => navigationVisibility;
-            set {
+            set
+            {
                 navigationVisibility = value;
                 NotifyPropertyChanged();
             }
@@ -37,9 +37,11 @@ namespace SportsBettingModule
 
         private Brush themeColour = Brushes.AntiqueWhite;
 
-        public Brush ThemeColour {
+        public Brush ThemeColour
+        {
             get => themeColour;
-            set {
+            set
+            {
                 themeColour = value;
                 NotifyPropertyChanged();
             }
@@ -57,13 +59,13 @@ namespace SportsBettingModule
             }
         }
 
-
-
         private List<string> resultTypes = new List<string>();
 
-        public List<string> ResultTypes {
+        public List<string> ResultTypes
+        {
             get => resultTypes;
-            set {
+            set
+            {
                 resultTypes = value;
                 NotifyPropertyChanged();
             }
@@ -71,9 +73,11 @@ namespace SportsBettingModule
 
         private List<string> competitionTypes = new List<string>();
 
-        public List<string> CompetitionTypes {
+        public List<string> CompetitionTypes
+        {
             get => competitionTypes;
-            set {
+            set
+            {
                 competitionTypes = value;
                 NotifyPropertyChanged();
             }
@@ -81,9 +85,11 @@ namespace SportsBettingModule
 
         private List<SelectionDisplay> selectionToDisplay = new List<SelectionDisplay>();
 
-        public List<SelectionDisplay> SelectionToDisplay {
+        public List<SelectionDisplay> SelectionToDisplay
+        {
             get => selectionToDisplay;
-            set {
+            set
+            {
                 selectionToDisplay = value;
                 NotifyPropertyChanged();
             }
@@ -91,9 +97,11 @@ namespace SportsBettingModule
 
         private TimeSpan loggingInterval = TimeSpan.FromMinutes(360);
 
-        public TimeSpan LoggingInterval {
+        public TimeSpan LoggingInterval
+        {
             get => loggingInterval;
-            set {
+            set
+            {
                 loggingInterval = value;
                 NotifyPropertyChanged();
             }
@@ -101,9 +109,11 @@ namespace SportsBettingModule
 
         private TimeSpan shortLoggingInterval = TimeSpan.FromMinutes(20);
 
-        public TimeSpan ShortLoggingInterval {
+        public TimeSpan ShortLoggingInterval
+        {
             get => shortLoggingInterval;
-            set {
+            set
+            {
                 shortLoggingInterval = value;
                 NotifyPropertyChanged();
             }
@@ -111,9 +121,11 @@ namespace SportsBettingModule
 
         private TimeSpan autoRefreshInterval = TimeSpan.FromMinutes(20);
 
-        public TimeSpan AutoRefreshInterval {
+        public TimeSpan AutoRefreshInterval
+        {
             get => autoRefreshInterval;
-            set {
+            set
+            {
                 autoRefreshInterval = value;
                 NotifyPropertyChanged();
             }
@@ -121,9 +133,11 @@ namespace SportsBettingModule
 
         private List<ComboBoxColourItem> buttonBackGrounds = new List<ComboBoxColourItem>();
 
-        public List<ComboBoxColourItem> ButtonBackgroundColours {
+        public List<ComboBoxColourItem> ButtonBackgroundColours
+        {
             get => buttonBackGrounds;
-            set {
+            set
+            {
                 buttonBackGrounds = value;
                 NotifyPropertyChanged();
             }
@@ -131,9 +145,11 @@ namespace SportsBettingModule
 
         private bool userLoggedIn = false;
 
-        public bool UserLoggedIn {
+        public bool UserLoggedIn
+        {
             get => userLoggedIn;
-            set {
+            set
+            {
                 userLoggedIn = value;
                 NotifyPropertyChanged();
             }
@@ -141,17 +157,23 @@ namespace SportsBettingModule
 
         private bool virtualize = false;
 
-        public bool Virtualize {
+        public bool Virtualize
+        {
             get => virtualize;
-            set {
+            set
+            {
                 virtualize = value;
                 NotifyPropertyChanged();
             }
         }
+
         private List<string> sports = new List<string>();
-        public List<string> Sports {
+
+        public List<string> Sports
+        {
             get => sports;
-            set {
+            set
+            {
                 sports = value;
                 NotifyPropertyChanged();
             }
@@ -159,9 +181,11 @@ namespace SportsBettingModule
 
         private double currentBalance = 0;
 
-        public double CurrentBalance {
+        public double CurrentBalance
+        {
             get => currentBalance;
-            set {
+            set
+            {
                 currentBalance = value;
                 NotifyPropertyChanged();
             }
@@ -169,9 +193,11 @@ namespace SportsBettingModule
 
         private double currentExposure = 0;
 
-        public double CurrentExposure {
+        public double CurrentExposure
+        {
             get => currentExposure;
-            set {
+            set
+            {
                 currentExposure = value;
                 NotifyPropertyChanged();
             }
@@ -179,9 +205,11 @@ namespace SportsBettingModule
 
         private double totalBalance = 0;
 
-        public double TotalBalance {
+        public double TotalBalance
+        {
             get => totalBalance;
-            set {
+            set
+            {
                 totalBalance = value;
                 NotifyPropertyChanged();
             }
@@ -189,9 +217,11 @@ namespace SportsBettingModule
 
         private int reloginTimes = 0;
 
-        public int ReloginTimes {
+        public int ReloginTimes
+        {
             get => reloginTimes;
-            set {
+            set
+            {
                 reloginTimes = value;
                 NotifyPropertyChanged();
             }
@@ -199,9 +229,11 @@ namespace SportsBettingModule
 
         private double betAmount = 0;
 
-        public double BetAmount {
+        public double BetAmount
+        {
             get => betAmount;
-            set {
+            set
+            {
                 betAmount = value;
                 NotifyPropertyChanged();
             }
@@ -209,9 +241,11 @@ namespace SportsBettingModule
 
         private double minBetLevel = 0;
 
-        public double MinBetLevel {
+        public double MinBetLevel
+        {
             get => minBetLevel;
-            set {
+            set
+            {
                 minBetLevel = value;
                 NotifyPropertyChanged();
             }
@@ -219,9 +253,11 @@ namespace SportsBettingModule
 
         private double maxBetLevel = 0;
 
-        public double MaxBetLevel {
+        public double MaxBetLevel
+        {
             get => maxBetLevel;
-            set {
+            set
+            {
                 maxBetLevel = value;
                 NotifyPropertyChanged();
             }
@@ -229,9 +265,11 @@ namespace SportsBettingModule
 
         private double betLimit = 100;
 
-        public double Betlimit {
+        public double Betlimit
+        {
             get => betLimit;
-            set {
+            set
+            {
                 betLimit = value;
                 NotifyPropertyChanged();
             }
@@ -239,9 +277,11 @@ namespace SportsBettingModule
 
         private List<string> resultSelectionList = new List<string>();
 
-        public List<string> ResultSelectionList {
+        public List<string> ResultSelectionList
+        {
             get => resultSelectionList;
-            set {
+            set
+            {
                 resultSelectionList = value;
                 NotifyPropertyChanged();
             }
@@ -249,9 +289,11 @@ namespace SportsBettingModule
 
         private System.Windows.Media.Brush buttonBackgroundColour = System.Windows.Media.Brushes.LightGray;
 
-        public System.Windows.Media.Brush ButtonBackgroundColour {
+        public System.Windows.Media.Brush ButtonBackgroundColour
+        {
             get => buttonBackgroundColour;
-            set {
+            set
+            {
                 buttonBackgroundColour = value;
                 NotifyPropertyChanged();
             }
@@ -259,9 +301,11 @@ namespace SportsBettingModule
 
         private string loggedUserName = "";
 
-        public string LoggedUserName {
+        public string LoggedUserName
+        {
             get => loggedUserName;
-            set {
+            set
+            {
                 loggedUserName = value;
                 NotifyPropertyChanged();
             }
@@ -269,9 +313,11 @@ namespace SportsBettingModule
 
         private string mainMessage = "";
 
-        public string MainMessage {
+        public string MainMessage
+        {
             get => mainMessage;
-            set {
+            set
+            {
                 mainMessage = value;
                 NotifyPropertyChanged();
             }

@@ -71,7 +71,6 @@ namespace SportsBettingModule
             twelveHourRefreshTimer = new Timer(1000 * 60 * 60 * 12);    //12 hours
             getResultsTimer = new Timer(1000 * 60 * 60 * 1);    //1 hours
 
-            
             SetUpEvents();
 
             DataContext = myGuiProperties;
@@ -153,6 +152,8 @@ namespace SportsBettingModule
 
             IDictionary<string, string> RunnerDictionary;
 
+           
+
             List<MarketplaceEvent> EventList = new List<MarketplaceEvent>();
             List<MarketplaceEvent> EventListWithOdds = new List<MarketplaceEvent>();
 
@@ -165,6 +166,7 @@ namespace SportsBettingModule
                 ReLogin();
                 //Try Again
                 RunnerDictionary = marketMessenger.GetBettingDictionary(eventType);
+                
             }
 
             EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
@@ -1768,19 +1770,6 @@ namespace SportsBettingModule
             {
                 e.Column.IsReadOnly = false;
                 
-            }
-            else if ((string)e.Column.Header == "Change")
-            {
-                DataGridTemplateColumn col = new DataGridTemplateColumn();
-                col.Header = e.Column.Header;
-                FrameworkElementFactory dataCellFactoryElem = new FrameworkElementFactory(typeof(DataCell));
-                Binding dateBind = new Binding(e.PropertyName);
-                dateBind.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                dateBind.Mode = BindingMode.TwoWay;
-                DataTemplate cellTemplate = new DataTemplate();
-                cellTemplate.VisualTree = dataCellFactoryElem;
-                col.CellTemplate = cellTemplate;
-                e.Column = col;//Set the new generated column
             }
             else
             {

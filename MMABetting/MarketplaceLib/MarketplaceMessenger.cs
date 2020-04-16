@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Marketplace
 {
-    public class MarketplaceMessenger
+    public partial class MarketplaceMessenger
     {
         private static readonly string appKey = "r9pFKKDlrpQknNvB";
         private static readonly string sessionTokenStatic = "5clUqvyg1RczWBw1MpvY7Ug0otjZRvAjcwHFlXYbqa8=";
@@ -17,6 +17,13 @@ namespace Marketplace
         public List<Dictionary<string, string>> eventList;
         private MarketFilter marketFilter;
         private IList<MarketCatalogue> marketCatalogues;
+
+        private PriceProjection priceProjection = new PriceProjection
+        {
+            ExBestOffersOverrides = new ExBestOffersOverrides() { BestPricesDepth = 1 },
+            PriceData = new HashSet<PriceData>(),
+            Virtualise = false
+        };
 
         //Betfair_Non_interactive_login.Program loginProgram;
         private IClient client;
@@ -703,16 +710,10 @@ namespace Marketplace
                 }
             }
 
-            ISet<PriceData> priceData = new HashSet<PriceData>();
             //get all prices from the exchange
             //priceData.Add(PriceData.EX_ALL_OFFERS);
 
-            PriceProjection priceProjection = new PriceProjection
-            {
-                ExBestOffersOverrides = new ExBestOffersOverrides() { BestPricesDepth = 1 },
-                PriceData = priceData,
-                Virtualise = false
-            };
+           
 
             Console.WriteLine("\nGetting prices for market");
 

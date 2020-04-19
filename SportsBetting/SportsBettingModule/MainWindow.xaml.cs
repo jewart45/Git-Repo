@@ -169,56 +169,10 @@ namespace SportsBettingModule
             BettingInfoAvailable = BettingInfoAvailable.OrderBy(x => x.Name).OrderBy(x => x.Date).ToList();
             foreach (var e in EventListWithOdds)
             {
-                //marketMessenger.BetSubscription(e).Where(x => !x.Compare(e)).Subscribe(x =>
-                // {
-                //     var ev = BettingInfoAvailable.Find(p => p.Id == e.MarketId);
-                //     ev.Date = e.Date;
-                //     ev.Winner = e.Winner;
-
-                //     var selection = ChooseSelectionType(ev);
-                //     foreach (var run in selection.Runners)
-                //     {
-                //         var selDisplay = AllSelections.Where(k => k.EventName == ev.Name && k.SelectionName == run.Name && (k.ResultType == settings.EventType || settings.EventType == "All")).FirstOrDefault();
-                //         if (selDisplay != null)
-                //         {
-                //             selDisplay.Change = run.Odds.ToDouble() - selDisplay.Odds;
-                //             selDisplay.Odds = run.Odds.ToDouble();
-                //             selDisplay.Date = ev.Date;
-                //             selDisplay.Percentage = run.PercentChance;
-                //             selDisplay.DecimalOdds = run.Multiplier;
-                //         }
-                //         else
-                //         {
-                //             var sd = new SelectionDisplay
-                //             {
-                //                 Change = 0,
-                //                 Date = ev.Date,
-                //                 DecimalOdds = run.Multiplier,
-                //                 EventName = ev.Name,
-                //                 Odds = run.Odds.ToDouble(),
-                //                 Percentage = run.PercentChance,
-                //                 ResultType = ev.ResultType,
-                //                 Selected = true,
-                //                 SelectionName = run.Name
-                //             };
-
-                //             AllSelections.Add(sd);
-
-                //             ChangeLogging(ev, run, true);
-                //         }
-                //     }
-                // },
-                ////oncompeted
-                //() =>
-                //{
-                //    var ev = BettingInfoAvailable.Find(p => p.Name == e.Name && p.ResultType == e.ResultType);
-                //    AllSelections.RemoveAll(k => k.EventName == ev.Name && (k.ResultType == settings.EventType || settings.EventType == "All"));
-                //    BettingInfoAvailable.Remove(ev);
-                //}
-                //);
+                SubscribeToEventUpdates(e);
             }
 
-            
+
             var selsNotAvail = AllSelections.Where(x => !BettingInfoAvailable.Select(y => y.Name).ToList().Contains(x.EventName) && (x.ResultType == settings.EventType || settings.EventType == "All"));
 
             foreach (var se in selsNotAvail)
@@ -229,6 +183,99 @@ namespace SportsBettingModule
             AllSelections.RemoveAll(x => !BettingInfoAvailable.Select(y => y.Name).ToList().Contains(x.EventName) && (x.ResultType == settings.EventType || settings.EventType == "All"));
 
             myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
+        }
+
+        private void SubscribeToEventUpdates(MarketplaceEvent e)
+        {
+            marketMessenger.BetSubscription(e)
+                .Where(x => !x.Compare(e))
+                .Subscribe(x =>
+            {
+                var ev = BettingInfoAvailable.Find(p => p.Name == e.Name);
+                if (ev == null)
+                    return;
+                ev.Date = e.Date;
+                ev.Winner = e.Winner;
+
+                if (ev.OtherResults.Find(k => k.Id == x.MarketId) == null)
+                {
+                    var res = new OtherResult(ev.Name, x.MarketId);
+                    foreach (MarketplaceRunner runn in x.Runners)
+                    {
+                        res.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                    }
+
+                    ev.OtherResults.Add(res);
+                }
+                else
+                {
+                    var oR = ev.OtherResults.Find(k => k.Id == x.MarketId);
+                    foreach (MarketplaceRunner runn in x.Runners)
+                    {
+                        if (oR.Runners.Find(k => k.SelectionID == runn.SelectionID) == null)
+                        {
+                            oR.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                        }
+                        else
+                        {
+                            oR.Runners.Find(k => k.SelectionID == runn.SelectionID).Odds = runn.Odds;
+                        }
+                    }
+                    ev.Date = ev.Date;
+                }
+
+                //Update displayed info
+                UpdateDisplayedEventInfo(ev);
+
+            },
+                            //oncompeted
+                            () =>
+                            {
+                                var ev = BettingInfoAvailable.Find(p => p.Name == e.Name && p.ResultType == e.ResultType);
+                                AllSelections.RemoveAll(k => k.EventName == ev.Name && (k.ResultType == settings.EventType || settings.EventType == "All"));
+                                BettingInfoAvailable.Remove(ev);
+                                //myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
+                            }
+                            );
+        }
+
+        private void UpdateDisplayedEventInfo(Event ev)
+        {
+            foreach (var oR in ev.OtherResults)
+            {
+                foreach (var run in oR.Runners)
+                {
+                    var selDisplay = AllSelections.Where(x => x.EventName == ev.Name && x.SelectionName == run.Name && (x.ResultType == settings.EventType || settings.EventType == "All")).FirstOrDefault();
+                    if (selDisplay != null)
+                    {
+                        selDisplay.Change = run.Odds == "-" ? 0 : run.Odds.ToDouble() - selDisplay.Odds + 10;
+                        selDisplay.Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble();
+                        selDisplay.Date = ev.Date;
+                        selDisplay.Percentage = run.PercentChance;
+                        selDisplay.DecimalOdds = run.Multiplier;
+                    }
+                    else
+                    {
+                        var sd = new SelectionDisplay
+                        {
+                            Change = 0,
+                            Date = ev.Date,
+                            DecimalOdds = run.Multiplier,
+                            EventName = ev.Name,
+                            Odds = run.Odds.ToDouble(),
+                            Percentage = run.PercentChance,
+                            ResultType = oR.Name,
+                            Selected = true,
+                            SelectionName = run.Name
+                        };
+
+                        AllSelections.Add(sd);
+
+                        ChangeLogging(ev, run, true);
+                    }
+                    //myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
+                }
+            }
         }
 
         private void RemoveEvent(Exception obj)
@@ -401,36 +448,6 @@ namespace SportsBettingModule
                             {
                                 oR.Runners.Find(x => x.SelectionID == runn.SelectionID).Odds = runn.Odds;
                             }
-
-                            var selDisplay = AllSelections.Where(k => k.EventName == ev.Name && k.SelectionName == runn.Name && (k.ResultType == settings.EventType || settings.EventType == "All")).FirstOrDefault();
-                            var run = oR.Runners.Find(x => x.SelectionID == runn.SelectionID);
-                            if (selDisplay != null)
-                            {
-                                selDisplay.Change = run.Odds.ToDouble() - selDisplay.Odds;
-                                selDisplay.Odds = run.Odds.ToDouble();
-                                selDisplay.Date = ev.Date;
-                                selDisplay.Percentage = run.PercentChance;
-                                selDisplay.DecimalOdds = run.Multiplier;
-                            }
-                            else
-                            {
-                                var sd = new SelectionDisplay
-                                {
-                                    Change = 0,
-                                    Date = ev.Date,
-                                    DecimalOdds = run.Multiplier,
-                                    EventName = ev.Name,
-                                    Odds = run.Odds.ToDouble(),
-                                    Percentage = run.PercentChance,
-                                    ResultType = ev.ResultType,
-                                    Selected = true,
-                                    SelectionName = run.Name
-                                };
-
-                                AllSelections.Add(sd);
-
-                                ChangeLogging(evList.Find(x => x.Name == ev.Name), run, true);
-                            }
                         }
                         evList.Find(x => x.Name == ev.Name).Date = ev.Date;
                     }
@@ -445,7 +462,7 @@ namespace SportsBettingModule
                             var selDisplay = AllSelections.Where(x => x.EventName == ev.Name && x.SelectionName == run.Name && (x.ResultType == settings.EventType || settings.EventType == "All")).FirstOrDefault();
                             if (selDisplay != null)
                             {
-                                selDisplay.Change = run.Odds.ToDouble() - selDisplay.Odds;
+                                selDisplay.Change = run.Odds == "-" ? 0 : run.Odds.ToDouble() - selDisplay.Odds;
                                 selDisplay.Odds = run.Odds.ToDouble();
                                 selDisplay.Date = ev.Date;
                                 selDisplay.Percentage = run.PercentChance;
@@ -496,16 +513,19 @@ namespace SportsBettingModule
         => InvokeUI(() =>
         {
             MainMessage("Refreshing List...");
-            GetBettingInfo(settings.EventType, settings.Competition);
-            FindAndFillResults();
-            Event f = BettingInfoAvailable
-            .Where(x => x.Fighters.First().NameNoSpaces == EventSelector.Text && x.Fighters.First().Odds != "" && x.Name == SelectionSelector.SelectedItem.ToString())
-            .FirstOrDefault();
+            myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
 
-            if (f != null)
-            {
-                oxyPlotView.Model = CreateGraphView(f).CreateOxyPlot();
-            }
+            //GetBettingInfo(settings.EventType, settings.Competition);
+
+            FindAndFillResults();
+            //Event f = BettingInfoAvailable
+            //.Where(x => x.Fighters.First().NameNoSpaces == EventSelector.Text && x.Fighters.First().Odds != "" && x.Name == SelectionSelector.SelectedItem.ToString())
+            //.FirstOrDefault();
+
+            //if (f != null)
+            //{
+            //    oxyPlotView.Model = CreateGraphView(f).CreateOxyPlot();
+            //}
 
             MainMessage("");
         });
@@ -1606,14 +1626,17 @@ namespace SportsBettingModule
             Task.Run(() =>
             {
                 MainMessage("Refreshing List...");
-                GetBettingInfo(settings.EventType, settings.Competition);
+                //GetBettingInfo(settings.EventType, settings.Competition);
+                myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
 
                 var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
                 typesSorted.Sort();
                 typesSorted.Insert(0, "All");
                 var competitions = marketMessenger.GetCompetitionTypes();
                 myGuiProperties.ResultTypes = typesSorted;
+                
                 competitions.Sort();
+                competitions.Insert(0, "All");
                 myGuiProperties.CompetitionTypes = competitions;
 
                 var bal = marketMessenger.GetAccountBalance();
@@ -1621,7 +1644,7 @@ namespace SportsBettingModule
                 myGuiProperties.CurrentExposure = bal.Exposure;
                 myGuiProperties.TotalBalance = bal.Total;
 
-                FindAndFillResults();
+                //FindAndFillResults();
                 InvokeUI(() =>
                 {
                     Event f = BettingInfoAvailable.Where(x => x.Name == EventSelector.Text && x.Name == SelectionSelector.SelectedItem.ToString()).FirstOrDefault();

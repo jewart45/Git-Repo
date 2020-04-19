@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonClasses;
+using System;
 using System.Collections.Generic;
 
 namespace SportsBettingModule.Classes
@@ -10,20 +11,23 @@ namespace SportsBettingModule.Classes
 
         public string Winner { get; set; }
         public string ResultType { get; set; }
+
+        public string Id { get; set; }
         public DateTime Date { get; set; }
         public GoTheDistance GoTheDistance { get; set; } = new GoTheDistance();
 
-        public RoundBetting RoundBetting { get; set; } = new RoundBetting();
+        public List<OtherResult> OtherResults { get; set; } = new List<OtherResult>();
 
-        public MatchResult FightResult { get; set; } = new MatchResult();
+        public MatchResult MatchResult { get; set; } = new MatchResult();
 
         public MethodOfVictory MethodOfVictory { get; set; } = new MethodOfVictory();
         public List<Fighter> Fighters { get; set; } = new List<Fighter>();
 
-        public Event(string name, string resultType = null, Fighter f1 = null, Fighter f2 = null)
+        public Event(string name, string id = null, string resultType = null, Fighter f1 = null, Fighter f2 = null)
         {
             Name = name;
             ResultType = resultType;
+            Id = id;
 
             if (f1 != null)
             {
@@ -34,6 +38,12 @@ namespace SportsBettingModule.Classes
             {
                 Fighters.Add(f2);
             }
+        }
+
+        internal void Update(MarketplaceEvent x)
+        {
+            Date = x.Date;
+            //Fighters.Find(x=> x.Name == )
         }
     }
 }

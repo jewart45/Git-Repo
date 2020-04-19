@@ -32,5 +32,27 @@ namespace CommonClasses
             MarketId = marketId;
             ResultType = resultType;
         }
+
+        public bool Compare(MarketplaceEvent incoming)
+        {
+            bool result = false;
+            if (this.Date != incoming.Date || this.Name != incoming.Name)
+                return false;
+            else if (this.Runners.Count != incoming.Runners.Count)
+                return false;
+            else
+            {
+                foreach(MarketplaceRunner r in this.Runners)
+                {
+                    var t = incoming.Runners.Find(x => x.SelectionID == r.SelectionID);
+                    if (t == null)
+                        return false;
+                    else if (t.Odds != r.Odds || t.Name != r.Name)
+                        return false;
+
+                }
+            }
+            return true;
+        }
     }
 }

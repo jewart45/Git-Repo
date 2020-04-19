@@ -2,26 +2,17 @@
 
 namespace SportsBettingModule.Classes
 {
-    public class RoundBetting : ISelection
+    public class OtherResult : ISelection
     {
         public string Name { get; set; }
+        public string Id { get; set; }
         public string Winner { get; set; }
-        public List<Runner> Runners { get; set; }
+        public List<Runner> Runners { get; set; } = new List<Runner>();
 
-        public RoundBetting(Runner run1, Runner run2)
+        public OtherResult(string name, string id = null)
         {
-            Name = "Round Betting";
-            Runners = new List<Runner>
-            {
-                run1,
-                run2
-            };
-        }
-
-        public RoundBetting()
-        {
-            Name = "Round Betting";
-            Runners = new List<Runner>();
+            Name = name;
+            Id = id;
         }
 
         public void AddRunner(Runner runner) => Runners.Add(runner);

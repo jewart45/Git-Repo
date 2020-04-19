@@ -222,6 +222,13 @@
                         <ColumnDefinition Width="8*" />
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Label x:Name="filteredListLbl" Content="Filtered List" FontWeight="Bold" MouseLeftButtonUp="FilteredList_MouseLeftButtonUp" Foreground="#CC000000" />
+                        <Label x:Name="allSelectionsLbl" Content="All Logged" MouseLeftButtonUp="AllSelections_MouseLeftButtonUp" Foreground="#CC000000" />
+                    </StackPanel>
+                    
+                    
                     <StackPanel Grid.Row="1" Grid.Column="1">
                         <Button
                             Width="140"
@@ -284,6 +291,8 @@
                                 Content="{Binding Path=ReloginTimes}" />
                         </StackPanel>
                     </StackPanel>
+
+                    
 
                     <DataGrid
                         x:Name="dataGrid"

@@ -183,6 +183,8 @@ namespace Marketplace
 
         public MarketplaceMessenger()
         {
+            eventListObservable = EventListUpdateObservableSetup(60);
+            eventListObservable.Subscribe();
         }
 
         private string GetSessionID()

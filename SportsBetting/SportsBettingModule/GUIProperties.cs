@@ -95,6 +95,18 @@ namespace SportsBettingModule
             }
         }
 
+        private List<SelectionDisplay> allSelections = new List<SelectionDisplay>();
+
+        public List<SelectionDisplay> AllSelections
+        {
+            get => allSelections;
+            set
+            {
+                allSelections = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private TimeSpan loggingInterval = TimeSpan.FromMinutes(360);
 
         public TimeSpan LoggingInterval

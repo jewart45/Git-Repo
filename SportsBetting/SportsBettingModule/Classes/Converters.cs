@@ -23,30 +23,34 @@ namespace SportsBettingModule.Classes
         public static List<OddsInfo> ToOddsInfo(this ISelection f, Event ev)
         {
             List<OddsInfo> list = new List<OddsInfo>();
-            foreach (Runner run in f.Runners)
+            foreach(var result in ev.OtherResults)
             {
-                list.Add(run.Odds != "-" ?
-                new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = (long)Convert.ToDecimal(run.Odds), Percent = (long)Convert.ToDecimal(run.PercentChanceDecimal), SelectionID = run.SelectionID, EventType = f.Name }
-                : new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = 0, Percent = 0, SelectionID = run.SelectionID, EventType = f.Name });
-            }
-            if (f.Winner != null)
-            {
-                list.Find(x => x.SelectionName == f.Winner).Winner = true;
-                foreach (OddsInfo k in list.Where(x => x.SelectionName != f.Winner))
+                foreach (Runner run in f.Runners)
                 {
-                    k.Winner = false;
+                    list.Add(run.Odds != "-" ?
+                    new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = (long)Convert.ToDecimal(run.Odds), Percent = (long)Convert.ToDecimal(run.PercentChanceDecimal), SelectionID = run.SelectionID, ResultType = f.Name, MarketID = result.Id}
+                    : new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = 0, Percent = 0, SelectionID = run.SelectionID, ResultType = f.Name, MarketID = result.Id });
+                }
+                if (f.Winner != null)
+                {
+                    list.Find(x => x.SelectionName == f.Winner).Winner = true;
+                    foreach (OddsInfo k in list.Where(x => x.SelectionName != f.Winner))
+                    {
+                        k.Winner = false;
+                    }
                 }
             }
+           
 
             return list;
         }
 
-        public static EventsLookup ToResultInfo(this MarketplaceEvent ev, string eventType) => new EventsLookup
+        public static EventsLookup ToResultInfo(this MarketplaceEvent ev) => new EventsLookup
         {
             DateTaken = DateTime.Now,
             EventDate = ev.Date,
             EventName = ev.Name,
-            EventType = eventType,
+            ResultType = ev.ResultType,
             MarketId = ev.MarketId
         };
 

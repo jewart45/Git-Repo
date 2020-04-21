@@ -251,6 +251,18 @@ namespace SportsBettingModule
             }
         }
 
+        private string bettingResultType = "All";
+
+        public string BettingResultType
+        {
+            get => bettingResultType;
+            set
+            {
+                bettingResultType = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private double minBetLevel = 0;
 
         public double MinBetLevel

@@ -9,7 +9,7 @@ namespace SportsDatabaseSqlite.Tables
         public DateTime EventDate { get; set; }
         public string MarketId { get; set; }
         public string EventName { get; set; }
-        public string EventType { get; set; }
+        public string ResultType { get; set; }
         public bool Winner { get; set; }
     }
 }

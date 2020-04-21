@@ -26,7 +26,7 @@ namespace SportsDatabaseSqlite.Tables
         public DateTime BetMadeTime { get; set; }
         public string SelectionName { get; set; }
         public string EventName { get; set; }
-        public string EventType { get; set; }
+        public string ResultType { get; set; }
         public bool Winner { get; set; }
     }
 }

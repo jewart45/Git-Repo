@@ -301,7 +301,7 @@ namespace Marketplace
                 if (f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged")
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
+                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", "")) { Competition = f.Competition.Name };
                     foreach (RunnerDescription runner in f.Runners)
                     {
                         ev.Runners.Add(new MarketplaceRunner(runner.RunnerName, runner.SelectionId.ToString()));
@@ -340,7 +340,7 @@ namespace Marketplace
                 if ((f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged" || evType == "All") && (f.Competition.Name == competition || competition == "All"))
                 {
                     marketIds.Add(f.MarketId);
-                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", ""));
+                    MarketplaceEvent ev = new MarketplaceEvent(f.Event.Name.Trim(), (DateTime)f.Event.OpenDate, f.MarketId, f.MarketName.Trim().Replace(" - Unmanaged", "").Replace(" (UNMANAGED)", "")) { Competition = f.Competition.Name};
 
                     foreach (RunnerDescription runner in f.Runners)
                     {
@@ -737,6 +737,67 @@ namespace Marketplace
 
             if (marketBook.Count != 0)
             {
+                foreach (MarketBook book in marketBook)
+                {
+                    MarketplaceEvent currentEvent = eventList.FirstOrDefault(x => x.MarketId == book.MarketId);
+                    if (currentEvent != null)
+                    {
+                        foreach (Runner runner in book.Runners)
+                        {
+                            MarketplaceRunner currentRunner = currentEvent.Runners.Find(x => x.SelectionID == runner.SelectionId.ToString());
+                            if (currentRunner != null && runner.LastPriceTraded != null)
+                            {
+                                currentRunner.Odds = runner.LastPriceTraded.ToString();
+                                if (runner.Status == RunnerStatus.WINNER)
+                                {
+                                    currentEvent.Winner = currentRunner.Name;
+                                }
+                            }
+                            else
+                            {
+                            }
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
+            }
+            return eventList;
+        }
+
+
+        public List<MarketplaceEvent> GetSpecificOdds(List<MarketplaceEvent> eventList)
+        {
+            IList<string> marketIds = eventList.Select(x => x.MarketId).Distinct().ToList();
+            
+            Console.WriteLine($"\nGetting prices for market for specific odds at {DateTime.Now}");
+
+            IList<MarketBook> marketBook = new List<MarketBook>();
+            IList<MarketBook> incrementalBook;
+            for (int i = 0; i < marketIds.Count; i = i + 50)
+            {
+                int j = i + 50 > marketIds.Count ? marketIds.Count : i + 50;
+                try
+                {
+                    incrementalBook = client.listMarketBook(marketIds.Skip(i).Take(j - i).ToList(), priceProjection);
+                }
+                catch (System.Exception ex)
+                {
+                    incrementalBook = new List<MarketBook>();
+                    Console.WriteLine(ex);
+                }
+                foreach (MarketBook price in incrementalBook)
+                {
+                    marketBook.Add(price);
+                }
+            }
+
+            if (marketBook.Count != 0)
+            {
+                //Remove any that dont have results
+                eventList.RemoveAll(x => marketBook.Select(y => y.MarketId).Contains(x.MarketId));
+
                 foreach (MarketBook book in marketBook)
                 {
                     MarketplaceEvent currentEvent = eventList.FirstOrDefault(x => x.MarketId == book.MarketId);

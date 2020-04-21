@@ -15,6 +15,7 @@ namespace CommonClasses
         public string Odds { get; set; }
 
         public string EventName { get; set; }
+        public string ResultType { get; set; }
 
         public double OddsDecimal { get; set; }
 

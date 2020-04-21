@@ -9,12 +9,14 @@ namespace SportsBettingModule.Classes
         public string EventType;
         public string Competition;
         public string Sport;
+        public string BettingType;
 
         public SettingsVariables()
         {
             EventType = "Match Odds";
             Competition = "";
             Sport = PossibleSports[0];
+            BettingType = "All";
         }
     }
 }

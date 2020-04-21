@@ -11,6 +11,7 @@ namespace CommonClasses
         public DateTime Date { get; set; }
 
         public string ResultType { get; set; }
+        public string Competition { get; set; }
 
         public string MarketId { get; set; }
 

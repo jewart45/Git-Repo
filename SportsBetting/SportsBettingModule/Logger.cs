@@ -14,7 +14,7 @@ namespace SportsBettingModule
     public partial class Logger
     {
         public MarketplaceMessenger marketMessenger { get; set; }
-        private List<OddsInfo> fighterOddsList { get; set; }
+        private List<OddsInfo> oddsList { get; set; }
 
         private List<Fighter> FightersAvailable { get; set; }
         public Task LoggingTask_Results { get; private set; }
@@ -34,29 +34,33 @@ namespace SportsBettingModule
 
         public Logger(MarketplaceMessenger messenger, TimeSpan t)
         {
-            fighterOddsList = new List<OddsInfo>();
+            oddsList = new List<OddsInfo>();
             logInterval = t;
             marketMessenger = messenger;
         }
 
         //public async Task StartLoggingAsync(TimeSpan timeSpan) => await LoggingTask(timeSpan);
 
-        public bool RemoveLoggingItem(string itemName, string EventName, string eventType)
+        public int RemoveLoggingItem(string selId, string marketId)
         {
-            OddsInfo fighterItem = fighterOddsList.Where(x => x.SelectionName == itemName && x.EventName == EventName && x.EventType == eventType).FirstOrDefault();
-            if (fighterItem != null)
-            {
-                fighterOddsList.Remove(fighterItem);
-            }
+            var number = oddsList.RemoveAll(x => x.SelectionID == selId && x.MarketID == marketId);
+            return number;
+        }
 
-            return true;
+   
+
+        public int RemoveLoggingItem(string itemName, string EventName, string eventType)
+        {
+            var num = oddsList.RemoveAll(x => x.SelectionName == itemName && x.EventName == EventName && x.ResultType == eventType);
+
+            return num;
         }
 
         public void FillResults(List<OddsInfo> resultsList)
         {
             foreach (OddsInfo res in resultsList)
             {
-                OddsInfo f = fighterOddsList
+                OddsInfo f = oddsList
                     .Where(x => x.EventName == res.EventName && x.SelectionName == res.SelectionName)
                     .FirstOrDefault();
                 if (f != null)
@@ -82,15 +86,15 @@ namespace SportsBettingModule
 
         public bool AddLoggingItem(OddsInfo odds)
         {
-            if (fighterOddsList.Where(x => x.EventName == odds.EventName && x.SelectionName == odds.SelectionName).FirstOrDefault() == null)
+            if (oddsList.Where(x => x.MarketID == odds.MarketID && x.SelectionID == odds.SelectionID).FirstOrDefault() == null)
             {
-                fighterOddsList.Add(odds);
+                oddsList.Add(odds);
             }
 
             return true;
         }
 
-        private string LogSpecificOdds(List<MarketplaceEvent> EventListWithOdds, string eventType, bool zeroCheck)
+        private string LogSpecificOdds(List<MarketplaceEvent> EventListWithOdds, string bettingResultType, bool zeroCheck)
         {
             string error = "";
             List<OddsInfo> listOfOddsToAdd = new List<OddsInfo>();
@@ -127,18 +131,18 @@ namespace SportsBettingModule
             //Get Odds
             foreach (MarketplaceEvent ev in EventListWithOdds)
             {
-                listOfEventsToAdd.Add(ev.ToResultInfo(eventType));
+                listOfEventsToAdd.Add(ev.ToResultInfo());
                 foreach (MarketplaceRunner runner in ev.Runners)
                 {
                     if (runner.Odds != "")
                     {
-                        OddsInfo info = fighterOddsList.Where(x => x.EventName == ev.Name && x.SelectionName == runner.Name).FirstOrDefault();
+                        OddsInfo info = oddsList.Where(x => x.EventName == ev.Name && x.SelectionName == runner.Name && x.ResultType == ev.ResultType).FirstOrDefault();
                         //Only take bets up to 30 mins before fight
                         if (info != null)
                         {
                             if (info.EventDate.AddMinutes(30).CompareTo(DateTime.Now) > 0)
                             {
-                                info.EventType = eventType;
+                                info.ResultType = ev.ResultType;
                                 info.OddsValue = PriceTradedToOdds(Convert.ToDouble(runner.Odds));
                                 info.DateTaken = DateTime.Now;
                                 listOfOddsToAdd.Add(info);
@@ -155,13 +159,13 @@ namespace SportsBettingModule
             //Log Results
             if (OrderingActive)
             {
-                MakeBetsOnCurrentOdds(eventType, EventListWithOdds.Where(x => x.Date.CompareTo(DateTime.Now.AddMinutes(30)) > 0).ToList());
+                MakeBetsOnCurrentOdds(bettingResultType, EventListWithOdds.Where(x => x.Date.CompareTo(DateTime.Now.AddMinutes(30)) > 0).ToList());
             }
 
             return error;
         }
 
-        public async void StartLoggingAsync(string eventType, string competition)
+        public async void StartLoggingAsync(string bettingResultType, string competition)
         {
             LoggingCancelFlag = false;
 
@@ -186,15 +190,15 @@ namespace SportsBettingModule
                         if ((i + 1) % shortLogInterval.TotalSeconds == 0)
                         {
                             //fighterDictionary = marketMessenger.GetAllOddsOld(fighterOddsList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.FightDate) > 0).Select(x => x.SelectionID).ToList<string>(), eventType, virtualise);
-                            EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
-                            EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
-                            EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
+
+                            //EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
+                            //EventListWithOdds = marketMessenger.GetSpecificOdds(EventList.Where(x => fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList());
 
                             if (EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0).Count() > 0)
                             {
-                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
+                                EventListWithOdds = marketMessenger.GetSpecificOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0 && oddsList.Select(y => y.EventName).Contains(x.Name)).ToList());
 
-                                error = LogSpecificOdds(EventListWithOdds, eventType, false);
+                                error = LogSpecificOdds(EventListWithOdds, bettingResultType, false);
                                 //increment
                                 //Reset Counter
                                 if (error == "" && EventList.Count > 0)
@@ -213,18 +217,15 @@ namespace SportsBettingModule
                                 i++;
                             }
                         }
-                        else if (i < logInterval.TotalSeconds)
-                        {
-                            i++;
-                        }
-                        else
+                       
+                        else if(i > logInterval.TotalSeconds)
                         {
                             List<OddsInfo> listOfOddsToAdd = new List<OddsInfo>();
                             try
                             {
-                                EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
-                                var eventsToCheck = EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) < 0 && fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList();
-                                EventListWithOdds = marketMessenger.GetAllOdds(eventsToCheck, eventType, competition);
+                                //EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
+                                var eventsToCheck = EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) < 0 && oddsList.Select(y => y.EventName).Contains(x.Name)).ToList();
+                                EventListWithOdds = marketMessenger.GetSpecificOdds(eventsToCheck);
                                 if (EventListWithOdds.Count == 0 && eventsToCheck.Count > 0)
                                 {
                                     if (MarketplaceErrorOccured != null)
@@ -268,13 +269,13 @@ namespace SportsBettingModule
                                 {
                                     if (runner.Odds != "")
                                     {
-                                        OddsInfo info = fighterOddsList.Where(x => x.EventName == ev.Name && x.SelectionName == runner.Name).FirstOrDefault();
+                                        OddsInfo info = oddsList.Where(x => x.EventName == ev.Name && x.SelectionName == runner.Name).FirstOrDefault();
                                         //Only take bets up to 30 mins before fight
                                         if (info != null)
                                         {
                                             if (info.EventDate.AddMinutes(30).CompareTo(DateTime.Now) > 0)
                                             {
-                                                info.EventType = eventType;
+                                                info.ResultType = ev.ResultType;
                                                 info.OddsValue = PriceTradedToOdds(Convert.ToDouble(runner.Odds));
                                                 info.DateTaken = DateTime.Now;
                                                 listOfOddsToAdd.Add(info);
@@ -290,7 +291,7 @@ namespace SportsBettingModule
                             }
                             if (OrderingActive)
                             {
-                                MakeBetsOnCurrentOdds(eventType, EventListWithOdds.Where(x => x.Date.CompareTo(DateTime.Now.AddMinutes(30)) > 0).ToList());
+                                MakeBetsOnCurrentOdds(bettingResultType, EventListWithOdds.Where(x => x.Date.CompareTo(DateTime.Now.AddMinutes(30)) > 0).ToList());
                             }
 
                             //Reset Counter
@@ -298,6 +299,10 @@ namespace SportsBettingModule
                             {
                                 i = 0;
                             }
+                        }
+                        else
+                        {
+                            i++;
                         }
                         System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
                     }
@@ -330,75 +335,30 @@ namespace SportsBettingModule
             LoggingTask_OverUnder?.Dispose();
         }
 
-        private Task LogResultOdds() => new Task(() =>
-        {
-            IDictionary<string, string> fighterDictionary;
-            int i = 0;
-            while (true)
-            {
-                if (LoggingCancelFlag)
-                {
-                    break;
-                }
-
-                if (i < logInterval.TotalSeconds)
-                {
-                    i++;
-                }
-                else
-                {
-                    //Get Odds
-                    fighterDictionary = marketMessenger.GetAllOddsOld(fighterOddsList.Select(x => x.SelectionID).ToList<string>(), "Match Odds");
-                    foreach (KeyValuePair<string, string> f in fighterDictionary)
-                    {
-                        if (f.Value != "")
-                        {
-                            OddsInfo info = fighterOddsList.Where(x => x.SelectionID == f.Key).First();
-                            //Only take bets up to 30 mins before fight
-                            if (info.EventDate.AddMinutes(30).CompareTo(DateTime.Now) > 0)
-                            {
-                                info.OddsValue = PriceTradedToOdds(Convert.ToDouble(f.Value));
-                                info.DateTaken = DateTime.Now;
-                            }
-                        }
-                    }
-                    using (SportsDatabaseModel db = new SportsDatabaseModel())
-                    {
-                        db.AddMultipleOdds(fighterOddsList.Where(x => x.OddsValue != 0 && x.EventDate.AddMinutes(30).CompareTo(DateTime.Now) > 0).ToList());
-                    }
-                    //Reset Counter
-                    i = 0;
-                }
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
-            }
-            //Increment Counter
-            Logging = false;
-            //IDictionary<string, string> fighterDictionary = marketMessenger.GetFighterDictionary("Match Odds");
-        });
-
-        public void LogOddsNow(string eventType, string competition)
+        
+        public void LogOddsNow(string resultType, string competition)
         {
             IDictionary<string, string> fighterDictionary;
             //Get Odds
             List<MarketplaceEvent> EventList = new List<MarketplaceEvent>();
             List<MarketplaceEvent> EventListWithOdds = new List<MarketplaceEvent>();
 
-            EventList = marketMessenger.GetEventSelectionIDs(eventType, competition);
-            EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => fighterOddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), eventType, competition);
-            fighterDictionary = marketMessenger.GetAllOddsOld(fighterOddsList.Select(x => x.SelectionID).ToList<string>(), eventType);
+            EventList = marketMessenger.GetEventSelectionIDs(resultType, competition);
+            EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => oddsList.Select(y => y.EventName).Contains(x.Name)).ToList(), resultType, competition);
+            fighterDictionary = marketMessenger.GetAllOddsOld(oddsList.Select(x => x.SelectionID).ToList<string>(), resultType);
             foreach (MarketplaceEvent ev in EventListWithOdds)
             {
                 foreach (MarketplaceRunner runner in ev.Runners)
                 {
-                    if (runner.Odds != "" && fighterOddsList.Select(x => x.SelectionName).Contains(runner.Name))
+                    if (runner.Odds != "" && oddsList.Select(x => x.SelectionName).Contains(runner.Name))
                     {
-                        OddsInfo info = fighterOddsList.Where(x => x.EventName == ev.Name && x.SelectionName == runner.Name).FirstOrDefault();
+                        OddsInfo info = oddsList.Where(x => x.EventName == ev.Name && x.SelectionName == runner.Name).FirstOrDefault();
                         //Only take bets up to 30 mins before fight
                         if (info != null)
                         {
                             if (info.EventDate.AddMinutes(30).CompareTo(DateTime.Now) > 0)
                             {
-                                info.EventType = eventType;
+                                info.ResultType = resultType;
                                 info.OddsValue = PriceTradedToOdds(Convert.ToDouble(runner.Odds));
                                 info.DateTaken = DateTime.Now;
                             }
@@ -408,7 +368,7 @@ namespace SportsBettingModule
             }
             using (SportsDatabaseModel db = new SportsDatabaseModel())
             {
-                db.AddMultipleOdds(fighterOddsList.Where(x => x.OddsValue != 0 && x.EventDate.AddMinutes(30).CompareTo(DateTime.Now) > 0).ToList());
+                db.AddMultipleOdds(oddsList.Where(x => x.OddsValue != 0 && x.EventDate.AddMinutes(30).CompareTo(DateTime.Now) > 0).ToList());
                 foreach (MarketplaceEvent ev in EventListWithOdds.Where(x => x.Winner != null))
                 {
                     foreach (OddsInfo dbOdds in db.oddsInfo.Where(x => x.EventName == ev.Name))
@@ -421,7 +381,7 @@ namespace SportsBettingModule
 
             if (OrderingActive)
             {
-                MakeBetsOnCurrentOdds(eventType, EventListWithOdds.Where(x => x.Date.CompareTo(DateTime.Now.AddMinutes(30)) > 0).ToList());
+                MakeBetsOnCurrentOdds(resultType, EventListWithOdds.Where(x => x.Date.CompareTo(DateTime.Now.AddMinutes(30)) > 0).ToList());
             }
         }
 

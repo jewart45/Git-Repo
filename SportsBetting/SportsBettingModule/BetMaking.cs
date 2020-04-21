@@ -19,7 +19,7 @@ namespace SportsBettingModule
 
         public bool OrderingActive { get; set; } = false;
 
-        private void MakeBetsOnCurrentOdds(string eventType, List<MarketplaceEvent> list)
+        private void MakeBetsOnCurrentOdds(string resultType, List<MarketplaceEvent> list)
         {
             var bal = marketMessenger.GetAccountBalance();
 
@@ -28,13 +28,15 @@ namespace SportsBettingModule
                 return;
             }
 
-            var listWithOddsInRange = list.Where(x => x.Runners.Where(y => y.Odds.ToDouble() >= MinBetLevel && y.Odds.ToDouble() <= MaxBetLevel).FirstOrDefault() != null).ToList(); // && y.Name == "The Draw"
+            var listWithOddsInRange = list
+                .Where(x => x.Runners.Where(y => y.Odds.ToDouble() >= MinBetLevel && y.Odds.ToDouble() <= MaxBetLevel).FirstOrDefault() != null && (x.ResultType == resultType || resultType == "All"))
+                .ToList(); // && y.Name == "The Draw"
 
-            var orders = marketMessenger.GetCurrentOffers(eventType, false, listWithOddsInRange);//.Where(x => x.Date.DayOfWeek != DayOfWeek.Saturday && x.Date.DayOfWeek != DayOfWeek.Sunday).ToList()
+            var orders = marketMessenger.GetCurrentOffers(resultType, false, listWithOddsInRange);//.Where(x => x.Date.DayOfWeek != DayOfWeek.Saturday && x.Date.DayOfWeek != DayOfWeek.Sunday).ToList()
             var ordersToPlace = new List<MarketplaceBetOrder>();
             using (SportsDatabaseModel db = new SportsDatabaseModel())
             {
-                ordersToPlace = orders.Where(x => db.results.Where(y => y.MarketId == x.MarketId && y.EventName == x.EventName && y.SelectionName == x.SelectionName).FirstOrDefault() == null && x.OddsDecimal >= MinBetLevel && x.OddsDecimal <= MaxBetLevel).ToList(); // && x.SelectionName == "The Draw"
+                ordersToPlace = orders.Where(x => db.results.Where(y => y.MarketId == x.MarketId && y.EventName == x.EventName && y.SelectionName == x.SelectionName && y.ResultType == x.ResultType).FirstOrDefault() == null && x.OddsDecimal >= MinBetLevel && x.OddsDecimal <= MaxBetLevel).ToList(); // && x.SelectionName == "The Draw"
             }
 
             var successfulOrdersList = marketMessenger.PlaceOrders(ordersToPlace, BetAmount);
@@ -53,7 +55,7 @@ namespace SportsBettingModule
                         OddsDecimal = o.OddsDecimal > o.LastTradedOddsDecimal ? o.OddsDecimal : o.LastTradedOddsDecimal,
                         EventStart = o.EventStart,
                         EventName = o.EventName,
-                        EventType = eventType,
+                        ResultType = o.ResultType,
                         SelectionName = o.SelectionName,
                         AmountWagered = BetAmount
                     });

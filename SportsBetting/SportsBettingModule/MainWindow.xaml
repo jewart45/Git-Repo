@@ -131,7 +131,7 @@
             x:Name="LoginGrid"
             Grid.Row="1"
             Margin="{Binding Path=ViewMargin}"
-            Visibility="Visible">
+            Visibility="Hidden">
             <Grid x:Name="LoggingGrid" Visibility="{Binding Path=UserLoggedIn}">
                 <TextBox
                     x:Name="usernameTxtBox"
@@ -209,7 +209,7 @@
             Grid.Row="1"
             Margin="{Binding Path=ViewMargin}"
             Background="AliceBlue"
-            Visibility="Visible">
+            Visibility="Hidden">
 
             <Viewbox>
                 <Grid>
@@ -665,16 +665,19 @@
             Grid.Row="1"
             Background="White"
             Margin="{Binding Path=ViewMargin}"
-            Visibility="Hidden">
+            Visibility="Visible">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" MinWidth="140" />
+                <ColumnDefinition Width="1.5*" MinWidth="140" />
+                <ColumnDefinition Width="3.5*" MinWidth="100" />
                 <ColumnDefinition Width="0.5*" MinWidth="100" />
-                <ColumnDefinition Width="0.5*" MinWidth="100" />
-                <ColumnDefinition Width="9*" MinWidth="400" />
+                <ColumnDefinition Width="4*" MinWidth="400" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.5*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
@@ -786,8 +789,39 @@
                 Content="{Binding Path=BetAmount}" />
 
             <TextBox
-                x:Name="BetLimitTextBox"
+                x:Name="ResultTypeTextBox"
                 Grid.Row="5"
+                Grid.Column="1"
+                Width="250"
+                Height="30"
+                Margin="0,21"
+                HorizontalAlignment="Left"
+                LostFocus="BetLimitTextBox_LostFocus"
+                Text="{Binding Path=BettingResultType, Mode=TwoWay}" />
+            <Label
+                Grid.Row="5"
+                Grid.Column="0"
+                Margin="10,10"
+                HorizontalAlignment="Right"
+                VerticalContentAlignment="Center"
+                Content="Of This Result Type:" />
+            <Label
+                Grid.Row="5"
+                Grid.Column="2"
+                Margin="10,10"
+                HorizontalAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="{Binding Path=BetLimit}" />
+            <Label
+                Grid.Row="6"
+                Grid.Column="0"
+                Margin="10,10"
+                HorizontalAlignment="Right"
+                VerticalContentAlignment="Center"
+                Content="As long as this much remains:" />
+            <TextBox
+                x:Name="BetLimitTextBox"
+                Grid.Row="6"
                 Grid.Column="1"
                 Width="90"
                 Height="30"
@@ -796,14 +830,7 @@
                 LostFocus="BetLimitTextBox_LostFocus"
                 Text="{Binding Path=BetLimit, Mode=TwoWay}" />
             <Label
-                Grid.Row="5"
-                Grid.Column="0"
-                Margin="10,10"
-                HorizontalAlignment="Right"
-                VerticalContentAlignment="Center"
-                Content="As long as this much remains:" />
-            <Label
-                Grid.Row="5"
+                Grid.Row="6"
                 Grid.Column="2"
                 Margin="10,10"
                 HorizontalAlignment="Left"

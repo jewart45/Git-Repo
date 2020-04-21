@@ -463,7 +463,7 @@ namespace SportsBettingModule
                             if (selDisplay != null)
                             {
                                 selDisplay.Change = run.Odds == "-" ? 0 : run.Odds.ToDouble() - selDisplay.Odds;
-                                selDisplay.Odds = run.Odds.ToDouble();
+                                selDisplay.Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble();
                                 selDisplay.Date = ev.Date;
                                 selDisplay.Percentage = run.PercentChance;
                                 selDisplay.DecimalOdds = run.Multiplier;
@@ -476,7 +476,7 @@ namespace SportsBettingModule
                                     Date = ev.Date,
                                     DecimalOdds = run.Multiplier,
                                     EventName = ev.Name,
-                                    Odds = run.Odds.ToDouble(),
+                                    Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble(),
                                     Percentage = run.PercentChance,
                                     ResultType = oR.Name,
                                     Selected = true,
@@ -581,7 +581,7 @@ namespace SportsBettingModule
                 {
                     if (oi.SelectionName == run.Name)
                     {
-                        success = !OddsLogger.RemoveLoggingItem(oi.SelectionName, ev.Name, oi.EventType);
+                        success = OddsLogger.RemoveLoggingItem(oi.SelectionID, oi.MarketID) > 0;
                     }
                 }
             }
@@ -819,7 +819,7 @@ namespace SportsBettingModule
             using (SportsDatabaseModel db = new SportsDatabaseModel())
             {
                 List<string> list = db.oddsInfo
-                    .Where(x => x.EventDate > window.Start && x.EventDate < window.End && x.EventType == settings.EventType)
+                    .Where(x => x.EventDate > window.Start && x.EventDate < window.End && x.ResultType == settings.EventType)
                     .GroupBy(x => x.EventName)
                     .Select(t => t.Key)
                     .OrderBy(f => f)
@@ -1979,7 +1979,7 @@ namespace SportsBettingModule
         {
             if (!OddsLogger.Logging)
             {
-                OddsLogger.StartLoggingAsync(settings.EventType, settings.Competition);
+                OddsLogger.StartLoggingAsync(settings.BettingType, settings.Competition);
                 StartLoggingBtn.IsChecked = true;
             }
             else

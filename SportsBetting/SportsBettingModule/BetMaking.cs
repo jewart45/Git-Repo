@@ -63,5 +63,7 @@ namespace SportsBettingModule
                 }
             }
         }
+
+        public void ClearLoggingList() => oddsList.Clear();
     }
 }

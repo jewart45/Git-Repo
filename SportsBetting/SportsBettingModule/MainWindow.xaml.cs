@@ -1,4 +1,5 @@
 ﻿using CommonClasses;
+using DynamicData;
 using LoginClientLib;
 using Marketplace;
 using Microsoft.Win32;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
@@ -35,6 +37,7 @@ namespace SportsBettingModule
         private List<Button> NavigationButtons;
         private Dictionary<Grid, Button> NavigationSet;
         private Logger OddsLogger;
+        private CompositeDisposable reactiveSubs = new CompositeDisposable();
         private SettingsVariables settings;
         private List<Grid> WindowList;
         private Timer twelveHourRefreshTimer;
@@ -52,10 +55,12 @@ namespace SportsBettingModule
             NavigationButtons = new List<Button>();
             NavigationSet = new Dictionary<Grid, Button>();
             myGuiProperties = new GUIProperties();
+            
             myGuiProperties.NavigationVisibility = Visibility.Hidden;
             myGuiProperties.LoggedUserName = "No User";
             OddsLogger = new Logger(marketMessenger, myGuiProperties.LoggingInterval);
             settings = new SettingsVariables();
+            LoadSettings(myGuiProperties);
             //Set the inital event types
             myGuiProperties.ResultTypes = settings.PossibleEventTypes;
             myGuiProperties.Sports = settings.PossibleSports;
@@ -105,6 +110,24 @@ namespace SportsBettingModule
             ShowWindow(LoginGrid);
         }
 
+        private void LoadSettings(GUIProperties props)
+        {
+            using (SportsDatabaseModel db = new SportsDatabaseModel())
+            {
+                if(db.settings.Count() > 0)
+                {
+                    props.AutoRefreshInterval = TimeSpan.FromSeconds(db.settings.OrderBy(x => x.ID).First().AutoRefreshInterval_s);
+                    props.LoggingInterval = TimeSpan.FromSeconds(db.settings.OrderBy(x => x.ID).First().LoggingFrequency_s);
+                    props.ShortLoggingInterval = TimeSpan.FromSeconds(db.settings.OrderBy(x => x.ID).First().ShortLoggingFrequency_s);
+                    props.Sport = db.settings.OrderBy(x => x.ID).First().Sport == null ? settings.PossibleSports.First() : settings.PossibleSports.Find(x => x == db.settings.OrderBy(y => y.ID).First().Sport);
+                }
+                OddsLogger.logInterval = props.LoggingInterval;
+                OddsLogger.shortLogInterval = props.ShortLoggingInterval;
+
+
+            }
+        }
+
         public void CreateCSVFile(DataTable dt, string strFilePath, bool append)
         {
             StreamWriter sw = new StreamWriter(strFilePath, append);
@@ -143,6 +166,9 @@ namespace SportsBettingModule
         public void GetBettingInfo(string eventType, string competition)
         {
             BettingInfoAvailable = new List<Event>();
+            reactiveSubs.Dispose();
+            reactiveSubs = new CompositeDisposable();
+            marketMessenger.ClearReactiveEventList();
 
             IDictionary<string, string> RunnerDictionary;
 
@@ -171,7 +197,44 @@ namespace SportsBettingModule
             {
                 SubscribeToEventUpdates(e);
             }
+            var evListSub = marketMessenger.EventListUpdates(30, eventType, competition).Where(x=>!x.Select(p=>p.MarketId).CompareList(EventList.Select(i=>i.MarketId))).Subscribe(k =>
+            {
+                var eventsToAdd = new List<MarketplaceEvent>();
+                var eventsToRemove = new List<MarketplaceEvent>();
+                foreach(var ev in k)
+                {
+                    if (!EventList.Select(p => p.MarketId).Contains(ev.MarketId))
+                    {
+                        eventsToAdd.Add(ev);
+                    }
+                }
+                foreach (var ev in EventList)
+                {
+                    if (!k.Select(p => p.MarketId).Contains(ev.MarketId))
+                    {
+                        eventsToRemove.Add(ev);
+                    }
+                }
 
+                EventList.RemoveMany(eventsToRemove);
+
+                EventList.AddRange(eventsToAdd);
+                foreach (var e in eventsToAdd)
+                {
+                    SubscribeToEventUpdates(e);
+                }
+                //Integrate into existing lists
+                BuildUpEventList(BettingInfoAvailable, eventsToAdd);
+                foreach(var e in eventsToRemove)
+                {
+                    RemoveEventFromAvailable(e);
+                }
+                UpdateAvailableEventInfo();
+
+
+
+            });
+            reactiveSubs.Add(evListSub);
 
             var selsNotAvail = AllSelections.Where(x => !BettingInfoAvailable.Select(y => y.Name).ToList().Contains(x.EventName) && (x.ResultType == settings.EventType || settings.EventType == "All"));
 
@@ -187,68 +250,87 @@ namespace SportsBettingModule
 
         private void SubscribeToEventUpdates(MarketplaceEvent e)
         {
-            marketMessenger.BetSubscription(e)
+            var sub = marketMessenger.BetSubscription(e)
                 .Where(x => !x.Compare(e))
                 .Subscribe(x =>
-            {
-                var ev = BettingInfoAvailable.Find(p => p.Name == e.Name);
-                if (ev == null)
-                    return;
-                ev.Date = e.Date;
-                ev.Winner = e.Winner;
-
-                if (ev.OtherResults.Find(k => k.Id == x.MarketId) == null)
                 {
-                    var res = new OtherResult(ev.Name, x.MarketId);
-                    foreach (MarketplaceRunner runn in x.Runners)
+                    var ev = BettingInfoAvailable.Find(p => p.Name == e.Name);
+                    if (ev == null)
+                        return;
+                    ev.Date = x.Date;
+                    ev.Winner = x.Winner;
+
+                    if (ev.OtherResults.Find(k => k.MarketId == x.MarketId && k.Name == e.ResultType) == null)
                     {
-                        res.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                        var res = new OtherResult(ev.Name, x.ResultType, x.MarketId);
+                        foreach (MarketplaceRunner runn in x.Runners)
+                        {
+                            res.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                        }
+
+                        //ev.OtherResults.Add(res);
+                        ev.AddOtherResult(res);
+                    }
+                    else
+                    {
+                        var oR = ev.OtherResults.Find(k => k.MarketId == x.MarketId && k.Name == e.ResultType);
+                        foreach (MarketplaceRunner runn in x.Runners)
+                        {
+                            if (oR.Runners.Find(k => k.SelectionID == runn.SelectionID) == null)
+                            {
+                                oR.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                            }
+                            else
+                            {
+                                oR.Runners.Find(k => k.SelectionID == runn.SelectionID).Odds = runn.Odds;
+                            }
+                        }
+                        ev.Date = ev.Date;
                     }
 
-                    ev.OtherResults.Add(res);
-                }
-                else
-                {
-                    var oR = ev.OtherResults.Find(k => k.Id == x.MarketId);
-                    foreach (MarketplaceRunner runn in x.Runners)
-                    {
-                        if (oR.Runners.Find(k => k.SelectionID == runn.SelectionID) == null)
-                        {
-                            oR.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
-                        }
-                        else
-                        {
-                            oR.Runners.Find(k => k.SelectionID == runn.SelectionID).Odds = runn.Odds;
-                        }
-                    }
-                    ev.Date = ev.Date;
-                }
+                    //Update displayed info
+                    UpdateDisplayedEventInfo(ev);
 
-                //Update displayed info
-                UpdateDisplayedEventInfo(ev);
-
-            },
+                },
                             //oncompeted
                             () =>
                             {
-                                var ev = BettingInfoAvailable.Find(p => p.Name == e.Name && p.ResultType == e.ResultType);
-                                AllSelections.RemoveAll(k => k.EventName == ev.Name && (k.ResultType == settings.EventType || settings.EventType == "All"));
-                                BettingInfoAvailable.Remove(ev);
-                                //myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
+                                RemoveEventFromAvailable(e);
+                          
                             }
-                            );
+                );
+            reactiveSubs.Add(sub);
+        }
+
+        private void RemoveEventFromAvailable(MarketplaceEvent e)
+        {
+            var ev = BettingInfoAvailable.Find(p => p.Name == e.Name);
+            if (ev == null)
+                return;
+            var mEv = ev.OtherResults.Find(x => x.Name == e.ResultType);
+            foreach (var run in mEv.Runners)
+            {
+                OddsLogger.RemoveLoggingItem(mEv, run);
+            }
+            AllSelections.RemoveAll(k => k.EventName == ev.Name && (k.ResultType == settings.EventType || settings.EventType == "All"));
+
+            BettingInfoAvailable.Find(x => x.Name == mEv.EventName).OtherResults.Remove(mEv);
+            if(ev.OtherResults.Count <= 0)
+            {
+                BettingInfoAvailable.Remove(ev);
+            }
         }
 
         private void UpdateDisplayedEventInfo(Event ev)
         {
             foreach (var oR in ev.OtherResults)
             {
-                foreach (var run in oR.Runners)
+                foreach (var run in oR.Runners.Where(x=>x.Odds != null))
                 {
                     var selDisplay = AllSelections.Where(x => x.EventName == ev.Name && x.SelectionName == run.Name && (x.ResultType == settings.EventType || settings.EventType == "All")).FirstOrDefault();
                     if (selDisplay != null)
                     {
-                        selDisplay.Change = run.Odds == "-" ? 0 : run.Odds.ToDouble() - selDisplay.Odds + 10;
+                        selDisplay.Change = run.Odds == "-" ? 0 : run.Odds.ToDouble() - selDisplay.Odds;
                         selDisplay.Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble();
                         selDisplay.Date = ev.Date;
                         selDisplay.Percentage = run.PercentChance;
@@ -271,7 +353,7 @@ namespace SportsBettingModule
 
                         AllSelections.Add(sd);
 
-                        ChangeLogging(ev, run, true);
+                        ChangeLogging(oR, run, true);
                     }
                     //myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
                 }
@@ -381,7 +463,9 @@ namespace SportsBettingModule
 
         private void CreateEventFramework(List<Event> evList, List<MarketplaceEvent> marketList, string eventType)
         {
-            if (eventType == "Match Odds" || eventType == "Fight Result" || eventType == "Moneyline")
+            AllSelections.Clear();
+            OddsLogger.ClearLoggingList();
+            if (eventType == "Fight Result" || eventType == "Moneyline")
             {
                 foreach (MarketplaceEvent ev in marketList)
                 {
@@ -403,97 +487,110 @@ namespace SportsBettingModule
                     }
                 }
             }
-            else// if (eventType == "To Be Placed")
+            else
             {
-                foreach (MarketplaceEvent ev in marketList)
-                {
-                    //If not in eventList, add
-                    if (evList.Find(x => x.Name == ev.Name) == null)
-                    {
-                        var res = new OtherResult(ev.ResultType, ev.MarketId);
+                BuildUpEventList(evList, marketList);
+                UpdateAvailableEventInfo();
 
-                        foreach (MarketplaceRunner runn in ev.Runners)
-                        {
-                            res.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
-                        }
-                        Event e = new Event(ev.Name)
-                        {
-                            Date = ev.Date,
-                            OtherResults = new List<OtherResult>() { res }
-                        };
-
-                        e.Winner = ev.Winner;
-                        evList.Add(e);
-                    }
-                    else if (evList.Find(x => x.Name == ev.Name).OtherResults.Find(x => x.Id == ev.MarketId) == null)
-                    {
-                        var res = new OtherResult(ev.Name, ev.MarketId);
-                        foreach (MarketplaceRunner runn in ev.Runners)
-                        {
-                            res.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
-                        }
-
-                        evList.Find(x => x.Name == ev.Name).OtherResults.Add(res);
-                    }
-                    else
-                    {
-                        var oR = evList.Find(x => x.Name == ev.Name).OtherResults.Find(x => x.Id == ev.MarketId);
-                        foreach (MarketplaceRunner runn in ev.Runners)
-                        {
-                            if (oR.Runners.Find(x => x.SelectionID == runn.SelectionID) == null)
-                            {
-                                oR.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
-                            }
-                            else
-                            {
-                                oR.Runners.Find(x => x.SelectionID == runn.SelectionID).Odds = runn.Odds;
-                            }
-                        }
-                        evList.Find(x => x.Name == ev.Name).Date = ev.Date;
-                    }
-                    
-                }
-                foreach (var ev in BettingInfoAvailable)
-                {
-                    foreach(var oR in ev.OtherResults)
-                    {
-                        foreach (var run in oR.Runners)
-                        {
-                            var selDisplay = AllSelections.Where(x => x.EventName == ev.Name && x.SelectionName == run.Name && (x.ResultType == settings.EventType || settings.EventType == "All")).FirstOrDefault();
-                            if (selDisplay != null)
-                            {
-                                selDisplay.Change = run.Odds == "-" ? 0 : run.Odds.ToDouble() - selDisplay.Odds;
-                                selDisplay.Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble();
-                                selDisplay.Date = ev.Date;
-                                selDisplay.Percentage = run.PercentChance;
-                                selDisplay.DecimalOdds = run.Multiplier;
-                            }
-                            else
-                            {
-                                var sd = new SelectionDisplay
-                                {
-                                    Change = 0,
-                                    Date = ev.Date,
-                                    DecimalOdds = run.Multiplier,
-                                    EventName = ev.Name,
-                                    Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble(),
-                                    Percentage = run.PercentChance,
-                                    ResultType = oR.Name,
-                                    Selected = true,
-                                    SelectionName = run.Name
-                                };
-
-                                AllSelections.Add(sd);
-
-                                ChangeLogging(ev, run, true);
-                            }
-                        }
-                    }
-                    
-                    
-                }
+            }
         }
-    }
+
+        private void UpdateAvailableEventInfo()
+        {
+            foreach (var ev in BettingInfoAvailable)
+            {
+                foreach (var oR in ev.OtherResults)
+                {
+                    foreach (var run in oR.Runners)
+                    {
+                        var selDisplay = AllSelections.Where(x => x.EventName == ev.Name && x.SelectionName == run.Name && (x.ResultType == settings.EventType || settings.EventType == "All")).FirstOrDefault();
+                        if (selDisplay != null)
+                        {
+                            selDisplay.Change = run.Odds == "-" ? 0 : run.Odds.ToDouble() - selDisplay.Odds;
+                            selDisplay.Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble();
+                            selDisplay.Date = ev.Date;
+                            selDisplay.Percentage = run.PercentChance;
+                            selDisplay.DecimalOdds = run.Multiplier;
+                        }
+                        else
+                        {
+                            var sd = new SelectionDisplay
+                            {
+                                Change = 0,
+                                Date = ev.Date,
+                                DecimalOdds = run.Multiplier,
+                                EventName = ev.Name,
+                                Odds = run.Odds == "-" ? 0 : run.Odds.ToDouble(),
+                                Percentage = run.PercentChance,
+                                ResultType = oR.Name,
+                                Selected = true,
+                                SelectionName = run.Name
+                            };
+
+                            AllSelections.Add(sd);
+
+                            //ChangeLoggingOld(ev, run, true);
+                            ChangeLogging(oR, run, true);
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+        private static void BuildUpEventList(List<Event> evList, List<MarketplaceEvent> marketList)
+        {
+            foreach (MarketplaceEvent ev in marketList)
+            {
+                //If not in eventList, add
+                if (evList.Find(x => x.Name == ev.Name) == null)
+                {
+                    var res = new OtherResult(ev.Name, ev.ResultType, ev.MarketId);
+
+                    foreach (MarketplaceRunner runn in ev.Runners)
+                    {
+                        res.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                    }
+                    Event e = new Event(ev.Name)
+                    {
+                        Date = ev.Date,
+                    };
+                    e.AddOtherResult(res);
+
+                    e.Winner = ev.Winner;
+                    evList.Add(e);
+                }
+                else if (evList.Find(x => x.Name == ev.Name).OtherResults.Find(x => x.MarketId == ev.MarketId) == null)
+                {
+                    var res = new OtherResult(ev.Name, ev.ResultType, ev.MarketId);
+                    foreach (MarketplaceRunner runn in ev.Runners)
+                    {
+                        res.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                    }
+
+                    //evList.Find(x => x.Name == ev.Name).OtherResults.Add(res);
+                    evList.Find(x => x.Name == ev.Name).AddOtherResult(res);
+                }
+                else
+                {
+                    var oR = evList.Find(x => x.Name == ev.Name).OtherResults.Find(x => x.MarketId == ev.MarketId);
+                    foreach (MarketplaceRunner runn in ev.Runners)
+                    {
+                        if (oR.Runners.Find(x => x.SelectionID == runn.SelectionID) == null)
+                        {
+                            oR.AddRunner(new Runner(runn.Name, runn.SelectionID, runn.Odds != null ? runn.Odds : "0"));
+                        }
+                        else
+                        {
+                            oR.Runners.Find(x => x.SelectionID == runn.SelectionID).Odds = runn.Odds;
+                        }
+                    }
+                    evList.Find(x => x.Name == ev.Name).Date = ev.Date;
+                }
+
+            }
+        }
 
         private void AutoRefreshChk_Click(object sender, RoutedEventArgs e)
         {
@@ -536,7 +633,7 @@ namespace SportsBettingModule
             myGuiProperties.ButtonBackgroundColour = colour.Value;
         }
 
-        private bool ChangeLogging(Event ev, Runner run, bool log)
+        private bool ChangeLoggingOld(Event ev, Runner run, bool log)
         {
             bool success = false;
             if (log)
@@ -584,6 +681,20 @@ namespace SportsBettingModule
                         success = OddsLogger.RemoveLoggingItem(oi.SelectionID, oi.MarketID) > 0;
                     }
                 }
+            }
+            return success;
+        }
+
+        private bool ChangeLogging(OtherResult oR, Runner run, bool log)
+        {
+            bool success = false;
+            if (log)
+            {
+                OddsLogger.AddLoggingItem(oR, run);
+            }
+            else
+            {
+                OddsLogger.RemoveLoggingItem(oR, run);
             }
             return success;
         }
@@ -1449,11 +1560,11 @@ namespace SportsBettingModule
                     switch (settings.EventType)
                     {
                         case "Match Odds":
-                            ChangeLogging(BettingInfoAvailable.Where(x => x.MatchResult.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
+                            ChangeLoggingOld(BettingInfoAvailable.Where(x => x.MatchResult.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
                             break;
 
                         case "Go The Distance?":
-                            ChangeLogging(BettingInfoAvailable.Where(x => x.GoTheDistance.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
+                            ChangeLoggingOld(BettingInfoAvailable.Where(x => x.GoTheDistance.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
                             break;
 
                         case "Round Betting":
@@ -1461,11 +1572,11 @@ namespace SportsBettingModule
                             break;
 
                         case "Method of Victory":
-                            ChangeLogging(BettingInfoAvailable.Where(x => x.MethodOfVictory.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
+                            ChangeLoggingOld(BettingInfoAvailable.Where(x => x.MethodOfVictory.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
                             break;
 
                         default:
-                            ChangeLogging(BettingInfoAvailable.Where(x => x.MatchResult.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
+                            ChangeLoggingOld(BettingInfoAvailable.Where(x => x.MatchResult.Runners.Contains(f) && x.Name == sel.EventName).First(), f, (bool)chkSender.IsChecked);
                             break;
                     }
                 }
@@ -1535,6 +1646,7 @@ namespace SportsBettingModule
                                 myGuiProperties.AutoRefreshInterval = TimeSpan.FromSeconds(db.settings.First().AutoRefreshInterval_s);
                                 myGuiProperties.LoggingInterval = TimeSpan.FromSeconds(db.settings.First().LoggingFrequency_s);
                                 myGuiProperties.ShortLoggingInterval = TimeSpan.FromSeconds(db.settings.First().ShortLoggingFrequency_s);
+                                myGuiProperties.Sport = db.settings.First().Sport;
                             }
                         }
                     });
@@ -1544,7 +1656,7 @@ namespace SportsBettingModule
                 myGuiProperties.NavigationVisibility = Visibility.Visible;
                 //mainMessage.Content = "Login Successful";
                 marketMessenger.Initialise(loginClient.SessionToken);
-                marketMessenger.SetMarketFilter(settings.Sport);
+                marketMessenger.SetMarketFilter(myGuiProperties.Sport);
                 var bal = marketMessenger.GetAccountBalance();
                 myGuiProperties.CurrentBalance = bal.CurrentAvailable;
                 myGuiProperties.CurrentExposure = bal.Exposure;
@@ -1556,7 +1668,7 @@ namespace SportsBettingModule
                     {
                         Task.Run(() =>
                         {
-                            var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
+                            var typesSorted = marketMessenger.GetEventTypes(myGuiProperties.Sport);
                             typesSorted.Sort();
                             typesSorted.Insert(0, "All");
                             myGuiProperties.ResultTypes = typesSorted;
@@ -1629,7 +1741,7 @@ namespace SportsBettingModule
                 //GetBettingInfo(settings.EventType, settings.Competition);
                 myGuiProperties.SelectionToDisplay = AllSelections.Where(x => (x.ResultType == settings.EventType || settings.EventType == "All")).OrderBy(x => x.Date).ToList();
 
-                var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
+                var typesSorted = marketMessenger.GetEventTypes(myGuiProperties.Sport);
                 typesSorted.Sort();
                 typesSorted.Insert(0, "All");
                 var competitions = marketMessenger.GetCompetitionTypes();
@@ -1875,7 +1987,7 @@ namespace SportsBettingModule
             if (loginClient.SessionToken != null)
             {
                 marketMessenger.Initialise(loginClient.SessionToken);
-                marketMessenger.SetMarketFilter(settings.Sport);
+                marketMessenger.SetMarketFilter(myGuiProperties.Sport);
 
                 marketMessenger.GetBettingDictionary(settings.EventType);
             }
@@ -1917,7 +2029,7 @@ namespace SportsBettingModule
 
             Task.Run(async () =>
             {
-                await DropWindow(WindowList.Find(x => x == currentWindow));
+                //await DropWindow(WindowList.Find(x => x == currentWindow));
                 InvokeUI(() =>
                 {
                     foreach (Grid window in WindowList)
@@ -1932,7 +2044,7 @@ namespace SportsBettingModule
                         }
                     }
                 });
-                await RaiseWindow(WindowList.Find(x => x == gridName));
+                //await RaiseWindow(WindowList.Find(x => x == gridName));
             });
 
             if (NavigationSet.ContainsKey(gridName))
@@ -2274,7 +2386,9 @@ namespace SportsBettingModule
                     {
                         AutoRefreshInterval_s = 20 * 60,
                         LoggingFrequency_s = 6 * 60 * 60,
-                        ShortLoggingFrequency_s = 42 * 60
+                        ShortLoggingFrequency_s = 42 * 60,
+                        Sport = settings.PossibleSports.FirstOrDefault()
+                    
                     });
                     db.SaveChanges();
                 }
@@ -2299,11 +2413,13 @@ namespace SportsBettingModule
                     {
                         AutoRefreshInterval_s = 20 * 60,
                         LoggingFrequency_s = 6 * 60 * 60,
+                        Sport = settings.PossibleSports.FirstOrDefault(),
                         ShortLoggingFrequency_s = 42 * 60
                     });
                     db.SaveChanges();
                 }
                 db.settings.First().ShortLoggingFrequency_s = (int)span.TotalSeconds;
+                db.SaveChanges();
             }
         }
 
@@ -2323,18 +2439,34 @@ namespace SportsBettingModule
                     {
                         AutoRefreshInterval_s = 20 * 60,
                         LoggingFrequency_s = 6 * 60 * 60,
-                        ShortLoggingFrequency_s = 42 * 60
+                        ShortLoggingFrequency_s = 42 * 60,
+                        Sport = settings.PossibleSports.FirstOrDefault()
+
                     });
                     db.SaveChanges();
                 }
                 db.settings.First().LoggingFrequency_s = (int)span.TotalSeconds;
+                db.SaveChanges();
             }
         }
 
         private void Sport_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            settings.Sport = SportCombo.SelectedItem.ToString();
-            marketMessenger.SetMarketFilter(settings.Sport);
+            myGuiProperties.Sport = SportCombo.SelectedItem.ToString();
+            SaveSportToDb(myGuiProperties.Sport);
+            marketMessenger.SetMarketFilter(myGuiProperties.Sport);
+        }
+
+        private void SaveSportToDb(string sport)
+        {
+            using (SportsDatabaseModel db = new SportsDatabaseModel())
+            {
+                if (db.settings.Count() != 0)
+                {
+                    db.settings.OrderBy(x => x.ID).First().Sport = sport;
+                    db.SaveChanges();
+                }
+            }
         }
 
         private void CompetitionTypeSelectorCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2344,7 +2476,7 @@ namespace SportsBettingModule
 
         private void RefreshSelection_Click(object sender, RoutedEventArgs e)
         {
-            var typesSorted = marketMessenger.GetEventTypes(settings.Sport);
+            var typesSorted = marketMessenger.GetEventTypes(myGuiProperties.Sport);
             typesSorted.Sort();
             typesSorted.Insert(0, "All");
             var competitions = marketMessenger.GetCompetitionTypes();

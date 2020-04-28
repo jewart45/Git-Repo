@@ -62,5 +62,11 @@
       <Version>1.0.110</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MMABetting\CommonClasses\CommonClasses.csproj">
+      <Project>{9c51e17e-2d66-4ba7-b021-38a29d187b7d}</Project>
+      <Name>CommonClasses</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

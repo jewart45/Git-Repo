@@ -183,7 +183,7 @@ namespace Marketplace
 
         public MarketplaceMessenger()
         {
-            eventListObservable = EventListUpdateObservableSetup(60);
+            eventListObservable = EventListUpdateObservableSetup(30);
             eventListObservable.Subscribe();
         }
 
@@ -334,7 +334,7 @@ namespace Marketplace
             IDictionary<string, string> fighterDictionary = new Dictionary<string, string>();
             IList<string> marketIds = new List<string>();
             ISet<string> EventNames = new HashSet<string>();
-            foreach (MarketCatalogue f in marketCatalogues)
+            foreach (MarketCatalogue f in marketCatalogues.Where(x=>x.Competition != null))
             {
                 EventNames.Add(f.Event.Name.Trim());
                 if ((f.MarketName == evType || f.MarketName == evType + " (UNMANAGED)" || f.MarketName.Trim() == evType + " - Unmanaged" || evType == "All") && (f.Competition.Name == competition || competition == "All"))
@@ -796,7 +796,7 @@ namespace Marketplace
             if (marketBook.Count != 0)
             {
                 //Remove any that dont have results
-                eventList.RemoveAll(x => marketBook.Select(y => y.MarketId).Contains(x.MarketId));
+                eventList.RemoveAll(x => !marketBook.Select(y => y.MarketId).Contains(x.MarketId));
 
                 foreach (MarketBook book in marketBook)
                 {
@@ -945,7 +945,7 @@ namespace Marketplace
             List<string> compTypes = new List<string>();
             IList<string> marketIds = new List<string>();
             ISet<string> EventNames = new HashSet<string>();
-            foreach (MarketCatalogue f in marketCatalogues)
+            foreach (MarketCatalogue f in marketCatalogues.Where(x=>x.Competition != null))
             {
                 //EventNames.Add(f.Event.Name);
                 if (!compTypes.Contains(f.Competition.Name.Replace(" (UNMANAGED)", "").Replace(" - Unmanaged", "")))

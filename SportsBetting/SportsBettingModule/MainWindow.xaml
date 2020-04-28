@@ -526,7 +526,7 @@
             Grid.Row="1"
             Margin="{Binding Path=ViewMargin}"
             Background="White"
-            Visibility="Hidden">
+            Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="350" />
                 <ColumnDefinition Width="240" />
@@ -665,7 +665,7 @@
             Grid.Row="1"
             Background="White"
             Margin="{Binding Path=ViewMargin}"
-            Visibility="Visible">
+            Visibility="Hidden">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*" MinWidth="140" />
                 <ColumnDefinition Width="3.5*" MinWidth="100" />

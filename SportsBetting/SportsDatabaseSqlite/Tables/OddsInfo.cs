@@ -8,7 +8,7 @@ namespace SportsDatabaseSqlite.Tables
         public DateTime DateTaken { get; set; }
         public string SelectionName { get; set; }
         public long OddsValue { get; set; }
-        public long Percent { get; set; }
+        public decimal Percent { get; set; }
         public DateTime EventDate { get; set; }
         public string EventName { get; set; }
         public string SelectionID { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SportsBettingModule.Classes
+namespace BetHistoryImport.Classes
 {
     internal class SettingsVariables
     {

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SportsBettingModule.Classes
+namespace BetHistoryImport.Classes
 {
     public static class Converters
     {

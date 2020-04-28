@@ -13,10 +13,15 @@ namespace Marketplace
     {
         private List<MarketplaceEvent> reactiveEventList = new List<MarketplaceEvent>();
         private IObservable<List<MarketplaceBetOrder>> eventListObservable;
+        private IObservable<List<MarketplaceEvent>> AllEventsObs;
+        private string currentResultType;
+        private string currentCompetition;
         private ISubject<List<MarketplaceBetOrder>> observerList = new Subject<List<MarketplaceBetOrder>>();
 
-        public IObservable<MarketplaceEvent> BetSubscription(MarketplaceEvent ev)
+        public IObservable<MarketplaceEvent> BetSubscription(MarketplaceEvent Ev)
         {
+            var ev = Ev.Copy();
+
             if (reactiveEventList.Find(x => x.MarketId == ev.MarketId) == null)
             {
                 reactiveEventList.Add(ev);
@@ -28,17 +33,17 @@ namespace Marketplace
                     .Select(x => x.Where(p => p.MarketId == ev.MarketId).ToList())
                     .Subscribe(e =>
                     {
-                       //remove runners not in there any more
-                       ev.Runners.RemoveAll(o => !e.Select(t => t.SelectionId.ToString()).Contains(o.SelectionID));
+                        //remove runners not in there any more
+                        ev.Runners.RemoveAll(o => !e.Select(t => t.SelectionId.ToString()).Contains(o.SelectionID));
 
-                       //update runners
-                       foreach (MarketplaceBetOrder incomingRunn in e)
+                        //update runners
+                        foreach (MarketplaceBetOrder incomingRunn in e)
                         {
                             var run = ev.Runners.Find(k => k.SelectionID == incomingRunn.SelectionId.ToString());
                             if (run == null)
                             {
-                               //add if not contains
-                               ev.Runners.Add(new MarketplaceRunner(incomingRunn.SelectionName, incomingRunn.SelectionId.ToString(), incomingRunn.Odds != null ? incomingRunn.Odds : "0"));
+                                //add if not contains
+                                ev.Runners.Add(new MarketplaceRunner(incomingRunn.SelectionName, incomingRunn.SelectionId.ToString(), incomingRunn.Odds != null ? incomingRunn.Odds : "0"));
                             }
                             else
                             {
@@ -63,6 +68,28 @@ namespace Marketplace
         }
 
 
+        public IObservable<List<MarketplaceEvent>> EventListUpdates(int interval, string eventType, string competition)
+        {
+            var timer = new System.Timers.Timer();
+            timer.Interval = 1000 * interval;
+            //Setup subsdcriptionm to list output
+            AllEventsObs = Observable.Create<List<MarketplaceEvent>>(
+                observer =>
+                {
+                    timer.Elapsed += (s, e) =>
+                    {
+                        observer.OnNext(GetEventSelectionIDs(eventType, competition));
+                    };
+
+
+                    return timer;
+                });
+
+            timer.Start(); 
+            return AllEventsObs;
+
+        }
+
         public IObservable<List<MarketplaceBetOrder>> EventListUpdateObservableSetup(int Interval_s)
         {
             if (eventListObservable != null)
@@ -74,7 +101,6 @@ namespace Marketplace
                 //Event list broadcast setup
                 SetupListBroadcast(Interval_s);
 
-
                 //Setup subsdcriptionm to list output
                 eventListObservable = Observable.Create<List<MarketplaceBetOrder>>(
                     observer =>
@@ -84,7 +110,6 @@ namespace Marketplace
                     });
                 return eventListObservable;
             }
-
         }
 
         private void SetupListBroadcast(int Interval_s)
@@ -157,9 +182,10 @@ namespace Marketplace
 
                     observerList.OnNext(orderList);
                 }
-
             };
             timer.Start();
         }
+
+        public void ClearReactiveEventList() => reactiveEventList.Clear();
     }
 }

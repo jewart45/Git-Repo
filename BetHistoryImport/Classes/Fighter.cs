@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SportsBettingModule.Classes
+namespace BetHistoryImport.Classes
 {
     public class Fighter
     {

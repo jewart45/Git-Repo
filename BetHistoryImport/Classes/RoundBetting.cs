@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SportsBettingModule.Classes
+namespace BetHistoryImport.Classes
 {
     public class OtherResult : ISelection
     {

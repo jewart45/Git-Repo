@@ -1,11 +1,12 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 
 namespace CommonClasses
 {
     public class MarketplaceEvent
     {
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         public string Winner { get; set; }
         public DateTime Date { get; set; }
@@ -13,7 +14,7 @@ namespace CommonClasses
         public string ResultType { get; set; }
         public string Competition { get; set; }
 
-        public string MarketId { get; set; }
+        public string MarketId { get; private set; }
 
         public List<MarketplaceRunner> Runners { get; set; }
 
@@ -24,6 +25,8 @@ namespace CommonClasses
             ResultType = resultType;
             MarketId = marketId;
         }
+
+        
 
         public MarketplaceEvent(string name, DateTime date, string marketId = null, string resultType = null)
         {
@@ -54,6 +57,20 @@ namespace CommonClasses
                 }
             }
             return true;
+        }
+
+        public MarketplaceEvent Copy()
+        {
+            var ev = new MarketplaceEvent(Name, MarketId, ResultType);
+            foreach (var r in Runners)
+            {
+                ev.Runners.Add(new MarketplaceRunner(r.Name, r.SelectionID, r.Odds));
+            }
+            ev.Date = Date;
+            ev.Competition = Competition;
+            ev.Winner = Winner;
+
+            return ev;
         }
     }
 }

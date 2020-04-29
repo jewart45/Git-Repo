@@ -6,14 +6,14 @@ namespace BetHistoryImport.Classes
     {
         public string Name { get; set; }
         public string Winner { get; set; }
-        public List<Runner> Runners { get; set; }
+        public List<RunnerSel> Runners { get; set; }
 
         public MethodOfVictory()
         {
             Name = "Method of Victory";
-            Runners = new List<Runner>();
+            Runners = new List<RunnerSel>();
         }
 
-        public void AddRunner(Runner runner) => Runners.Add(runner);
+        public void AddRunner(RunnerSel runner) => Runners.Add(runner);
     }
 }

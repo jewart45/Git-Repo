@@ -5,13 +5,13 @@ namespace BetHistoryImport.Classes
     public class MatchResult : ISelection
     {
         public string Name { get; set; }
-        public List<Runner> Runners { get; set; }
+        public List<RunnerSel> Runners { get; set; }
         public string Winner { get; set; }
 
-        public MatchResult(Runner run1, Runner run2)
+        public MatchResult(RunnerSel run1, RunnerSel run2)
         {
             Name = "Match Odds";
-            Runners = new List<Runner>
+            Runners = new List<RunnerSel>
             {
                 run1,
                 run2
@@ -21,9 +21,9 @@ namespace BetHistoryImport.Classes
         public MatchResult()
         {
             Name = "Match Odds";
-            Runners = new List<Runner>();
+            Runners = new List<RunnerSel>();
         }
 
-        public void AddRunner(Runner runner) => Runners.Add(runner);
+        public void AddRunner(RunnerSel runner) => Runners.Add(runner);
     }
 }

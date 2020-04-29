@@ -26,12 +26,12 @@ namespace BetHistoryImport.Classes
         /// <value>
         /// The runners.
         /// </value>
-        List<Runner> Runners { get; set; }
+        List<RunnerSel> Runners { get; set; }
 
         /// <summary>
         /// Adds the runner.
         /// </summary>
         /// <param name="runner">The runner.</param>
-        void AddRunner(Runner runner);
+        void AddRunner(RunnerSel runner);
     }
 }

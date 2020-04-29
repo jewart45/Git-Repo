@@ -9,12 +9,12 @@ namespace BetHistoryImport.Classes
         public string Winner { get; set; }
         public string Yes => Runners.Where(x => x.Name == "Yes").FirstOrDefault().Odds;
         public string No => Runners.Where(x => x.Name == "No").FirstOrDefault().Odds;
-        public List<Runner> Runners { get; set; }
+        public List<RunnerSel> Runners { get; set; }
 
-        public GoTheDistance(Runner run1, Runner run2)
+        public GoTheDistance(RunnerSel run1, RunnerSel run2)
         {
             Name = "Go The Distance?";
-            Runners = new List<Runner>
+            Runners = new List<RunnerSel>
             {
                 run1,
                 run2
@@ -24,9 +24,9 @@ namespace BetHistoryImport.Classes
         public GoTheDistance()
         {
             Name = "Go The Distance?";
-            Runners = new List<Runner>();
+            Runners = new List<RunnerSel>();
         }
 
-        public void AddRunner(Runner runner) => Runners.Add(runner);
+        public void AddRunner(RunnerSel runner) => Runners.Add(runner);
     }
 }

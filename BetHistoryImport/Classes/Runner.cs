@@ -2,7 +2,7 @@
 
 namespace BetHistoryImport.Classes
 {
-    public class Runner
+    public class RunnerSel
     {
         public string Name { get; set; }
         public string SelectionID { get; set; }
@@ -16,7 +16,7 @@ namespace BetHistoryImport.Classes
         public double Multiplier { get; private set; }
         public string LastOdds { get; private set; }
 
-        public Runner(string name, string selectionId, string odds)
+        public RunnerSel(string name, string selectionId, string odds)
         {
             Name = name;
             SelectionID = selectionId;

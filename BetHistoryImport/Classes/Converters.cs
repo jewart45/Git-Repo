@@ -56,7 +56,7 @@ namespace BetHistoryImport.Classes
             List<OddsInfo> list = new List<OddsInfo>();
             foreach(var result in ev.OtherResults)
             {
-                foreach (Runner run in f.Runners)
+                foreach (RunnerSel run in f.Runners)
                 {
                     list.Add(run.Odds != "-" ?
                     new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = (long)Convert.ToDecimal(run.Odds), Percent = (long)Convert.ToDecimal(run.PercentChanceDecimal), SelectionID = run.SelectionID, ResultType = f.Name, MarketID = result.MarketId}

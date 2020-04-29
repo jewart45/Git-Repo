@@ -9,7 +9,7 @@ namespace BetHistoryImport.Classes
         public string Name { get; set; }
         public string MarketId { get; set; }
         public string Winner { get; set; }
-        public List<Runner> Runners { get; set; } = new List<Runner>();
+        public List<RunnerSel> Runners { get; set; } = new List<RunnerSel>();
         public DateTime Date { get; internal set; }
 
         public OtherResult(string eventName, string name, string id = null, DateTime dt = new DateTime())
@@ -27,6 +27,6 @@ namespace BetHistoryImport.Classes
             MarketId = id;
         }
 
-        public void AddRunner(Runner runner) => Runners.Add(runner);
+        public void AddRunner(RunnerSel runner) => Runners.Add(runner);
     }
 }

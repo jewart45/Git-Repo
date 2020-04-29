@@ -10,7 +10,7 @@
         x:Name="ListBetsGrid"
             Grid.Row="1"
             Margin="{Binding Path=ViewMargin}"
-            Background="AliceBlue"
+            Background="Navy"
             Visibility="Visible">
 
         <Viewbox>
@@ -31,7 +31,7 @@
                 </StackPanel>
 
 
-                <StackPanel Grid.Row="1" Grid.Column="1">
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,1">
                     <Button
                             Width="140"
                             Height="25"
@@ -74,7 +74,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Click="Button_Click"
-                            Content="Update List"
+                            Content="Choose Folder"
                             Visibility="Visible" />
 
                     <StackPanel Orientation="Horizontal">
@@ -112,7 +112,7 @@
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn
                                 Binding="{Binding Path=Selected}"
-                                Header="Logging"
+                                Header="Logged"
                                 IsReadOnly="False" />
                         <DataGridTextColumn
                                 Width="100"
@@ -149,9 +149,9 @@
                         <DataGridTextColumn
                                 Width="*"
                                 Binding="{Binding Path=Change, NotifyOnTargetUpdated=True}"
-                                Header="Change"
+                                Header="Winner"
                                 IsReadOnly="True">
-                            <DataGridTextColumn.CellStyle>
+                            <!--<DataGridTextColumn.CellStyle>
                                 <Style>
                                     <Style.Triggers>
                                         <EventTrigger RoutedEvent="Binding.TargetUpdated">
@@ -163,7 +163,7 @@
                                         </EventTrigger>
                                     </Style.Triggers>
                                 </Style>
-                            </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn.CellStyle>-->
                         </DataGridTextColumn>
                     </DataGrid.Columns>
                 </DataGrid>

@@ -15,6 +15,6 @@ namespace BetHistoryImport.Classes
 
         public double DecimalOdds { get; set; }
         public double Odds { get; set; }
-        public double Change { get; set; }
+        public bool Winner { get; set; }
     }
 }

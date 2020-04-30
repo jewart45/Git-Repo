@@ -5,7 +5,7 @@ namespace BetHistoryImport.Classes
     public class RunnerSel
     {
         public string Name { get; set; }
-        public string SelectionID { get; set; }
+        public long SelectionID { get; set; }
         public string Odds { get; set; }
         public string NameNoSpaces => Name.Replace(" ", "");
 
@@ -15,12 +15,14 @@ namespace BetHistoryImport.Classes
 
         public double Multiplier { get; private set; }
         public string LastOdds { get; private set; }
+        public bool Winner { get; set; }
 
-        public RunnerSel(string name, string selectionId, string odds)
+        public RunnerSel(string name, long selectionId, bool winner, string odds)
         {
             Name = name;
             SelectionID = selectionId;
             PriceTradedtoOdds(Convert.ToDouble(odds));
+            Winner = winner;
         }
 
         public string OddsToChance(string Odds)

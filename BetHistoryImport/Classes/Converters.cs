@@ -38,7 +38,7 @@ namespace BetHistoryImport.Classes
             MarketplaceEvent mEv = new MarketplaceEvent(result.Name, result.MarketId, result.Name) { Date = ev.Date, Winner = result.Winner };
             foreach(var r in f.Runners)
             {
-                mEv.Runners.Add(new MarketplaceRunner(r.Name, r.SelectionID, r.Odds == "-" ? "0" : r.Odds));
+                mEv.Runners.Add(new MarketplaceRunner(r.Name, r.SelectionID.ToString(), r.Odds == "-" ? "0" : r.Odds));
             }
 
             if(ev.Winner != null)
@@ -51,30 +51,30 @@ namespace BetHistoryImport.Classes
 
         
 
-        public static List<OddsInfo> ToOddsInfo(this ISelection f, Event ev)
-        {
-            List<OddsInfo> list = new List<OddsInfo>();
-            foreach(var result in ev.OtherResults)
-            {
-                foreach (RunnerSel run in f.Runners)
-                {
-                    list.Add(run.Odds != "-" ?
-                    new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = (long)Convert.ToDecimal(run.Odds), Percent = (long)Convert.ToDecimal(run.PercentChanceDecimal), SelectionID = run.SelectionID, ResultType = f.Name, MarketID = result.MarketId}
-                    : new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = 0, Percent = 0, SelectionID = run.SelectionID, ResultType = f.Name, MarketID = result.MarketId });
-                }
-                if (f.Winner != null)
-                {
-                    list.Find(x => x.SelectionName == f.Winner).Winner = true;
-                    foreach (OddsInfo k in list.Where(x => x.SelectionName != f.Winner))
-                    {
-                        k.Winner = false;
-                    }
-                }
-            }
+        //public static List<OddsInfo> ToOddsInfo(this ISelection f, Event ev)
+        //{
+        //    List<OddsInfo> list = new List<OddsInfo>();
+        //    foreach(var result in ev.OtherResults)
+        //    {
+        //        foreach (RunnerSel run in f.Runners)
+        //        {
+        //            list.Add(run.Odds != "-" ?
+        //            new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = (long)Convert.ToDecimal(run.Odds), Percent = (long)Convert.ToDecimal(run.PercentChanceDecimal), SelectionID = run.SelectionID, ResultType = f.Name, MarketID = result.MarketId}
+        //            : new OddsInfo() { EventDate = ev.Date, EventName = ev.Name, SelectionName = run.Name, OddsValue = 0, Percent = 0, SelectionID = run.SelectionID, ResultType = f.Name, MarketID = result.MarketId });
+        //        }
+        //        if (f.Winner != null)
+        //        {
+        //            list.Find(x => x.SelectionName == f.Winner).Winner = true;
+        //            foreach (OddsInfo k in list.Where(x => x.SelectionName != f.Winner))
+        //            {
+        //                k.Winner = false;
+        //            }
+        //        }
+        //    }
            
 
-            return list;
-        }
+        //    return list;
+        //}
 
         public static EventsLookup ToResultInfo(this MarketplaceEvent ev) => new EventsLookup
         {

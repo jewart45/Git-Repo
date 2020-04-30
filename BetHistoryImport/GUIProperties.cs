@@ -79,17 +79,7 @@ namespace BetHistoryImport
             }
         }
 
-        private List<SelectionDisplay> allSelections = new List<SelectionDisplay>();
-
-        public List<SelectionDisplay> AllSelections
-        {
-            get => allSelections;
-            set
-            {
-                allSelections = value;
-                NotifyPropertyChanged();
-            }
-        }
+       
 
         private TimeSpan loggingInterval = TimeSpan.FromMinutes(360);
 
@@ -325,6 +315,42 @@ namespace BetHistoryImport
             set
             {
                 loggedUserName = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private int eventTypeId = 7524;
+
+        public int EventTypeId
+        {
+            get => eventTypeId;
+            set
+            {
+                eventTypeId = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private string filePath = @"C:\Users\jewar\Downloads\OtherSportsRaw";
+        
+        public string FilePath
+        {
+            get => filePath;
+            set
+            {
+                filePath = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private string resultType = "MATCH_ODDS";
+
+        public string ResultType
+        {
+            get => resultType;
+            set
+            {
+                resultType = value;
                 NotifyPropertyChanged();
             }
         }

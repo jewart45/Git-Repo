@@ -15,6 +15,7 @@ namespace SportsDatabaseSqlite
         }
 
         public DbSet<OddsInfo> oddsInfo { get; set; }
+        public DbSet<OddsInfoMedian> oddsInfoMed { get; set; }
         public DbSet<EventsLookup> eventLookups { get; set; }
 
         public DbSet<FighterInfo> playerInfo { get; set; }
@@ -85,6 +86,7 @@ namespace SportsDatabaseSqlite
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OddsInfo>();
+            modelBuilder.Entity<OddsInfoMedian>();
             modelBuilder.Entity<ResultLog>();
             modelBuilder.Entity<EventsLookup>();
             modelBuilder.Entity<FighterInfo>();

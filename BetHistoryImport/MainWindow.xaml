@@ -26,46 +26,16 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal">
-                    <Label x:Name="filteredListLbl" Content="Filtered List" FontWeight="Bold" MouseLeftButtonUp="filteredListLbl_MouseLeftButtonUp"  Foreground="#CC000000" />
-                    <Label x:Name="allSelectionsLbl" Content="All Logged" MouseLeftButtonUp="allSelectionsLbl_MouseLeftButtonUp"  Foreground="#CC000000" />
+                    <Label Content="Event Type Id: " FontWeight="Bold" Foreground="Orange" Margin="10,0" />
+                    <TextBox Width="80" Text="{Binding Path=EventTypeId}"/>
+                    <Label Content="Result Type: " FontWeight="Bold" Foreground="Orange" Margin="10,0"  />
+                    <TextBox Width="150" Text="{Binding Path=ResultType}" Margin="10,0"/>
+                    <Label Content="FilePath: " FontWeight="Bold" Foreground="Orange"  Margin="10,0" />
+                    <Label x:Name="FilePath" Content="{Binding Path=FilePath}" Foreground="Orange" Margin="10,0" />
                 </StackPanel>
 
 
                 <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,1">
-                    <Button
-                            Width="140"
-                            Height="25"
-                            Margin="10"
-                            Content="Refresh Selections" Click="Button_Click_1" />
-
-                    <Label
-                            Height="40"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
-                            VerticalContentAlignment="Bottom"
-                            Content="Competition" />
-                    <ComboBox
-                            x:Name="CompetitionTypeSelectorCombo"
-                            Height="40"
-                            VerticalAlignment="Bottom"
-                            ItemsSource="{Binding Path=CompetitionTypes, Mode=TwoWay}"
-                            SelectedIndex="0"
-                            SelectionChanged="CompetitionTypeSelectorCombo_SelectionChanged"/>
-                    <Label
-                            Height="40"
-                            Margin="0,0,0,0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
-                            VerticalContentAlignment="Bottom"
-                            Content="Result Type" />
-                    <ComboBox
-                            x:Name="ResultTypeSelectorCombo"
-                            Grid.Row="1"
-                            Height="40"
-                            VerticalAlignment="Bottom"
-                            ItemsSource="{Binding Path=ResultTypes, Mode=TwoWay}"
-                            SelectedIndex="0" />
 
                     <Button
                             Width="140"
@@ -76,16 +46,28 @@
                             Click="Button_Click"
                             Content="Choose Folder"
                             Visibility="Visible" />
+                    <Button
+                        x:Name="RunGetInfoBtn"
+                            Width="140"
+                            Height="45"
+                            Margin="0,30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Click="RunGetInfoBtn_Click"
+                            Content="Run Find"
+                            Visibility="Visible" />
+                    <Button
+                        x:Name="bailBtn"
+                            Width="140"
+                            Height="45"
+                            Margin="0,30"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Click="bailBtn_Click"
+                            Content="Bail"
+                            Visibility="Hidden" />
 
                     <StackPanel Orientation="Horizontal">
-                        <Label
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Width="83"
-                                Height="45"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top"
-                                Content="Relogin times:" />
                         <Label
                                 Height="45"
                                 HorizontalAlignment="Left"
@@ -107,7 +89,6 @@
                         CanUserAddRows="False"
                         CanUserDeleteRows="False"
                         HorizontalScrollBarVisibility="Disabled"
-                        ItemsSource="{Binding SelectionToDisplay}"
                         VerticalScrollBarVisibility="Auto">
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn
@@ -146,9 +127,9 @@
                                 Binding="{Binding Path=Odds}"
                                 Header="Odds (American)"
                                 IsReadOnly="True" />
-                        <DataGridTextColumn
+                        <DataGridCheckBoxColumn
                                 Width="*"
-                                Binding="{Binding Path=Change, NotifyOnTargetUpdated=True}"
+                                Binding="{Binding Path=Winner, NotifyOnTargetUpdated=True}"
                                 Header="Winner"
                                 IsReadOnly="True">
                             <!--<DataGridTextColumn.CellStyle>
@@ -164,7 +145,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </DataGridTextColumn.CellStyle>-->
-                        </DataGridTextColumn>
+                        </DataGridCheckBoxColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

@@ -11,7 +11,7 @@
             Grid.Row="1"
             Margin="{Binding Path=ViewMargin}"
             Background="Navy"
-            Visibility="Visible">
+            Visibility="Visible" >
 
         <Viewbox>
             <Grid>
@@ -27,9 +27,9 @@
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Event Type Id: " FontWeight="Bold" Foreground="Orange" Margin="10,0" />
-                    <TextBox Width="80" Text="{Binding Path=EventTypeId}"/>
+                    <TextBox x:Name="evTypeTxtBox" Width="80" Text="{Binding Path=EventTypeId}"/>
                     <Label Content="Result Type: " FontWeight="Bold" Foreground="Orange" Margin="10,0"  />
-                    <TextBox Width="150" Text="{Binding Path=ResultType}" Margin="10,0"/>
+                    <TextBox x:Name="resTypeTxtBox" Width="150" Text="{Binding Path=ResultType}" Margin="10,0"/>
                     <Label Content="FilePath: " FontWeight="Bold" Foreground="Orange"  Margin="10,0" />
                     <Label x:Name="FilePath" Content="{Binding Path=FilePath}" Foreground="Orange" Margin="10,0" />
                 </StackPanel>
@@ -66,6 +66,37 @@
                             Click="bailBtn_Click"
                             Content="Bail"
                             Visibility="Hidden" />
+                    <Button
+                        x:Name="SettingBtn"
+                        Width="140"
+                        Height="45"
+                        Margin="0,30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="SettingBtn_Click"
+                        Content="Settings"
+                        Visibility="Visible" />
+                    <Button
+                        x:Name="PlayerBtn"
+                        Width="140"
+                        Height="45"
+                        Margin="0,30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="PlayerBtn_Click"
+                        Content="Player List"
+                        Visibility="Visible" />
+
+                    <Button
+                        x:Name="ImageRunBtn"
+                        Width="140"
+                        Height="45"
+                        Margin="0,30"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Click="RunImageBtn_Click"
+                        Content="Run Images"
+                        Visibility="Visible" />
 
                     <StackPanel Orientation="Horizontal">
                         <Label
@@ -74,6 +105,7 @@
                                 VerticalAlignment="Top"
                                 Content="{Binding Path=ReloginTimes}" />
                     </StackPanel>
+                    
                 </StackPanel>
 
 
@@ -89,7 +121,8 @@
                         CanUserAddRows="False"
                         CanUserDeleteRows="False"
                         HorizontalScrollBarVisibility="Disabled"
-                        VerticalScrollBarVisibility="Auto">
+                        VerticalScrollBarVisibility="Auto"
+                    Visibility="Hidden">
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn
                                 Binding="{Binding Path=Selected}"
@@ -147,6 +180,95 @@
                             </DataGridTextColumn.CellStyle>-->
                         </DataGridCheckBoxColumn>
                     </DataGrid.Columns>
+                </DataGrid>
+                <Grid 
+                    x:Name="settingGrid"
+                        Grid.Row="2"
+                        Width="900"
+                        Height="500" Background="AliceBlue"
+                    Visibility="Hidden"
+                    >
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Margin="20" Orientation="Horizontal">
+                            <Label Content="Sport Mode: " FontWeight="Bold" Foreground="Black" Margin="10,0"  />
+                            <ComboBox Width="150" ItemsSource="{Binding Path=SportMode}" SelectedItem="{Binding Path=SelectedSportMode}" Margin="10,0"/>
+                        </StackPanel>
+                        <StackPanel Margin="20" Orientation="Horizontal">
+                            <Label Content="Include Live Betting: " FontWeight="Bold" Foreground="Black" Margin="10,0"  />
+                            <CheckBox IsChecked="{Binding Path=IncludeLiveBetting}" Margin="10,10"/>
+                        </StackPanel>
+                        <StackPanel Margin="20" Orientation="Horizontal">
+                            <Label Content="Extra Search Text: " FontWeight="Bold" Foreground="Black" Margin="10,0"  />
+                            <TextBox Text="{Binding Path=AditionalImageTextSearch}" Margin="10,10"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+
+                <Grid 
+                    x:Name="ImageGrid"
+                        Grid.Row="2"
+                        Width="900"
+                        Height="500"
+                    Visibility="Hidden"
+                    >
+                    <StackPanel Orientation="Horizontal">
+                        <Image x:Name="img1" Source="{Binding Path=Image1}" Height="300" Width="300" Margin="15"/>
+                        <Image Source="{Binding Path=Image2}" Height="300" Width="300" Margin="15"/>
+
+                    </StackPanel>
+                    <Button x:Name="nextImage"
+                        Content="Next" 
+                            Click="NextImage_Click" 
+                            VerticalAlignment="Bottom" 
+                            HorizontalAlignment="Center" 
+                            Margin="10" Height="50" 
+                            Width="100"/>
+                    <Button
+                        Content="Use" 
+                            Click="UseImage_Click" 
+                            VerticalAlignment="Bottom" 
+                            HorizontalAlignment="Center" 
+                            Margin="10,10,-250,10" Height="50" 
+                            Width="100"/>
+                    <Label x:Name="savedLbl" 
+                           
+                            VerticalAlignment="Bottom" 
+                            HorizontalAlignment="Center" 
+                           Margin="10,10,250,10" FontWeight="Bold" Foreground="Green"
+                           Content="Saved!" 
+                           Visibility="Hidden"
+                           Width="200" />
+                </Grid>
+
+                <DataGrid 
+                    x:Name="playerGrid"
+                        Grid.Row="2"
+                        Width="900"
+                        Height="500" Background="AliceBlue"
+                        AlternatingRowBackground="Beige"
+                        AlternationCount="2"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto"
+                    Visibility="Hidden">
+                    <DataGrid.Columns>
+                        
+                        <DataGridTextColumn
+                                Width="100"
+                                Binding="{Binding Path=Name}"
+                                Header="Name"
+                                IsReadOnly="True" />
+                        <DataGridCheckBoxColumn
+                                Binding="{Binding Path=SelectionBias}"
+                                Header="Selection"
+                                IsReadOnly="False" />
+                    </DataGrid.Columns>
+                    
+
+                   
                 </DataGrid>
             </Grid>
         </Viewbox>

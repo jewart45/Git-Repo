@@ -4,6 +4,7 @@ using SportsDatabaseSqlite;
 using SportsDatabaseSqlite.Tables;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace BetHistoryImport
 {
@@ -23,6 +25,75 @@ namespace BetHistoryImport
         private bool bail;
         private System.Timers.Timer timer;
 
+        private List<string> NBATeams = new List<string>()
+        {
+            "Boston Celtics",
+            "Brooklyn Nets",
+            "New York Knicks",
+            "Philadelphia 76ers",
+            "Toronto Raptors",
+            "Chicago Bulls",
+            "Cleveland Cavaliers",
+            "Detroit Pistons",
+            "Indiana Pacers",
+            "Milwaukee Bucks",
+            "Atlanta Hawks",
+            "Charlotte Hornets",
+            "Miami Heat",
+            "Orlando Magic",
+            "Washington Wizards",
+            "Denver Nuggets",
+            "Minnesota Timberwolves",
+            "Oklahoma City Thunder",
+            "Portland Trail Blazers",
+            "Utah Jazz",
+            "Golden State Warriors",
+            "Los Angeles Clippers",
+            "Los Angeles Lakers",
+            "Phoenix Suns",
+            "Sacramento Kings",
+            "Dallas Mavericks",
+            "Houston Rockets",
+            "Memphis Grizzlies",
+            "New Orleans Pelicans",
+            "San Antonio Spurs",
+        };
+
+        private List<string> NHLTeams = new List<string>()
+        {
+            "Boston Bruins",
+            "Buffalo Sabres",
+            "Detroit Red Wings",
+            "Florida Panthers",
+            "Montreal Canadiens",
+            "Ottawa Senators",
+            "Tampa Bay Lightning",
+            "Toronto Maple Leafs",
+            "Carolina Hurricanes",
+            "Columbus Blue Jackets",
+            "New Jersey Devils",
+            "New York Islanders",
+            "New York Rangers",
+            "Philadelphia Flyers",
+            "Pittsburgh Penguins",
+            "Washington Capitals",
+            "Chicago Blackhawks",
+            "Colorado Avalanche",
+            "Dallas Stars",
+            "Minnesota Wild",
+            "Nashville Predators",
+            "St. Louis Blues",
+            "Winnipeg Jets",
+            "Anaheim Ducks",
+            "Arizona Coyotes",
+            "Calgary Flames",
+            "Edmonton Oilers",
+            "Los Angeles Kings",
+            "San Jose Sharks",
+            "Vancouver Canucks",
+            "Vegas Golden Knights",
+        };
+
         public List<SelectionDisplay> AllSelections { get; private set; } = new List<SelectionDisplay>();
 
         public MainWindow()
@@ -32,6 +103,7 @@ namespace BetHistoryImport
             myGuiProperties = new GUIProperties();
 
             DataContext = myGuiProperties;
+            this.KeyDown += ImageGrid_KeyDown;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -71,6 +143,7 @@ namespace BetHistoryImport
                     fileContent = reader.ReadToEnd();
                     var oddsToAdd = await BuildEventHistoryAsync(fileContent);
                     var oddsSummed = new List<OddsInfoMedian>();
+                    var playerInfos = new List<PlayerInfo>();
 
                     foreach (var o in oddsToAdd.Select(x => x.SelectionName).Distinct())
                     {
@@ -98,6 +171,17 @@ namespace BetHistoryImport
                             SelectionName = odd.SelectionName,
                             Winner = odd.Winner
                         });
+
+                        if (!playerInfos.Select(x => x.Name).Contains(odd.SelectionName))
+                        {
+                            playerInfos.Add(new PlayerInfo()
+                            {
+                                Name = odd.SelectionName,
+                                SelectionBias = false
+                            });
+                        }
+                        
+                        
                     }
                     if (oddsToAdd.Count > 0)
                     {
@@ -105,6 +189,13 @@ namespace BetHistoryImport
                         {
                             db.oddsInfo.AddRange(oddsToAdd);
                             db.oddsInfoMed.AddRange(oddsSummed);
+                            foreach(PlayerInfo p in playerInfos)
+                            {
+                                if (db.playerInfo.FirstOrDefault(x => x.Name == p.Name) == null)
+                                {
+                                    db.playerInfo.Add(p);
+                                }
+                            }
                             await db.SaveChangesAsync();
                         }
                         //await Task.Delay(1000);
@@ -182,7 +273,11 @@ namespace BetHistoryImport
             };
 
             var startTimeEv = evList.Find(x => x.Mc.First(y=>y.MarketDefinition != null).MarketDefinition.InPlay);
-            if (startTimeEv == null || (startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventTypeId != myGuiProperties.EventTypeId || myGuiProperties.EventTypeId == 0) || (startTimeEv.Mc.First(y=>y.MarketDefinition != null).MarketDefinition.MarketType != myGuiProperties.ResultType || myGuiProperties.ResultType == "") || !startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventName.Contains('@'))
+            if (startTimeEv == null 
+                || (startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventTypeId != myGuiProperties.EventTypeId && myGuiProperties.EventTypeId != 0) 
+                || (startTimeEv.Mc.First(y=>y.MarketDefinition != null).MarketDefinition.MarketType != myGuiProperties.ResultType && myGuiProperties.ResultType != "")
+                || (!NHLTeams.Any(startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventName.Contains) && myGuiProperties.SelectedSportMode == "NHL")
+                || (!NBATeams.Any(startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventName.Contains) && myGuiProperties.SelectedSportMode == "NBA")) //NBA Filter
                 return oddsInfo;
 
             var startTime = startTimeEv.Clk;
@@ -232,10 +327,11 @@ namespace BetHistoryImport
                             SelectionName = runner.Name,
                             Winner = runner.Winner
                         });
+                        runner.Odds = PriceTradedtoOdds(converted.Mc.First(y => y.Rc != null).Rc[i].Ltp).ToString();
                     }
                     
                 }
-
+                
                 objList.Add(converted);
             };
 
@@ -277,24 +373,26 @@ namespace BetHistoryImport
             //Update UI
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void SettingBtn_Click(object sender, RoutedEventArgs e)
         {
+            HideAllWindows();
+            if (settingGrid.Visibility == Visibility.Visible)
+            {
+                dataGrid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                settingGrid.Visibility = Visibility.Visible;
+            }
+            
         }
+        
 
-        private void filteredListLbl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-        }
 
-        private void allSelectionsLbl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-        }
-
-        private void CompetitionTypeSelectorCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-        }
 
         private void RunGetInfoBtn_Click(object sender, RoutedEventArgs e)
         {
+            dataGrid.Items.Clear();
             bail = false;
             bailBtn.Visibility = Visibility.Visible;
             RunGetInfoBtn.Visibility = Visibility.Hidden;
@@ -319,5 +417,54 @@ namespace BetHistoryImport
             bail = true;
             timer?.Stop();
         }
+
+        private void PlayerBtn_Click(object sender, RoutedEventArgs e)
+        {
+            HideAllWindows();
+            if(playerGrid.Visibility == Visibility.Visible)
+            {
+                dataGrid.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                playerGrid.Visibility = Visibility.Visible;
+                resTypeTxtBox.IsEnabled = false;
+                evTypeTxtBox.IsEnabled = false;
+                GetPlayerInfo();
+            }
+        }
+
+        private void HideAllWindows()
+        {
+
+            settingGrid.Visibility = Visibility.Hidden;
+            dataGrid.Visibility = Visibility.Hidden;
+            playerGrid.Visibility = Visibility.Hidden;
+            ImageGrid.Visibility = Visibility.Hidden;
+        }
+
+        private void GetPlayerInfo()
+        {
+            playerGrid.Items.Clear();
+            var sels = new List<PlayerInfo>();
+
+            using (var db = new SportsDatabaseModel())
+            {
+                sels = db.playerInfo.ToList();
+            }
+
+            InvokeUI(() =>
+            {
+                playerGrid.ItemsSource = sels;
+            
+            });
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+      
     }
 }

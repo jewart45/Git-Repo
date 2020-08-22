@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace BetHistoryImport
 {
@@ -14,7 +15,55 @@ namespace BetHistoryImport
 
         public GUIProperties()
         {
-           
+
+        }
+
+        public List<string> SportMode { get; private set; } = new List<string>() {"General", "NHL", "NBA", "UFC" };
+
+        private string selectedSportMode = "General";
+
+        public string SelectedSportMode
+        {
+            get => selectedSportMode;
+            set
+            {
+                selectedSportMode = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool includeLiveBetting = false;
+
+        public bool IncludeLiveBetting
+        {
+            get => includeLiveBetting;
+            set
+            {
+                includeLiveBetting = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private ImageSource image1;
+        public ImageSource Image1
+        {
+            get => image1;
+            set
+            {
+                image1 = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private ImageSource image2;
+        public ImageSource Image2
+        {
+            get => image2;
+            set
+            {
+                image2 = value;
+                NotifyPropertyChanged();
+            }
         }
 
         private Visibility navigationVisibility = Visibility.Hidden;
@@ -89,6 +138,18 @@ namespace BetHistoryImport
             set
             {
                 loggingInterval = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private string aditionalImageTextSearch = "";
+
+        public string AditionalImageTextSearch
+        {
+            get => aditionalImageTextSearch;
+            set
+            {
+                aditionalImageTextSearch = value;
                 NotifyPropertyChanged();
             }
         }

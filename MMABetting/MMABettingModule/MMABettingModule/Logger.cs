@@ -87,10 +87,10 @@ namespace MMABettingModule
                         if ((i + 1) % TimeSpan.FromHours(1).TotalSeconds == 0)
                         {
                             //fighterDictionary = marketMessenger.GetAllOddsOld(fighterOddsList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.FightDate) > 0).Select(x => x.SelectionID).ToList<string>(), eventType, virtualise);
-                            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
+                            EventList = marketMessenger.GetEventSelectionIDs(eventType, "All");
                             if (EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0).Count() > 0)
                             {
-                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0).ToList(), eventType, false);
+                                EventListWithOdds = marketMessenger.GetAllOdds(EventList.Where(x => DateTime.Now.AddDays(1).CompareTo(x.Date) > 0).ToList(), eventType, "All");
                                 foreach (OddsInfo f in fighterOddsList)
                                 {
                                     int k = DateTime.Now.Add(TimeSpan.FromDays(1)).CompareTo(f.FightDate);
@@ -121,8 +121,8 @@ namespace MMABettingModule
                         }
                         else
                         {
-                            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-                            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, false);
+                            EventList = marketMessenger.GetEventSelectionIDs(eventType, "All");
+                            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, "All");
                             error = LogSpecificOdds(EventListWithOdds, eventType, true);
 
                             //Reset Counter
@@ -282,8 +282,8 @@ namespace MMABettingModule
             List<MarketplaceEvent> EventListWithOdds = new List<MarketplaceEvent>();
             List<OddsInfo> listOddsToAdd = new List<OddsInfo>();
 
-            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, false);
+            EventList = marketMessenger.GetEventSelectionIDs(eventType, "All");
+            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, "All");
             fighterDictionary = marketMessenger.GetAllOddsOld(fighterOddsList.Select(x => x.SelectionID).ToList<string>(), eventType);
             foreach (MarketplaceEvent ev in EventListWithOdds)
             {

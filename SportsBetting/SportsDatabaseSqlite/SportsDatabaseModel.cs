@@ -18,7 +18,7 @@ namespace SportsDatabaseSqlite
         public DbSet<OddsInfoMedian> oddsInfoMed { get; set; }
         public DbSet<EventsLookup> eventLookups { get; set; }
 
-        public DbSet<FighterInfo> playerInfo { get; set; }
+        public DbSet<PlayerInfo> playerInfo { get; set; }
 
         public DbSet<ResultLog> results { get; set; }
 
@@ -89,7 +89,7 @@ namespace SportsDatabaseSqlite
             modelBuilder.Entity<OddsInfoMedian>();
             modelBuilder.Entity<ResultLog>();
             modelBuilder.Entity<EventsLookup>();
-            modelBuilder.Entity<FighterInfo>();
+            modelBuilder.Entity<PlayerInfo>();
             modelBuilder.Entity<User>();
             modelBuilder.Entity<Settings>();
 

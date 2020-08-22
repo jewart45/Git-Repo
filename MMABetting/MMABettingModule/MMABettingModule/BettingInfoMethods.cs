@@ -41,8 +41,8 @@ namespace MMABettingModule
             //DateDictionary = marketMessenger.GetAllDates(EventDictionary.GroupBy(x => x.Value)
             //    .Select(x => x.Key).ToList());
 
-            EventList = marketMessenger.GetEventSelectionIDs(eventType, true);
-            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, myGuiProperties.Virtualise);
+            EventList = marketMessenger.GetEventSelectionIDs(eventType, "All");
+            EventListWithOdds = marketMessenger.GetAllOdds(EventList, eventType, "All");
 
             //foreach (string t in settings.PossibleEventTypes)
             //{

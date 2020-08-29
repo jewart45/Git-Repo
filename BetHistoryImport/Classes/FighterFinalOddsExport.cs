@@ -13,5 +13,7 @@ namespace BetHistoryImport.Classes
         public double Odds;
 
         public string Winner;
+
+        public int Gender;
     }
 }

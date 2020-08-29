@@ -4,15 +4,13 @@ using SportsDatabaseSqlite;
 using SportsDatabaseSqlite.Tables;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Forms;
 
 namespace BetHistoryImport
 {
@@ -24,6 +22,7 @@ namespace BetHistoryImport
         private GUIProperties myGuiProperties;
         private bool bail;
         private System.Timers.Timer timer;
+        private string currentDirectory;
 
         private List<string> NBATeams = new List<string>()
         {
@@ -104,6 +103,7 @@ namespace BetHistoryImport
 
             DataContext = myGuiProperties;
             this.KeyDown += ImageGrid_KeyDown;
+            currentDirectory = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(AppDomain.CurrentDomain.BaseDirectory)));
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -180,8 +180,6 @@ namespace BetHistoryImport
                                 SelectionBias = false
                             });
                         }
-                        
-                        
                     }
                     if (oddsToAdd.Count > 0)
                     {
@@ -189,7 +187,7 @@ namespace BetHistoryImport
                         {
                             db.oddsInfo.AddRange(oddsToAdd);
                             db.oddsInfoMed.AddRange(oddsSummed);
-                            foreach(PlayerInfo p in playerInfos)
+                            foreach (PlayerInfo p in playerInfos)
                             {
                                 if (db.playerInfo.FirstOrDefault(x => x.Name == p.Name) == null)
                                 {
@@ -204,7 +202,6 @@ namespace BetHistoryImport
                 }
                 InvokeUI(() =>
                 {
-
                     bailBtn.Visibility = Visibility.Hidden;
                     RunGetInfoBtn.Visibility = Visibility.Visible;
                 });
@@ -215,7 +212,6 @@ namespace BetHistoryImport
         {
             InvokeUI(() =>
             {
-                
                 //dataGrid.ItemsSource = AllSelections;
             });
         }
@@ -272,10 +268,10 @@ namespace BetHistoryImport
                 evList.Add(evToAdd);
             };
 
-            var startTimeEv = evList.Find(x => x.Mc.First(y=>y.MarketDefinition != null).MarketDefinition.InPlay);
-            if (startTimeEv == null 
-                || (startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventTypeId != myGuiProperties.EventTypeId && myGuiProperties.EventTypeId != 0) 
-                || (startTimeEv.Mc.First(y=>y.MarketDefinition != null).MarketDefinition.MarketType != myGuiProperties.ResultType && myGuiProperties.ResultType != "")
+            var startTimeEv = evList.Find(x => x.Mc.First(y => y.MarketDefinition != null).MarketDefinition.InPlay);
+            if (startTimeEv == null
+                || (startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventTypeId != myGuiProperties.EventTypeId && myGuiProperties.EventTypeId != 0)
+                || (startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.MarketType != myGuiProperties.ResultType && myGuiProperties.ResultType != "")
                 || (!NHLTeams.Any(startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventName.Contains) && myGuiProperties.SelectedSportMode == "NHL")
                 || (!NBATeams.Any(startTimeEv.Mc.First(y => y.MarketDefinition != null).MarketDefinition.EventName.Contains) && myGuiProperties.SelectedSportMode == "NBA")) //NBA Filter
                 return oddsInfo;
@@ -311,7 +307,7 @@ namespace BetHistoryImport
                 for (int i = 0; i < converted.Mc.First(y => y.Rc != null).Rc.Count(); i++)
                 {
                     var runner = ev.OtherResults.First().Runners.Find(x => x.SelectionID == converted.Mc.First(y => y.Rc != null).Rc[i].Id);
-                    if(runner != null)
+                    if (runner != null)
                     {
                         oddsInfo.Add(new OddsInfo()
                         {
@@ -329,9 +325,8 @@ namespace BetHistoryImport
                         });
                         runner.Odds = PriceTradedtoOdds(converted.Mc.First(y => y.Rc != null).Rc[i].Ltp).ToString();
                     }
-                    
                 }
-                
+
                 objList.Add(converted);
             };
 
@@ -340,7 +335,7 @@ namespace BetHistoryImport
             return oddsInfo;
         }
 
-        private void InvokeUI(Action a) => Application.Current.Dispatcher.Invoke(a);
+        private void InvokeUI(Action a) => System.Windows.Application.Current.Dispatcher.Invoke(a);
 
         private async Task UpdateNewInfo(Event ev)
         {
@@ -362,10 +357,9 @@ namespace BetHistoryImport
             }
             InvokeUI(() =>
             {
-                foreach(var item in sels)
+                foreach (var item in sels)
                 {
                     dataGrid.Items.Add(item);
-
                 }
             });
             await Task.Delay(200);
@@ -384,11 +378,7 @@ namespace BetHistoryImport
             {
                 settingGrid.Visibility = Visibility.Visible;
             }
-            
         }
-        
-
-
 
         private void RunGetInfoBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -421,7 +411,7 @@ namespace BetHistoryImport
         private void PlayerBtn_Click(object sender, RoutedEventArgs e)
         {
             HideAllWindows();
-            if(playerGrid.Visibility == Visibility.Visible)
+            if (playerGrid.Visibility == Visibility.Visible)
             {
                 dataGrid.Visibility = Visibility.Visible;
             }
@@ -436,7 +426,6 @@ namespace BetHistoryImport
 
         private void HideAllWindows()
         {
-
             settingGrid.Visibility = Visibility.Hidden;
             dataGrid.Visibility = Visibility.Hidden;
             playerGrid.Visibility = Visibility.Hidden;
@@ -445,7 +434,7 @@ namespace BetHistoryImport
 
         private void GetPlayerInfo()
         {
-            playerGrid.Items.Clear();
+            playerGrid?.Items.Clear();
             var sels = new List<PlayerInfo>();
 
             using (var db = new SportsDatabaseModel())
@@ -456,15 +445,106 @@ namespace BetHistoryImport
             InvokeUI(() =>
             {
                 playerGrid.ItemsSource = sels;
-            
             });
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-
         }
 
-      
+        private void ExportFinalOdds(object sender, RoutedEventArgs e)
+        {
+            List<FighterFinalOddsExport> finalOdds = new List<FighterFinalOddsExport>();
+            DataTable dataTable = new DataTable("Results Export");
+
+            List<long> eventIds;
+
+            Task.Run(() =>
+            {
+                using (var db = new SportsDatabaseModel())
+                {
+                    eventIds = db.oddsInfoMed
+                    .OrderBy(x => x.EventDate)
+                    .Select(x => x.ID)
+                    .ToList();
+
+                    foreach (long evId in eventIds)
+                    {
+                        var record = db.oddsInfoMed.FirstOrDefault(x => x.ID == evId);
+                        var player = db.playerInfo.FirstOrDefault(x => x.Name == record.SelectionName);
+                        //Add to a list
+                        if (record != null)
+                        {
+                            finalOdds.Add(new FighterFinalOddsExport
+                            {
+                                EventDate = record.EventDate,
+                                Name = record.SelectionName,
+                                Odds = record.OddsMedian,
+                                EventName = record.EventName,
+                                Winner = record.Winner ? "1" : "0",
+                                Gender = player != null ? player.Gender : 0
+                            });
+                        }
+                    }
+
+                    dataTable.Columns.Add("Event Date", typeof(DateTime));
+                    dataTable.Columns.Add("Event Name", typeof(string));
+                    dataTable.Columns.Add("Seection Name", typeof(string));
+                    dataTable.Columns.Add("Odds", typeof(double));
+                    dataTable.Columns.Add("Winner", typeof(string));
+                    dataTable.Columns.Add("Gender", typeof(int));
+
+                    foreach (FighterFinalOddsExport i in finalOdds.OrderBy(x => x.EventName).ThenBy(x => x.Winner))
+                    {
+                        dataTable.Rows.Add(i.EventDate, i.EventName, i.Name, i.Odds, i.Winner, i.Gender);
+                    }
+                }
+
+                InvokeUI(() =>
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Excel|*.csv"
+                    };
+                    if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        CreateCSVFile(dataTable, saveFileDialog.FileName, false);
+                    }
+                });
+            });
+        }
+
+        public void CreateCSVFile(DataTable dt, string strFilePath, bool append)
+        {
+            StreamWriter sw = new StreamWriter(strFilePath, append);
+
+            int iColCount = dt.Columns.Count;
+            for (int i = 0; i < iColCount; i++)
+            {
+                sw.Write(dt.Columns[i]);
+                if (i < iColCount - 1)
+                {
+                    sw.Write(",");
+                }
+            }
+            sw.Write(sw.NewLine);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                for (int i = 0; i < iColCount; i++)
+                {
+                    if (!Convert.IsDBNull(dr[i]))
+                    {
+                        sw.Write(dr[i].ToString());
+                    }
+                    if (i < iColCount - 1)
+                    {
+                        sw.Write(",");
+                    }
+                }
+                sw.Write(sw.NewLine);
+            }
+            sw.Close();
+        }
     }
 }

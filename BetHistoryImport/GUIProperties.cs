@@ -142,7 +142,7 @@ namespace BetHistoryImport
             }
         }
 
-        private string aditionalImageTextSearch = "";
+        private string aditionalImageTextSearch = " UFC";
 
         public string AditionalImageTextSearch
         {
@@ -412,6 +412,30 @@ namespace BetHistoryImport
             set
             {
                 resultType = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private string playerName1 = "Player Name 1";
+
+        public string PlayerName1
+        {
+            get => playerName1;
+            set
+            {
+                playerName1 = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private string playerName2 = "Player Name 2";
+
+        public string PlayerName2
+        {
+            get => playerName2;
+            set
+            {
+                playerName2 = value;
                 NotifyPropertyChanged();
             }
         }

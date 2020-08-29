@@ -16,6 +16,7 @@ namespace SportsDatabaseSqlite.Tables
         public string SelectionID { get; set; }
         public string MarketID { get; set; }
         public string ResultType { get; set; }
+        public bool SelectionBias { get; set; }
         public bool Winner { get; set; }
     }
 }

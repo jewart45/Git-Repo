@@ -26,12 +26,29 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Orientation="Horizontal">
+                    <Menu
+                        Width="150"
+                        Height="25"
+                        VerticalContentAlignment="Top"
+                        Background="Transparent"
+                        DockPanel.Dock="Left">
+                        <MenuItem
+                            Width="150"
+                            Height="25"
+                            VerticalContentAlignment="Center"
+                            Background="White"
+                            BorderBrush="Black"
+                            Header="Special Functions">
+                            <MenuItem Click="ExportFinalOdds" Header="Export Median Odds" />
+                        </MenuItem>
+                    </Menu>
                     <Label Content="Event Type Id: " FontWeight="Bold" Foreground="Orange" Margin="10,0" />
                     <TextBox x:Name="evTypeTxtBox" Width="80" Text="{Binding Path=EventTypeId}"/>
                     <Label Content="Result Type: " FontWeight="Bold" Foreground="Orange" Margin="10,0"  />
                     <TextBox x:Name="resTypeTxtBox" Width="150" Text="{Binding Path=ResultType}" Margin="10,0"/>
                     <Label Content="FilePath: " FontWeight="Bold" Foreground="Orange"  Margin="10,0" />
                     <Label x:Name="FilePath" Content="{Binding Path=FilePath}" Foreground="Orange" Margin="10,0" />
+                    
                 </StackPanel>
 
 
@@ -210,27 +227,36 @@
                         Grid.Row="2"
                         Width="900"
                         Height="500"
-                    Visibility="Hidden"
+                    Visibility="Visible"
                     >
-                    <StackPanel Orientation="Horizontal">
-                        <Image x:Name="img1" Source="{Binding Path=Image1}" Height="300" Width="300" Margin="15"/>
-                        <Image Source="{Binding Path=Image2}" Height="300" Width="300" Margin="15"/>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Vertical" Height="500" Width="300"  Margin="25,0" >
+                                <Image x:Name="img1" Source="{Binding Path=Image1}" Height="300" Width="300" Margin="15"/>
+                                <Label x:Name="image1Lbl" FontWeight="Bold"  Foreground="White" FontSize="20" Margin="10" Content="{Binding Path=PlayerName1}"/>
+                            </StackPanel >
+                            <StackPanel Orientation="Vertical"  Height="500" Width="300" Margin="25,0">
+                                <Image Source="{Binding Path=Image2}" Height="300" Width="300" Margin="15"/>
+                                <Label x:Name="image2Lbl" FontWeight="Bold"  Foreground="White" FontSize="20" Margin="10" Content="{Binding Path=PlayerName2}"/>
+                            </StackPanel>
 
+                        </StackPanel>
                     </StackPanel>
+                    
                     <Button x:Name="nextImage"
                         Content="Next" 
                             Click="NextImage_Click" 
                             VerticalAlignment="Bottom" 
                             HorizontalAlignment="Center" 
                             Margin="10" Height="50" 
-                            Width="100"/>
+                            Width="100" Visibility="Hidden"/>
                     <Button
                         Content="Use" 
                             Click="UseImage_Click" 
                             VerticalAlignment="Bottom" 
                             HorizontalAlignment="Center" 
                             Margin="10,10,-250,10" Height="50" 
-                            Width="100"/>
+                            Width="100" Visibility="Hidden"/>
                     <Label x:Name="savedLbl" 
                            
                             VerticalAlignment="Bottom" 

@@ -256,7 +256,7 @@
                             VerticalAlignment="Bottom" 
                             HorizontalAlignment="Center" 
                             Margin="10,10,-250,10" Height="50" 
-                            Width="100" Visibility="Hidden"/>
+                            Width="100" Visibility="Visible"/>
                     <Label x:Name="savedLbl" 
                            
                             VerticalAlignment="Bottom" 

@@ -452,6 +452,111 @@ namespace BetHistoryImport
         {
         }
 
+        private async Task ExportFinalOddsToCSV(string fileName)
+        {
+            List<FighterFinalOddsExport> finalOdds = new List<FighterFinalOddsExport>();
+            DataTable dataTable = new DataTable(fileName);
+
+            List<long> eventIds;
+
+            await Task.Run(async () =>
+            {
+                using (var db = new SportsDatabaseModel())
+                {
+                    eventIds = db.oddsInfoMed
+                    .Where(x=>x.SelectionBias)
+                    .OrderBy(x => x.EventDate)
+                    .Select(x => x.ID)
+                    .ToList();
+
+                    foreach (long evId in eventIds)
+                    {
+                        var record = db.oddsInfoMed.FirstOrDefault(x => x.ID == evId);
+                        var player = db.playerInfo.FirstOrDefault(x => x.Name == record.SelectionName);
+                        //Add to a list
+                        if (record != null)
+                        {
+                            finalOdds.Add(new FighterFinalOddsExport
+                            {
+                                EventDate = record.EventDate,
+                                Name = record.SelectionName,
+                                Odds = record.OddsMedian,
+                                EventName = record.EventName,
+                                Winner = record.Winner ? "1" : "0",
+                                Gender = player != null ? player.Gender : 0,
+                                Height = player.Height,
+                                GrapplingAccuracy = player.GrapplingAccuracy,
+                                LegReach = player.LegReach,
+                                Reach = player.Reach,
+                                SigStrikesAbsorb = player.SigStrikesAbs,
+                                SigStrikesDefend = player.SigStrikeDef,
+                                SigStrikesLand = player.SigStrikesLand,
+                                StrikingAccuracy = player.StrikingAccuracy,
+                                SubAvg = player.SubmissionAvg,
+                                TakedownAvg = player.TakedownAvg,
+                                Weight = player.Weight,
+                                SelectionBias = record.SelectionBias
+                            });
+                        }
+                    }
+
+                    dataTable.Columns.Add("Event Date", typeof(DateTime));
+                    dataTable.Columns.Add("Event Name", typeof(string));
+                    dataTable.Columns.Add("Selection Name", typeof(string));
+                    dataTable.Columns.Add("Odds", typeof(double));
+                    dataTable.Columns.Add("Winner", typeof(string));
+                    dataTable.Columns.Add("Gender", typeof(int));
+                    dataTable.Columns.Add("Height", typeof(float));
+                    dataTable.Columns.Add("Weight", typeof(float));
+                    dataTable.Columns.Add("GrapplingAcc", typeof(float));
+                    dataTable.Columns.Add("Striking Acc", typeof(float));
+                    dataTable.Columns.Add("Reach", typeof(float));
+                    dataTable.Columns.Add("LegReach", typeof(float));
+                    dataTable.Columns.Add("SubAvg", typeof(float));
+                    dataTable.Columns.Add("TkdAvg", typeof(float));
+                    dataTable.Columns.Add("SigStrikesAbsorb", typeof(float));
+                    dataTable.Columns.Add("SigStrikesLand", typeof(float));
+                    dataTable.Columns.Add("SigStrikesDef", typeof(float));
+                    dataTable.Columns.Add("Selection Bias", typeof(int));
+
+                    foreach (FighterFinalOddsExport i in finalOdds.OrderBy(x => x.EventName).ThenBy(x => x.Winner))
+                    {
+                        dataTable.Rows.Add(i.EventDate, 
+                            i.EventName, 
+                            i.Name, 
+                            i.Odds, 
+                            i.Winner, 
+                            i.Gender, 
+                            i.Height, 
+                            i.Weight, 
+                            i.GrapplingAccuracy, 
+                            i.StrikingAccuracy, 
+                            i.Reach, 
+                            i.LegReach, 
+                            i.SubAvg, 
+                            i.TakedownAvg, 
+                            i.SigStrikesAbsorb, 
+                            i.SigStrikesLand, 
+                            i.SigStrikesDefend, 
+                            i.SelectionBias);
+                    }
+                }
+
+                InvokeUI(() =>
+                {
+                    SaveFileDialog saveFileDialog = new SaveFileDialog
+                    {
+                        Filter = "Excel|*.csv"
+                    };
+                    if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        CreateCSVFile(dataTable, saveFileDialog.FileName, false);
+                    }
+                });
+                await Task.Delay(1000);
+            });
+        }
+
         private void ExportFinalOdds(object sender, RoutedEventArgs e)
         {
             List<FighterFinalOddsExport> finalOdds = new List<FighterFinalOddsExport>();
@@ -482,7 +587,8 @@ namespace BetHistoryImport
                                 Odds = record.OddsMedian,
                                 EventName = record.EventName,
                                 Winner = record.Winner ? "1" : "0",
-                                Gender = player != null ? player.Gender : 0
+                                Gender = player != null ? player.Gender : 0,
+                                SelectionBias = record.SelectionBias
                             });
                         }
                     }
@@ -493,10 +599,11 @@ namespace BetHistoryImport
                     dataTable.Columns.Add("Odds", typeof(double));
                     dataTable.Columns.Add("Winner", typeof(string));
                     dataTable.Columns.Add("Gender", typeof(int));
+                    dataTable.Columns.Add("Selection Bias", typeof(int));
 
                     foreach (FighterFinalOddsExport i in finalOdds.OrderBy(x => x.EventName).ThenBy(x => x.Winner))
                     {
-                        dataTable.Rows.Add(i.EventDate, i.EventName, i.Name, i.Odds, i.Winner, i.Gender);
+                        dataTable.Rows.Add(i.EventDate, i.EventName, i.Name, i.Odds, i.Winner, i.Gender, i.SelectionBias);
                     }
                 }
 

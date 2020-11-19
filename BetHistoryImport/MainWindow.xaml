@@ -227,7 +227,7 @@
                         Grid.Row="2"
                         Width="900"
                         Height="500"
-                    Visibility="Visible"
+                    Visibility="Hidden"
                     >
                     <StackPanel Orientation="Vertical">
                         <StackPanel Orientation="Horizontal">

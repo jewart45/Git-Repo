@@ -369,13 +369,15 @@ namespace BetHistoryImport
 
         private void SettingBtn_Click(object sender, RoutedEventArgs e)
         {
-            HideAllWindows();
+            
             if (settingGrid.Visibility == Visibility.Visible)
             {
+                HideAllWindows();
                 dataGrid.Visibility = Visibility.Visible;
             }
             else
             {
+                HideAllWindows();
                 settingGrid.Visibility = Visibility.Visible;
             }
         }
@@ -410,13 +412,18 @@ namespace BetHistoryImport
 
         private void PlayerBtn_Click(object sender, RoutedEventArgs e)
         {
-            HideAllWindows();
+            
             if (playerGrid.Visibility == Visibility.Visible)
             {
+                HideAllWindows();
                 dataGrid.Visibility = Visibility.Visible;
+
+                resTypeTxtBox.IsEnabled = true;
+                evTypeTxtBox.IsEnabled = true;
             }
             else
             {
+                HideAllWindows();
                 playerGrid.Visibility = Visibility.Visible;
                 resTypeTxtBox.IsEnabled = false;
                 evTypeTxtBox.IsEnabled = false;

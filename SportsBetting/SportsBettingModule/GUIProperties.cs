@@ -1,5 +1,4 @@
-﻿using Microsoft.Office.Core;
-using SportsBettingModule.Classes;
+﻿using SportsBettingModule.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
